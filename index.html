@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
     <title>منصة التعلم عن بعد الشاملة</title>
     <style>
         :root {
@@ -99,16 +100,10 @@
             text-align: center;
             margin-top: 10px;
             font-size: 1rem;
+            text-decoration: none;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: none; }
-
-        .attendance-log {
-            background: #fff;
-            border-radius: 15px; padding: 15px;
-            margin-top: 20px; border: 1px dashed #cbd5e1;
-            max-height: 350px; overflow-y: auto;
-        }
 
         @media (max-width: 400px) {
             .filter-group { grid-template-columns: 1fr; }
@@ -127,14 +122,14 @@
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle">تحميل...</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer;">خروج</button>
+            <h3 id="appTitle">جاري التحميل...</h3>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label>📅 اليوم:</label>
+                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
                         <option value="الأحد">الأحد</option>
                         <option value="الاثنين">الاثنين</option>
@@ -144,7 +139,7 @@
                     </select>
                 </div>
                 <div>
-                    <label>🎓 الصف:</label>
+                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">🎓 الصف:</label>
                     <select id="gradeSelect" onchange="updateUI()">
                         <option value="1">الأول</option><option value="2">الثاني</option>
                         <option value="3">الثالث</option><option value="4">الرابع</option>
@@ -157,37 +152,27 @@
         </div>
 
         <div id="lessonsGrid"></div>
-
-        <div id="teacherPanel" style="display:none; margin-top: 20px;">
-            <hr>
-            <h3>📊 سجل الحضور</h3>
-            <button class="btn btn-outline" onclick="showAttendance()">عرض القائمة</button>
-            <div id="attendanceDisplay" class="attendance-log" style="display:none;"></div>
-        </div>
     </div>
 </div>
 
 <script>
-    // رابط الجدول - تأكد من عمل Publish to Web بصيغة CSV
+    // الرابط المباشر للبيانات بصيغة CSV
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     
     let rawData = [];
 
     async function fetchSheetData() {
         try {
-            // إضافة محدد زمني عشوائي لمنع المتصفح من استخدام نسخة قديمة مخزنة
-            const response = await fetch(sheetURL + '&cache_boost=' + Date.now());
-            if (!response.ok) throw new Error("فشل الوصول للرابط");
+            // استخدام fetch بدون قيود مع كسر الكاش لضمان أحدث البيانات
+            const response = await fetch(sheetURL + '&t=' + new Date().getTime(), {
+                mode: 'cors',
+                headers: { 'Accept': 'text/csv' }
+            });
+            if (!response.ok) throw new Error();
             const data = await response.text();
-            
-            if (data.includes('<!DOCTYPE html>')) {
-                throw new Error("الرابط غير صحيح (يجب النشر بصيغة CSV وليس Web Page)");
-            }
-            
             parseCSV(data);
         } catch (error) {
-            console.error(error);
-            alert("⚠️ خطأ في جلب البيانات:\n1. تأكد من نشر الجدول بصيغة CSV.\n2. تأكد من أن الرابط يبدأ بـ https.");
+            alert("فشل جلب البيانات. تأكد من نشر الجدول بصيغة CSV.");
         }
     }
 
@@ -223,15 +208,11 @@
     }
 
     async function startSystem() {
-        const role = localStorage.getItem('user_role');
-        if (!role) return;
-
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدولي الدراسي";
+        const role = localStorage.getItem('user_role');
+        document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدول الحصص";
         
-        if (role === 'teacher') document.getElementById('teacherPanel').style.display = 'block';
-
         await fetchSheetData();
         setInterval(updateUI, 30000);
     }
@@ -240,12 +221,11 @@
         const grid = document.getElementById('lessonsGrid');
         const day = document.getElementById('daySelect').value;
         const grade = document.getElementById('gradeSelect').value;
-        
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مضافة.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد دروس مضافة حالياً.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -263,20 +243,24 @@
                 progress = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`;
             }
 
+            // تعديل طريقة فتح الرابط ليكون بأقصى درجات السماحية
             card.innerHTML = `
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
-                <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="window.open('${lesson.link}', '_blank')">دخول الحصة</button>
+                <p style="margin:5px 0; font-size:0.9rem; color:#475569;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
+                <button class="btn btn-primary" onclick="openLesson('${lesson.link}')">🚀 دخول الحصة الآن</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    function showAttendance() {
-        const display = document.getElementById('attendanceDisplay');
-        display.style.display = 'block';
-        display.innerHTML = "سجل الحضور يعمل على المتصفح الحالي فقط.";
+    function openLesson(url) {
+        // التحقق من وجود البروتوكول لضمان عمل الرابط
+        const finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
+        const newWin = window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        if (!newWin) {
+            alert("يرجى السماح بفتح النوافذ المنبثقة (Pop-ups) للدخول إلى الحصة.");
+        }
     }
 
     function logout() { localStorage.clear(); location.reload(); }
