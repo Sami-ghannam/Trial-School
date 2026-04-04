@@ -100,7 +100,6 @@
             text-align: center;
             margin-top: 10px;
             font-size: 1rem;
-            text-decoration: none;
         }
         .btn-primary { background: var(--primary); color: white; }
 
@@ -114,15 +113,15 @@
 <div class="container">
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك</h2>
-        <p>أدخل الرمز للدخول (طالب: 1 | معلم: 2)</p>
+        <p>أدخل الرمز (طالب: 1 | معلم: 2)</p>
         <input type="text" id="passCode" placeholder="أدخل الرقم هنا">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle">جاري التحميل...</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
+            <h3 id="appTitle">تحميل الجدول...</h3>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
@@ -155,19 +154,17 @@
 </div>
 
 <script>
-    // رابط البيانات
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     
     let rawData = [];
 
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL + '&t=' + new Date().getTime());
-            if (!response.ok) throw new Error();
+            const response = await fetch(sheetURL + '&cache=' + Math.random());
             const data = await response.text();
             parseCSV(data);
-        } catch (error) {
-            alert("فشل جلب البيانات. يرجى التأكد من الإنترنت.");
+        } catch (e) {
+            console.error("Connection Error");
         }
     }
 
@@ -178,12 +175,9 @@
             const cols = lines[i].split(',');
             if (cols.length >= 7) {
                 rawData.push({
-                    day: cols[0].trim(),
-                    grade: cols[1].trim(),
-                    subject: cols[2].trim(),
-                    teacher: cols[3].trim(),
-                    start: cols[4].trim(),
-                    end: cols[5].trim(),
+                    day: cols[0].trim(), grade: cols[1].trim(),
+                    subject: cols[2].trim(), teacher: cols[3].trim(),
+                    start: cols[4].trim(), end: cols[5].trim(),
                     link: cols[6].trim()
                 });
             }
@@ -194,27 +188,21 @@
     function handleLogin() {
         const input = document.getElementById('passCode').value.trim();
         let role = (input === "1") ? 'student' : (input === "2") ? 'teacher' : '';
-        
         if (role) {
-            // استخدام sessionStorage بدلاً من localStorage لضمان مسح البيانات عند إغلاق التبويب
             sessionStorage.setItem('user_role', role);
             startSystem();
         } else {
-            alert("الرمز غير صحيح.");
+            alert("الرمز خطأ");
         }
     }
 
     async function startSystem() {
-        // التحقق من الجلسة الحالية
-        const role = sessionStorage.getItem('user_role');
-        if (!role) return;
-
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
+        const role = sessionStorage.getItem('user_role');
         document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدول الحصص";
-        
         await fetchSheetData();
-        setInterval(updateUI, 30000);
+        setInterval(updateUI, 20000);
     }
 
     function updateUI() {
@@ -225,7 +213,7 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد دروس حالياً.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص حالياً.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -247,32 +235,28 @@
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
                 <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="openDirect('${lesson.link}')">🚀 دخول الحصة الآن</button>
+                <button class="btn btn-primary" onclick="forceOpen('${lesson.link}')">🚀 دخول الحصة مباشرة</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    function openDirect(url) {
+    // الطريقة الأكثر "تحرراً" لفتح الروابط دون تحذيرات أمنية
+    function forceOpen(url) {
         const finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
-        const newWindow = window.open();
-        newWindow.opener = null;
-        newWindow.location = finalUrl;
-        newWindow.target = "_blank";
+        
+        // فتح نافذة جديدة فارغة أولاً لفك الارتباط بصفحتك الحالية
+        const win = window.open('about:blank', '_blank');
+        
+        // منع النافذة الجديدة من معرفة من فتحها (لقطع تتبع الأمان)
+        win.opener = null;
+        
+        // التوجه للرابط المطلوب
+        win.location.href = finalUrl;
     }
 
-    function logout() {
-        // مسح بيانات الجلسة والعودة للبداية
-        sessionStorage.clear();
-        location.reload();
-    }
-    
-    // عند تحميل الصفحة، نتحقق إذا كانت الجلسة موجودة (في حال قام المستخدم بعمل Refresh فقط)
-    window.onload = () => { 
-        if (sessionStorage.getItem('user_role')) {
-            startSystem();
-        }
-    };
+    function logout() { sessionStorage.clear(); location.reload(); }
+    window.onload = () => { if (sessionStorage.getItem('user_role')) startSystem(); };
 </script>
 </body>
 </html>
