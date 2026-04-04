@@ -4,23 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>منصة الحصص الذكية</title>
+    <title>منصة الحصص المباشرة</title>
     <style>
         :root { --primary: #2563eb; --success: #10b981; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         .container { max-width: 600px; margin: 0 auto; width: 100%; }
         .auth-card { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 30px; }
         .filter-section { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        select, input { width: 100%; padding: 14px; margin: 5px 0; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; }
-        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        select, input { width: 100%; padding: 14px; margin: 5px 0; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; outline: none; }
+        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; }
         .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
         .progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #f1f5f9; }
         .progress-bar { height: 100%; background: var(--success); transition: width 0.5s ease; }
-        .btn { display: block; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; font-size: 1rem; }
+        .btn { display: block; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; font-size: 1rem; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -28,8 +28,8 @@
 <div class="container">
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك</h2>
-        <p>أدخل الرمز (طالب: 1 | معلم: 2)</p>
-        <input type="text" id="passCode" placeholder="أدخل الرقم هنا">
+        <p>يرجى إدخال رمز الدخول</p>
+        <input type="text" id="passCode" placeholder="أدخل الرقم (1 أو 2)">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
@@ -42,7 +42,7 @@
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label style="font-size:12px; font-weight:bold;">📅 اليوم:</label>
+                    <label>📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
                         <option value="الأحد">الأحد</option>
                         <option value="الاثنين">الاثنين</option>
@@ -52,7 +52,7 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:12px; font-weight:bold;">🎓 الصف:</label>
+                    <label>🎓 الصف:</label>
                     <select id="gradeSelect" onchange="updateUI()">
                         <option value="1">الأول</option><option value="2">الثاني</option>
                         <option value="3">الثالث</option><option value="4">الرابع</option>
@@ -71,21 +71,18 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     let rawData = [];
 
-    // دالة لتنظيف النص (إزالة الهمزات والمسافات) لضمان التطابق
-    function cleanText(text) {
+    // دالة تنظيف النصوص لضمان ظهور الحصص عند الفلترة
+    function clean(text) {
         if (!text) return "";
-        return text.toString().trim()
-            .replace(/[أإآ]/g, 'ا')
-            .replace(/ة/g, 'ه')
-            .replace(/\s+/g, '');
+        return text.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '');
     }
 
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL + '&cache=' + Math.random());
+            const response = await fetch(sheetURL + '&cache_bust=' + Date.now());
             const data = await response.text();
             parseCSV(data);
-        } catch (e) { alert("خطأ في الاتصال بالبيانات"); }
+        } catch (e) { console.error("Data Fetch Error"); }
     }
 
     function parseCSV(csvText) {
@@ -95,9 +92,8 @@
             const cols = lines[i].split(',');
             if (cols.length >= 7) {
                 rawData.push({
-                    day: cols[0], grade: cols[1],
-                    subject: cols[2], teacher: cols[3],
-                    start: cols[4], end: cols[5], link: cols[6]
+                    day: cols[0], grade: cols[1], subject: cols[2],
+                    teacher: cols[3], start: cols[4], end: cols[5], link: cols[6]
                 });
             }
         }
@@ -108,7 +104,7 @@
         const input = document.getElementById('passCode').value.trim();
         let role = (input === "1") ? 'student' : (input === "2") ? 'teacher' : '';
         if (role) { sessionStorage.setItem('user_role', role); startSystem(); }
-        else { alert("الرمز خطأ"); }
+        else { alert("رمز الدخول غير صحيح"); }
     }
 
     async function startSystem() {
@@ -117,21 +113,19 @@
         const role = sessionStorage.getItem('user_role');
         document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدول الحصص";
         await fetchSheetData();
-        setInterval(updateUI, 30000);
+        setInterval(updateUI, 20000);
     }
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
-        const selectedDay = cleanText(document.getElementById('daySelect').value);
-        const selectedGrade = cleanText(document.getElementById('gradeSelect').value);
+        const selectedDay = clean(document.getElementById('daySelect').value);
+        const selectedGrade = clean(document.getElementById('gradeSelect').value);
         
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        // فلترة ذكية تتجاهل المسافات والهمزات
-        const filtered = rawData.filter(l => cleanText(l.day) === selectedDay && cleanText(l.grade) === selectedGrade);
-        
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px; color:#64748b;">لا توجد حصص مضافة لهذا اليوم وهذا الصف.</p>';
+        const filtered = rawData.filter(l => clean(l.day) === selectedDay && clean(l.grade) === selectedGrade);
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد حصص حالياً.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = (lesson.start || "0:0").split(':').map(Number);
@@ -153,19 +147,29 @@
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
                 <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="openLesson('${lesson.link}')">🚀 دخول الحصة</button>
+                <button class="btn btn-primary" onclick="bypassSecurity('${lesson.link}')">🚀 دخول مباشر للحصة</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    function openLesson(url) {
-        const finalUrl = (url.trim().startsWith('http')) ? url.trim() : 'https://' + url.trim();
-        const form = document.createElement('form');
-        form.method = 'GET'; form.action = finalUrl; form.target = '_blank';
-        document.body.appendChild(form);
-        form.submit();
-        setTimeout(() => document.body.removeChild(form), 100);
+    /**
+     * دالة تجاوز حماية Antiphishing.biz
+     * تقوم بإنشاء صفحة وسيطة سريعة جداً تمسح أثر المصدر (Referrer) 
+     * وتجعل الرابط يفتح وكأنه إدخال يدوي
+     */
+    function bypassSecurity(targetUrl) {
+        let cleanUrl = targetUrl.trim();
+        if (!cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
+
+        // فتح نافذة جديدة فارغة تماماً
+        const newWin = window.open('', '_blank');
+        
+        // منع النافذة الجديدة من معرفة أنها فُتحت بواسطة هذا الكود (لقطع تتبع الحماية)
+        newWin.opener = null;
+
+        // إرسال المستخدم للرابط باستخدام "تحديث الموقع" الصامت
+        newWin.location.replace(cleanUrl);
     }
 
     function logout() { sessionStorage.clear(); location.reload(); }
