@@ -142,7 +142,6 @@
                         <option value="7">السابع</option>
                         <option value="8">الثامن</option>
                         <option value="9">التاسع</option>
-                        <option value="10">العاشر</option>
                     </select>
                 </div>
             </div>
@@ -174,14 +173,11 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     let rawData = [];
 
-    // دالة شاملة لتنظيف النصوص والأرقام لضمان التطابق 100%
     function smartClean(text) {
         if (!text) return "";
         let str = text.toString().trim();
-        // تحويل الأرقام العربية (١٢٣) إلى إنجليزية (123)
         const ar = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
         for (let i = 0; i < 10; i++) str = str.replace(ar[i], i);
-        // توحيد الهمزات والتاء المربوطة وحذف المسافات الداخلية
         return str.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '');
     }
 
@@ -232,19 +228,20 @@
         const code = smartClean(document.getElementById('passCode').value);
         let role = (code === "1234") ? 'student' : (code === "5678") ? 'teacher' : '';
         if (role) {
-            localStorage.setItem('user_role', role);
+            // استخدام sessionStorage لجعل الدخول مؤقتاً
+            sessionStorage.setItem('user_role', role);
             startSystem();
         } else { alert("الرمز غير صحيح (استخدم 1234 أو 5678)"); }
     }
 
     async function startSystem() {
-        const role = localStorage.getItem('user_role');
+        const role = sessionStorage.getItem('user_role');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
         document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة التحكم 👨‍🏫" : "الجدول الدراسي 🎓";
         document.getElementById('teacherFiltersSection').style.display = (role === 'teacher') ? 'block' : 'none';
         await fetchSheetData();
-        setInterval(updateUI, 30000); // تحديث تلقائي كل 30 ثانية
+        setInterval(updateUI, 30000);
     }
 
     function updateUI() {
@@ -252,7 +249,6 @@
         const sDay = smartClean(document.getElementById('daySelect').value);
         const sGrade = smartClean(document.getElementById('gradeSelect').value);
         
-        // إظهار رسالة تنبيه إذا لم يتم الاختيار
         if (!sDay || !sGrade) {
             grid.innerHTML = '<p class="no-data">يرجى اختيار اليوم والصف أولاً.</p>';
             return;
@@ -260,17 +256,15 @@
 
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
-        const role = localStorage.getItem('user_role');
+        const role = sessionStorage.getItem('user_role');
         const fSub = document.getElementById('subjectFilter').value;
         const fTeach = document.getElementById('teacherFilter').value;
 
-        // الفلترة باستخدام دالة التنظيف الذكية
         let filtered = rawData.filter(item => 
             smartClean(item.day) === sDay && 
             smartClean(item.grade) === sGrade
         );
 
-        // فلاتر إضافية للمعلم
         if (role === 'teacher') {
             if (fSub) filtered = filtered.filter(i => i.subject === fSub);
             if (fTeach) filtered = filtered.filter(i => i.teacher === fTeach);
@@ -305,14 +299,17 @@
     }
 
     function openSession(url) {
-        // تجاوز حماية الروابط وتتبع المصدر
         const win = window.open('', '_blank');
         win.opener = null;
         win.location.replace(url.trim().startsWith('http') ? url.trim() : 'https://' + url.trim());
     }
 
-    function logout() { localStorage.clear(); location.reload(); }
-    window.onload = () => { if (localStorage.getItem('user_role')) startSystem(); };
+    function logout() { sessionStorage.clear(); location.reload(); }
+
+    window.onload = () => { 
+        // استعادة الجلسة فقط إذا كانت موجودة في التبويب الحالي
+        if (sessionStorage.getItem('user_role')) startSystem(); 
+    };
 </script>
 </body>
 </html>
