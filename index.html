@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src https://docs.google.com; style-src 'self' 'unsafe-inline';">
     <title>منصة التعلم عن بعد الشاملة</title>
     <style>
         :root {
@@ -14,28 +15,31 @@
             --text: #1e293b;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
+            line-height: 1.6;
         }
 
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 600px; margin: 0 auto; width: 100%; }
 
         .auth-card {
             background: var(--card);
-            padding: 30px;
+            padding: 25px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             text-align: center;
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
         .filter-section {
             background: var(--card);
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             margin-bottom: 20px;
             border: 1px solid #e2e8f0;
@@ -44,18 +48,19 @@
         .filter-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
             margin-top: 10px;
         }
 
+        /* تحسين المدخلات للهواتف */
         select, input[type="text"] {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin: 5px 0;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #ddd;
-            font-size: 0.9rem;
-            box-sizing: border-box;
+            font-size: 16px; /* منع الزووم التلقائي في آيفون */
+            background-color: #fff;
         }
 
         .lesson-card {
@@ -66,67 +71,81 @@
             position: relative;
             overflow: hidden;
             border: 1px solid #e2e8f0;
-            transition: 0.3s ease;
+            transition: transform 0.2s ease;
         }
+
+        .lesson-card:active { transform: scale(0.98); }
 
         .active-lesson {
             border: 2px solid var(--success);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1);
             background: #f0fdf4;
         }
 
         .progress-container {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 5px;
+            top: 0; left: 0; width: 100%; height: 6px;
             background: #f1f5f9;
         }
 
         .progress-bar {
             height: 100%;
-            background: var(--success); width: 0%;
-            transition: width 1s linear;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
         }
 
         .btn {
             display: block;
-            width: 100%; padding: 14px;
-            border-radius: 12px; border: none; font-weight: bold;
-            cursor: pointer; text-decoration: none; text-align: center;
-            margin-top: 10px; font-size: 1rem;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1rem;
+            touch-action: manipulation;
         }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: none; }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: none; }
 
         .attendance-log {
             background: #fff;
             border-radius: 15px; padding: 15px;
             margin-top: 20px; border: 1px dashed #cbd5e1;
-            max-height: 400px; overflow-y: auto;
+            max-height: 350px; overflow-y: auto;
+            font-size: 0.9rem;
         }
-        
-        label { font-size: 0.85rem; font-weight: bold; color: var(--primary); }
+
+        /* تعديلات للشاشات الصغيرة جداً */
+        @media (max-width: 400px) {
+            .filter-group { grid-template-columns: 1fr; }
+            body { padding: 10px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="loginScreen" class="auth-card">
-        <h2>👋 مرحباً بك</h2>
-        <p>أدخل الرمز للدخول (طالب: 1 | معلم: 2)</p>
-        <input type="text" id="passCode" placeholder="أدخل الرقم 1 أو 2">
+        <h2 style="margin-bottom:10px;">👋 مرحباً بك</h2>
+        <p style="color:#64748b;">أدخل رمز الدخول</p>
+        <input type="text" id="passCode" inputmode="numeric" placeholder="طالب: 1 | معلم: 2">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: center;">
-            <h2 id="appTitle">جاري تحميل البيانات...</h2>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer;">خروج</button>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="appTitle" style="margin:0;">جاري التحميل...</h3>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label>📅 اليوم (أساسي):</label>
+                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
                         <option value="الأحد">الأحد</option>
                         <option value="الاثنين">الاثنين</option>
@@ -136,7 +155,7 @@
                     </select>
                 </div>
                 <div>
-                    <label>🎓 الصف (أساسي):</label>
+                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">🎓 الصف:</label>
                     <select id="gradeSelect" onchange="updateUI()">
                         <option value="1">الأول</option>
                         <option value="2">الثاني</option>
@@ -150,168 +169,134 @@
                     </select>
                 </div>
             </div>
-
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-
-            <div class="filter-group">
-                <div>
-                    <label>📚 المادة:</label>
-                    <select id="subjectFilter" onchange="updateUI()">
-                        <option value="">--- الكل ---</option>
-                    </select>
-                </div>
-                <div>
-                    <label>👨‍🏫 المعلم:</label>
-                    <select id="teacherFilter" onchange="updateUI()">
-                        <option value="">--- الكل ---</option>
-                    </select>
-                </div>
-            </div>
         </div>
 
         <div id="lessonsGrid"></div>
 
-        <div id="teacherPanel" style="display:none; margin-top: 30px;">
-            <hr>
-            <h3>📊 سجل الحضور الذكي</h3>
-            <button class="btn btn-outline" onclick="showAttendance()">تحديث وعرض سجل الحضور</button>
+        <div id="teacherPanel" style="display:none; margin-top: 25px;">
+            <hr style="border:0; border-top:1px solid #e2e8f0; margin-bottom:20px;">
+            <h3>📊 سجل الحضور</h3>
+            <button class="btn btn-outline" onclick="showAttendance()">تحديث وعرض القائمة</button>
             <div id="attendanceDisplay" class="attendance-log" style="display:none;"></div>
         </div>
     </div>
 </div>
 
 <script>
+    // تأمين HTTPS
+    if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
+        window.location.href = window.location.href.replace('http:', 'https:');
+    }
+
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    
     let rawData = [];
+    let loginAttempts = 0;
+
+    // دوال تخزين آمنة ومتوافقة مع جميع المتصفحات
+    function secureSave(key, value) {
+        try {
+            const strValue = JSON.stringify(value);
+            const encoded = btoa(encodeURIComponent(strValue));
+            localStorage.setItem(key, encoded);
+        } catch (e) { console.error("Storage error", e); }
+    }
+
+    function secureGet(key) {
+        try {
+            const data = localStorage.getItem(key);
+            if (!data) return null;
+            return JSON.parse(decodeURIComponent(atob(data)));
+        } catch (e) { return null; }
+    }
+
+    function sanitize(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 
     async function fetchSheetData() {
         try {
             const response = await fetch(sheetURL);
+            if (!response.ok) throw new Error();
             const data = await response.text();
             parseCSV(data);
         } catch (error) {
-            console.error("خطأ في جلب البيانات:", error);
-            alert("فشل تحميل البيانات من Google Sheets");
+            alert("خطأ في الاتصال بالبيانات، يرجى التحقق من الإنترنت.");
         }
     }
 
     function parseCSV(csvText) {
-        const lines = csvText.split('\n');
+        const lines = csvText.split(/\r?\n/);
         rawData = [];
-        let subjectsSet = new Set();
-        let teachersSet = new Set();
-
         for (let i = 1; i < lines.length; i++) {
             const cols = lines[i].split(',');
             if (cols.length >= 7) {
-                const lesson = {
-                    day: cols[0].trim(),
-                    grade: cols[1].trim(),
-                    subject: cols[2].trim(),
-                    teacher: cols[3].trim(),
-                    start: cols[4].trim(),
-                    end: cols[5].trim(),
+                rawData.push({
+                    day: sanitize(cols[0].trim()),
+                    grade: sanitize(cols[1].trim()),
+                    subject: sanitize(cols[2].trim()),
+                    teacher: sanitize(cols[3].trim()),
+                    start: sanitize(cols[4].trim()),
+                    end: sanitize(cols[5].trim()),
                     link: cols[6].trim()
-                };
-                rawData.push(lesson);
-                subjectsSet.add(lesson.subject);
-                teachersSet.add(lesson.teacher);
+                });
             }
         }
-        
-        populateDropdown('subjectFilter', subjectsSet);
-        populateDropdown('teacherFilter', teachersSet);
         updateUI();
     }
 
-    function populateDropdown(id, dataSet) {
-        const select = document.getElementById(id);
-        const currentValue = select.value;
-        select.innerHTML = '<option value="">--- الكل ---</option>';
-        dataSet.forEach(item => {
-            select.innerHTML += `<option value="${item}">${item}</option>`;
-        });
-        select.value = currentValue;
-    }
-
-    function convertArabicNumbers(str) {
-        const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-        return str.replace(/[٠-٩]/g, function(w) {
-            return arabicNums.indexOf(w);
-        });
-    }
-
     function handleLogin() {
-        const inputVal = document.getElementById('passCode').value.trim();
-        const code = convertArabicNumbers(inputVal);
+        if (loginAttempts >= 5) return alert("محاولات كثيرة خاطئة.");
         
-        let role = '';
-        if (code === "1") role = 'student';
-        else if (code === "2") role = 'teacher';
+        const input = document.getElementById('passCode').value.trim();
+        const code = input.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+        
+        let role = (code === "1") ? 'student' : (code === "2") ? 'teacher' : '';
 
         if (role) {
-            localStorage.setItem('user_role', role);
-            if (role === 'student' && "Notification" in window) {
-                Notification.requestPermission();
-            }
+            secureSave('user_role', role);
             startSystem();
         } else {
-            alert("الرمز غير صحيح! أدخل 1 للطالب أو 2 للمعلم.");
+            loginAttempts++;
+            alert("الرمز غير صحيح.");
         }
     }
 
     async function startSystem() {
-        const role = localStorage.getItem('user_role');
+        const role = secureGet('user_role');
+        if (!role) return;
+
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدولي اليومي";
         
-        if (role === 'teacher') {
-            document.getElementById('teacherPanel').style.display = 'block';
-            document.getElementById('appTitle').innerText = "لوحة التحكم 👨‍🏫";
-        } else {
-            document.getElementById('appTitle').innerText = "الجدول الدراسي";
-        }
+        if (role === 'teacher') document.getElementById('teacherPanel').style.display = 'block';
 
-        const daysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-        const today = daysArr[new Date().getDay()];
-        if (daysArr.includes(today)) {
-            document.getElementById('daySelect').value = today;
+        // تحديد اليوم تلقائياً
+        const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+        const today = days[new Date().getDay()];
+        const daySelect = document.getElementById('daySelect');
+        for(let i=0; i<daySelect.options.length; i++) {
+            if(daySelect.options[i].value === today) daySelect.selectedIndex = i;
         }
 
         await fetchSheetData();
-        setInterval(updateUI, 30000);
-        if (role === 'student') scheduleNotifications();
+        setInterval(updateUI, 20000); // تحديث كل 20 ثانية
     }
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
         if (!grid) return;
-        grid.innerHTML = '';
         
-        const selectedDay = document.getElementById('daySelect').value;
-        const selectedGrade = document.getElementById('gradeSelect').value;
-        const filterSubject = document.getElementById('subjectFilter').value;
-        const filterTeacher = document.getElementById('teacherFilter').value;
+        const day = document.getElementById('daySelect').value;
+        const grade = document.getElementById('gradeSelect').value;
         
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        // فلترة أساسية
-        let filtered = rawData.filter(item => item.day === selectedDay && item.grade === selectedGrade);
-
-        // فلترة عرض إضافية
-        if (filterSubject !== "") {
-            filtered = filtered.filter(item => item.subject === filterSubject);
-        }
-        if (filterTeacher !== "") {
-            filtered = filtered.filter(item => item.teacher === filterTeacher);
-        }
-
-        if (filtered.length === 0) {
-            grid.innerHTML = '<p style="text-align:center;">لا توجد حصص مجدولة حالياً لهذا الاختيار.</p>';
-            return;
-        }
+        const filtered = rawData.filter(l => l.day === day && l.grade === grade);
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد دروس مضافة لهذا اليوم.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -323,51 +308,62 @@
             const card = document.createElement('div');
             card.className = `lesson-card ${isActive ? 'active-lesson' : ''}`;
             
-            let progressHtml = '';
+            let progress = '';
             if (isActive) {
-                const pct = ((nowMins - startTotal) / (endTotal - startTotal)) * 100;
-                progressHtml = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`;
+                const pct = Math.min(100, Math.max(0, ((nowMins - startTotal) / (endTotal - startTotal)) * 100));
+                progress = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`;
             }
 
             card.innerHTML = `
-                ${progressHtml}
-                <h3 style="margin:0">${lesson.subject}</h3>
-                <p style="color:gray; font-size:0.9rem;">👨‍🏫 ${lesson.teacher}</p>
-                <p>⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="joinSession('${lesson.subject}', '${lesson.link}')">🚀 دخول الحصة</button>
+                ${progress}
+                <h3 style="margin:0 0 5px 0; color:var(--primary);">${lesson.subject}</h3>
+                <div style="font-size:0.85rem; color:#64748b;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</div>
+                <button class="btn btn-primary" onclick="joinSession('${lesson.subject}', '${lesson.link}')">دخول الحصة الآن</button>
             `;
             grid.appendChild(card);
         });
     }
 
     function joinSession(subject, url) {
-        const role = localStorage.getItem('user_role');
-        if (role === 'student') {
-            let name = localStorage.getItem('student_name');
-            if (!name) {
-                name = prompt("سجل حضورك.. ادخل اسمك الثلاثي:");
-                if (name) localStorage.setItem('student_name', name);
-                else return;
-            }
-            const logs = JSON.parse(localStorage.getItem('attendance_logs') || '[]');
+        if (secureGet('user_role') === 'student') {
+            let name = secureGet('student_name') || prompt("يرجى كتابة اسمك الثلاثي لتسجيل الحضور:");
+            if (!name) return;
+            secureSave('student_name', sanitize(name));
+            
+            const logs = secureGet('attendance_logs') || [];
             logs.push({ name, subject, time: new Date().toLocaleTimeString('ar-EG'), date: new Date().toLocaleDateString('ar-EG') });
-            localStorage.setItem('attendance_logs', JSON.stringify(logs));
+            secureSave('attendance_logs', logs);
         }
-        window.open(url, '_blank');
-    }
-
-    function scheduleNotifications() {
-        rawData.forEach(lesson => {
-            const [h, m] = lesson.start.split(':').map(Number);
-            const alertTime = new Date();
-            alertTime.setHours(h, m - 1, 0);
-            const diff = alertTime.getTime() - new Date().getTime();
-            if (diff > 0) {
-                setTimeout(() => {
-                    new Notification(`🔔 اقترب موعد حصة ${lesson.subject}`, { body: "ستبدأ الحصة بعد دقيقة، استعد!" });
-                }, diff);
-            }
-        });
+        
+        // فتح الرابط بطريقة متوافقة مع جميع المتصفحات
+        const win = window.open(url, '_blank');
+        if (win) win.focus();
+        else alert("يرجى السماح بالنوافذ المنبثقة لفتح الحصة.");
     }
 
     function showAttendance() {
+        const display = document.getElementById('attendanceDisplay');
+        const logs = secureGet('attendance_logs') || [];
+        display.style.display = 'block';
+        
+        if (!logs.length) { display.innerHTML = "لا يوجد سجلات حضور حالياً."; return; }
+        
+        const grouped = logs.reduce((acc, obj) => {
+            acc[obj.subject] = acc[obj.subject] || [];
+            acc[obj.subject].push(`• ${sanitize(obj.name)} (${obj.time})`);
+            return acc;
+        }, {});
+
+        let html = '';
+        for (const sub in grouped) {
+            html += `<div style="margin-bottom:10px;"><b>📍 ${sub}:</b><br>${grouped[sub].join('<br>')}</div>`;
+        }
+        display.innerHTML = html;
+    }
+
+    function logout() { localStorage.clear(); location.reload(); }
+    
+    window.onload = () => { if (secureGet('user_role')) startSystem(); };
+</script>
+</body>
+</html>
