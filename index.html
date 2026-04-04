@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>منصة التعلم عن بعد الشاملة</title>
     <style>
         :root {
@@ -48,7 +49,7 @@
             margin-top: 10px;
         }
 
-        select, input[type="password"] {
+        select, input[type="password"], input[type="text"] {
             width: 100%;
             padding: 12px;
             margin: 5px 0;
@@ -104,6 +105,7 @@
         }
         
         label { font-size: 0.85rem; font-weight: bold; color: var(--primary); }
+        .no-data { text-align: center; padding: 20px; color: #64748b; font-style: italic; }
     </style>
 </head>
 <body>
@@ -112,21 +114,22 @@
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك</h2>
         <p>أدخل الرمز للدخول (طالب: 1234 | معلم: 5678)</p>
-        <input type="password" id="passCode" placeholder="الرمز السري">
+        <input type="text" id="passCode" placeholder="الرمز السري">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center;">
             <h2 id="appTitle">جاري تحميل البيانات...</h2>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer;">خروج</button>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label>📅 اليوم (أساسي):</label>
+                    <label>📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
+                        <option value="">---</option>
                         <option value="الأحد">الأحد</option>
                         <option value="الاثنين">الاثنين</option>
                         <option value="الثلاثاء">الثلاثاء</option>
@@ -135,8 +138,9 @@
                     </select>
                 </div>
                 <div>
-                    <label>🎓 الصف (أساسي):</label>
+                    <label>🎓 الصف:</label>
                     <select id="gradeSelect" onchange="updateUI()">
+                        <option value="">---</option>
                         <option value="1">الأول</option>
                         <option value="2">الثاني</option>
                         <option value="3">الثالث</option>
@@ -146,25 +150,26 @@
                         <option value="7">السابع</option>
                         <option value="8">الثامن</option>
                         <option value="9">التاسع</option>
-
+                        <option value="10">العاشر</option>
                     </select>
                 </div>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-
-            <div class="filter-group">
-                <div>
-                    <label>📚 المادة:</label>
-                    <select id="subjectFilter" onchange="updateUI()">
-                        <option value="">--- الكل ---</option>
-                    </select>
-                </div>
-                <div>
-                    <label>👨‍🏫 المعلم:</label>
-                    <select id="teacherFilter" onchange="updateUI()">
-                        <option value="">--- الكل ---</option>
-                    </select>
+            <div id="teacherFiltersSection" style="display:none;">
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                <div class="filter-group">
+                    <div>
+                        <label>📚 المادة:</label>
+                        <select id="subjectFilter" onchange="updateUI()">
+                            <option value="">--- الكل ---</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>👨‍🏫 المعلم:</label>
+                        <select id="teacherFilter" onchange="updateUI()">
+                            <option value="">--- الكل ---</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,19 +190,33 @@
     
     let rawData = []; 
 
+    // دالة تحويل الأرقام العربية إلى إنجليزية
+    function convertArabicToEnglish(str) {
+        const arabicNumbers = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+        for (let i = 0; i < 10; i++) {
+            str = str.replace(arabicNumbers[i], i);
+        }
+        return str;
+    }
+
+    // دالة تنظيف النص للمقارنة
+    function clean(text) {
+        if (!text) return "";
+        return text.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '');
+    }
+
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL);
+            const response = await fetch(sheetURL + '?cache=' + Date.now());
             const data = await response.text();
             parseCSV(data);
         } catch (error) {
             console.error("خطأ في جلب البيانات:", error);
-            alert("فشل تحميل البيانات من Google Sheets");
         }
     }
 
     function parseCSV(csvText) {
-        const lines = csvText.split('\n');
+        const lines = csvText.split(/\r?\n/);
         rawData = [];
         let subjectsSet = new Set();
         let teachersSet = new Set();
@@ -207,7 +226,7 @@
             if (cols.length >= 7) {
                 const lesson = {
                     day: cols[0].trim(),
-                    grade: cols[1].trim(),
+                    grade: convertArabicToEnglish(cols[1].trim()), // دعم الأرقام العربية بالجدول
                     subject: cols[2].trim(),
                     teacher: cols[3].trim(),
                     start: cols[4].trim(),
@@ -220,32 +239,32 @@
             }
         }
         
-        // تعبئة فلاتر العرض ديناميكياً [cite: 29, 32, 33]
         populateDropdown('subjectFilter', subjectsSet);
         populateDropdown('teacherFilter', teachersSet);
-        
         updateUI();
     }
 
     function populateDropdown(id, dataSet) {
         const select = document.getElementById(id);
+        if(!select) return;
         const currentValue = select.value;
         select.innerHTML = '<option value="">--- الكل ---</option>';
         dataSet.forEach(item => {
-            select.innerHTML += `<option value="${item}">${item}</option>`;
+            if(item) select.innerHTML += `<option value="${item}">${item}</option>`;
         });
         select.value = currentValue;
     }
 
     function handleLogin() {
-        const code = document.getElementById('passCode').value;
+        let code = document.getElementById('passCode').value;
+        code = convertArabicToEnglish(code.trim()); // تحويل المدخلات فوراً
+
         let role = '';
         if (code === "1234") role = 'student';
         else if (code === "5678") role = 'teacher';
 
         if (role) {
             localStorage.setItem('user_role', role);
-            if (role === 'student') Notification.requestPermission();
             startSystem();
         } else {
             alert("الرمز غير صحيح!");
@@ -259,53 +278,46 @@
         
         if (role === 'teacher') {
             document.getElementById('teacherPanel').style.display = 'block';
+            document.getElementById('teacherFiltersSection').style.display = 'block';
             document.getElementById('appTitle').innerText = "لوحة التحكم 👨‍🏫";
         } else {
-            document.getElementById('appTitle').innerText = "الجدول الدراسي";
-        }
-
-        const daysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-        const today = daysArr[new Date().getDay()];
-        if (daysArr.includes(today)) {
-            document.getElementById('daySelect').value = today;
+            document.getElementById('teacherFiltersSection').style.display = 'none';
+            document.getElementById('appTitle').innerText = "الجدول الدراسي 🎓";
         }
 
         await fetchSheetData();
-        setInterval(updateUI, 30000);
-        if (role === 'student') scheduleNotifications();
+        setInterval(updateUI, 20000);
     }
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
         if (!grid) return;
-        grid.innerHTML = '';
         
-        // جلب قيم الفلترة الأساسية [cite: 26, 27]
-        const selectedDay = document.getElementById('daySelect').value;
-        const selectedGrade = document.getElementById('gradeSelect').value;
+        const selectedDay = clean(document.getElementById('daySelect').value);
+        const selectedGrade = convertArabicToEnglish(document.getElementById('gradeSelect').value);
         
-        // جلب قيم فلترة العرض [cite: 48]
+        // إفراغ الشبكة إذا لم يتم اختيار يوم أو صف
+        if (!selectedDay || !selectedGrade) {
+            grid.innerHTML = '<p class="no-data">يرجى اختيار اليوم والصف لعرض الحصص.</p>';
+            return;
+        }
+
         const filterSubject = document.getElementById('subjectFilter').value;
         const filterTeacher = document.getElementById('teacherFilter').value;
-        
+        const role = localStorage.getItem('user_role');
+
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        // الفلترة الأساسية أولاً (اليوم والصف) [cite: 48]
-        let filtered = rawData.filter(item => item.day === selectedDay && item.grade === selectedGrade);
+        let filtered = rawData.filter(item => clean(item.day) === selectedDay && item.grade === selectedGrade);
 
-        // تطبيق فلترة العرض الإضافية إذا تم اختيارها [cite: 48]
-        if (filterSubject !== "") {
-            filtered = filtered.filter(item => item.subject === filterSubject);
-        }
-        if (filterTeacher !== "") {
-            filtered = filtered.filter(item => item.teacher === filterTeacher);
+        // تطبيق فلاتر المعلم الإضافية فقط إذا كان المستخدم معلماً
+        if (role === 'teacher') {
+            if (filterSubject !== "") filtered = filtered.filter(item => item.subject === filterSubject);
+            if (filterTeacher !== "") filtered = filtered.filter(item => item.teacher === filterTeacher);
         }
 
-        if (filtered.length === 0) {
-            grid.innerHTML = '<p style="text-align:center;">لا توجد حصص مجدولة لهذا الاختيار.</p>';
-            return;
-        }
+        grid.innerHTML = filtered.length ? '' : '<p class="no-data">لا توجد حصص مجدولة لهذا الاختيار.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -319,15 +331,15 @@
             
             let progressHtml = '';
             if (isActive) {
-                const pct = ((nowMins - startTotal) / (endTotal - startTotal)) * 100;
+                const pct = Math.min(100, Math.max(0, ((nowMins - startTotal) / (endTotal - startTotal)) * 100));
                 progressHtml = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`;
             }
 
             card.innerHTML = `
                 ${progressHtml}
                 <h3 style="margin:0">${lesson.subject}</h3>
-                <p style="color:gray; font-size:0.9rem;">👨‍🏫 ${lesson.teacher}</p>
-                <p>⏰ ${lesson.start} - ${lesson.end}</p>
+                <p style="color:gray; font-size:0.9rem; margin:5px 0;">👨‍🏫 ${lesson.teacher}</p>
+                <p style="margin:5px 0;">⏰ ${lesson.start} - ${lesson.end}</p>
                 <button class="btn btn-primary" onclick="joinSession('${lesson.subject}', '${lesson.link}')">🚀 دخول الحصة</button>
             `;
             grid.appendChild(card);
@@ -335,33 +347,11 @@
     }
 
     function joinSession(subject, url) {
-        const role = localStorage.getItem('user_role');
-        if (role === 'student') {
-            let name = localStorage.getItem('student_name');
-            if (!name) {
-                name = prompt("سجل حضورك.. ادخل اسمك الثلاثي:");
-                if (name) localStorage.setItem('student_name', name);
-                else return;
-            }
-            const logs = JSON.parse(localStorage.getItem('attendance_logs') || '[]');
-            logs.push({ name, subject, time: new Date().toLocaleTimeString('ar-EG'), date: new Date().toLocaleDateString('ar-EG') });
-            localStorage.setItem('attendance_logs', JSON.stringify(logs));
-        }
-        window.open(url, '_blank');
-    }
-
-    function scheduleNotifications() {
-        rawData.forEach(lesson => {
-            const [h, m] = lesson.start.split(':').map(Number);
-            const alertTime = new Date();
-            alertTime.setHours(h, m - 1, 0); 
-            const diff = alertTime.getTime() - new Date().getTime();
-            if (diff > 0) {
-                setTimeout(() => {
-                    new Notification(`🔔 اقترب موعد حصة ${lesson.subject}`, { body: "ستبدأ الحصة بعد دقيقة، استعد!" });
-                }, diff);
-            }
-        });
+        const finalUrl = url.trim().startsWith('http') ? url.trim() : 'https://' + url.trim();
+        // فتح الرابط بطريقة تتجاوز بعض تحذيرات الأمن
+        const win = window.open('', '_blank');
+        win.opener = null;
+        win.location.replace(finalUrl);
     }
 
     function showAttendance() {
@@ -369,15 +359,10 @@
         const logs = JSON.parse(localStorage.getItem('attendance_logs') || '[]');
         display.style.display = 'block';
         if (logs.length === 0) { display.innerHTML = "لا يوجد سجل حضور حالياً."; return; }
-        const grouped = logs.reduce((acc, obj) => {
-            acc[obj.subject] = acc[obj.subject] || [];
-            acc[obj.subject].push(`• ${obj.name} (${obj.time})`);
-            return acc;
-        }, {});
-        display.innerHTML = '<h4>قائمة الحضور المسجلة:</h4>';
-        for (const sub in grouped) {
-            display.innerHTML += `<b>🔹 ${sub}:</b><br>${grouped[sub].join('<br>')}<br><br>`;
-        }
+        display.innerHTML = '<h4>قائمة الحضور:</h4>';
+        logs.forEach(log => {
+            display.innerHTML += `• ${log.name} - ${log.subject} (${log.time})<br>`;
+        });
     }
 
     function logout() { localStorage.clear(); location.reload(); }
