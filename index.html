@@ -4,108 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>منصة التعلم عن بعد الشاملة</title>
+    <title>منصة الحصص الذكية</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-        }
-
+        :root { --primary: #2563eb; --success: #10b981; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 15px;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         .container { max-width: 600px; margin: 0 auto; width: 100%; }
-
-        .auth-card {
-            background: var(--card);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .filter-section {
-            background: var(--card);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .filter-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        select, input[type="text"] {
-            width: 100%;
-            padding: 14px;
-            margin: 5px 0;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            background-color: #fff;
-        }
-
-        .lesson-card {
-            background: var(--card);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #e2e8f0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .active-lesson {
-            border: 2px solid var(--success);
-            background: #f0fdf4;
-        }
-
-        .progress-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 6px;
-            background: #f1f5f9;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--success);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 1rem;
-        }
+        .auth-card { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 30px; }
+        .filter-section { background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        select, input { width: 100%; padding: 14px; margin: 5px 0; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; }
+        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
+        .progress-container { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #f1f5f9; }
+        .progress-bar { height: 100%; background: var(--success); transition: width 0.5s ease; }
+        .btn { display: block; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; font-size: 1rem; }
         .btn-primary { background: var(--primary); color: white; }
-
-        @media (max-width: 400px) {
-            .filter-group { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
@@ -120,8 +35,8 @@
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle">تحميل البيانات...</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
+            <h3 id="appTitle">تحميل...</h3>
+            <button onclick="logout()" style="color:#ef4444; border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
@@ -143,7 +58,7 @@
                         <option value="3">الثالث</option><option value="4">الرابع</option>
                         <option value="5">الخامس</option><option value="6">السادس</option>
                         <option value="7">السابع</option><option value="8">الثامن</option>
-                        <option value="9">التاسع</option>
+                        <option value="9">التاسع</option><option value="10">العاشر</option>
                     </select>
                 </div>
             </div>
@@ -156,12 +71,21 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     let rawData = [];
 
+    // دالة لتنظيف النص (إزالة الهمزات والمسافات) لضمان التطابق
+    function cleanText(text) {
+        if (!text) return "";
+        return text.toString().trim()
+            .replace(/[أإآ]/g, 'ا')
+            .replace(/ة/g, 'ه')
+            .replace(/\s+/g, '');
+    }
+
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL + '?nocache=' + Math.random());
+            const response = await fetch(sheetURL + '&cache=' + Math.random());
             const data = await response.text();
             parseCSV(data);
-        } catch (e) { console.error("Error loading CSV"); }
+        } catch (e) { alert("خطأ في الاتصال بالبيانات"); }
     }
 
     function parseCSV(csvText) {
@@ -171,10 +95,9 @@
             const cols = lines[i].split(',');
             if (cols.length >= 7) {
                 rawData.push({
-                    day: cols[0].trim(), grade: cols[1].trim(),
-                    subject: cols[2].trim(), teacher: cols[3].trim(),
-                    start: cols[4].trim(), end: cols[5].trim(),
-                    link: cols[6].trim()
+                    day: cols[0], grade: cols[1],
+                    subject: cols[2], teacher: cols[3],
+                    start: cols[4], end: cols[5], link: cols[6]
                 });
             }
         }
@@ -184,10 +107,8 @@
     function handleLogin() {
         const input = document.getElementById('passCode').value.trim();
         let role = (input === "1") ? 'student' : (input === "2") ? 'teacher' : '';
-        if (role) {
-            sessionStorage.setItem('user_role', role);
-            startSystem();
-        } else { alert("الرمز خطأ"); }
+        if (role) { sessionStorage.setItem('user_role', role); startSystem(); }
+        else { alert("الرمز خطأ"); }
     }
 
     async function startSystem() {
@@ -201,17 +122,20 @@
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
-        const day = document.getElementById('daySelect').value;
-        const grade = document.getElementById('gradeSelect').value;
+        const selectedDay = cleanText(document.getElementById('daySelect').value);
+        const selectedGrade = cleanText(document.getElementById('gradeSelect').value);
+        
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مضافة.</p>';
+        // فلترة ذكية تتجاهل المسافات والهمزات
+        const filtered = rawData.filter(l => cleanText(l.day) === selectedDay && cleanText(l.grade) === selectedGrade);
+        
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px; color:#64748b;">لا توجد حصص مضافة لهذا اليوم وهذا الصف.</p>';
 
         filtered.forEach(lesson => {
-            const [sH, sM] = lesson.start.split(':').map(Number);
-            const [eH, eM] = lesson.end.split(':').map(Number);
+            const [sH, sM] = (lesson.start || "0:0").split(':').map(Number);
+            const [eH, eM] = (lesson.end || "0:0").split(':').map(Number);
             const startTotal = sH * 60 + sM;
             const endTotal = eH * 60 + eM;
             const isActive = nowMins >= startTotal && nowMins < endTotal;
@@ -229,28 +153,18 @@
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
                 <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="ultimateBypass('${lesson.link}')">🚀 دخول الحصة الآن</button>
+                <button class="btn btn-primary" onclick="openLesson('${lesson.link}')">🚀 دخول الحصة</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    // الطريقة الأقوى لتجاوز "Antiphishing.biz" وفحوصات الروابط المختصرة
-    function ultimateBypass(url) {
-        let finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
-        
-        // إنشاء نموذج (Form) وهمي في الذاكرة وإرساله تلقائياً
-        // هذه الطريقة تجعل المواقع تعتبر الزيارة "إرسال بيانات بشري" وليست مجرد ضغطة سكريبت
+    function openLesson(url) {
+        const finalUrl = (url.trim().startsWith('http')) ? url.trim() : 'https://' + url.trim();
         const form = document.createElement('form');
-        form.method = 'GET';
-        form.action = finalUrl;
-        form.target = '_blank'; // فتح في نافذة جديدة
-        
-        // إخفاء النموذج وإضافته للصفحة ثم إرساله
+        form.method = 'GET'; form.action = finalUrl; form.target = '_blank';
         document.body.appendChild(form);
         form.submit();
-        
-        // حذف النموذج من الصفحة بعد الإرسال للحفاظ على نظافة الكود
         setTimeout(() => document.body.removeChild(form), 100);
     }
 
