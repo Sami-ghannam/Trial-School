@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>منصة التعلم عن بعد الشاملة</title>
+    <title>منصة التعلم عن بعد</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -103,7 +103,6 @@
             text-decoration: none;
         }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: none; }
 
         @media (max-width: 400px) {
             .filter-group { grid-template-columns: 1fr; }
@@ -115,7 +114,7 @@
 <div class="container">
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك</h2>
-        <p>أدخل الرمز (طالب: 1 | معلم: 2)</p>
+        <p>أدخل الرمز للدخول (طالب: 1 | معلم: 2)</p>
         <input type="text" id="passCode" placeholder="أدخل الرقم هنا">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
@@ -123,13 +122,13 @@
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="appTitle">جاري التحميل...</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">📅 اليوم:</label>
+                    <label style="font-size:12px; font-weight:bold;">📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
                         <option value="الأحد">الأحد</option>
                         <option value="الاثنين">الاثنين</option>
@@ -139,7 +138,7 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">🎓 الصف:</label>
+                    <label style="font-size:12px; font-weight:bold;">🎓 الصف:</label>
                     <select id="gradeSelect" onchange="updateUI()">
                         <option value="1">الأول</option><option value="2">الثاني</option>
                         <option value="3">الثالث</option><option value="4">الرابع</option>
@@ -156,23 +155,19 @@
 </div>
 
 <script>
-    // الرابط المباشر للبيانات بصيغة CSV
+    // رابط البيانات
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     
     let rawData = [];
 
     async function fetchSheetData() {
         try {
-            // استخدام fetch بدون قيود مع كسر الكاش لضمان أحدث البيانات
-            const response = await fetch(sheetURL + '&t=' + new Date().getTime(), {
-                mode: 'cors',
-                headers: { 'Accept': 'text/csv' }
-            });
+            const response = await fetch(sheetURL + '&t=' + new Date().getTime());
             if (!response.ok) throw new Error();
             const data = await response.text();
             parseCSV(data);
         } catch (error) {
-            alert("فشل جلب البيانات. تأكد من نشر الجدول بصيغة CSV.");
+            alert("فشل جلب البيانات. يرجى التأكد من الإنترنت.");
         }
     }
 
@@ -199,8 +194,10 @@
     function handleLogin() {
         const input = document.getElementById('passCode').value.trim();
         let role = (input === "1") ? 'student' : (input === "2") ? 'teacher' : '';
+        
         if (role) {
-            localStorage.setItem('user_role', role);
+            // استخدام sessionStorage بدلاً من localStorage لضمان مسح البيانات عند إغلاق التبويب
+            sessionStorage.setItem('user_role', role);
             startSystem();
         } else {
             alert("الرمز غير صحيح.");
@@ -208,9 +205,12 @@
     }
 
     async function startSystem() {
+        // التحقق من الجلسة الحالية
+        const role = sessionStorage.getItem('user_role');
+        if (!role) return;
+
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        const role = localStorage.getItem('user_role');
         document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدول الحصص";
         
         await fetchSheetData();
@@ -225,7 +225,7 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد دروس مضافة حالياً.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد دروس حالياً.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -243,29 +243,36 @@
                 progress = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`;
             }
 
-            // تعديل طريقة فتح الرابط ليكون بأقصى درجات السماحية
             card.innerHTML = `
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
-                <p style="margin:5px 0; font-size:0.9rem; color:#475569;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="openLesson('${lesson.link}')">🚀 دخول الحصة الآن</button>
+                <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
+                <button class="btn btn-primary" onclick="openDirect('${lesson.link}')">🚀 دخول الحصة الآن</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    function openLesson(url) {
-        // التحقق من وجود البروتوكول لضمان عمل الرابط
+    function openDirect(url) {
         const finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
-        const newWin = window.open(finalUrl, '_blank', 'noopener,noreferrer');
-        if (!newWin) {
-            alert("يرجى السماح بفتح النوافذ المنبثقة (Pop-ups) للدخول إلى الحصة.");
-        }
+        const newWindow = window.open();
+        newWindow.opener = null;
+        newWindow.location = finalUrl;
+        newWindow.target = "_blank";
     }
 
-    function logout() { localStorage.clear(); location.reload(); }
+    function logout() {
+        // مسح بيانات الجلسة والعودة للبداية
+        sessionStorage.clear();
+        location.reload();
+    }
     
-    window.onload = () => { if (localStorage.getItem('user_role')) startSystem(); };
+    // عند تحميل الصفحة، نتحقق إذا كانت الجلسة موجودة (في حال قام المستخدم بعمل Refresh فقط)
+    window.onload = () => { 
+        if (sessionStorage.getItem('user_role')) {
+            startSystem();
+        }
+    };
 </script>
 </body>
 </html>
