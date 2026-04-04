@@ -120,7 +120,7 @@
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle">تحميل الجدول...</h3>
+            <h3 id="appTitle">تحميل...</h3>
             <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
@@ -148,14 +148,12 @@
                 </div>
             </div>
         </div>
-
         <div id="lessonsGrid"></div>
     </div>
 </div>
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    
     let rawData = [];
 
     async function fetchSheetData() {
@@ -163,9 +161,7 @@
             const response = await fetch(sheetURL + '&cache=' + Math.random());
             const data = await response.text();
             parseCSV(data);
-        } catch (e) {
-            console.error("Connection Error");
-        }
+        } catch (e) { console.error("Error"); }
     }
 
     function parseCSV(csvText) {
@@ -191,9 +187,7 @@
         if (role) {
             sessionStorage.setItem('user_role', role);
             startSystem();
-        } else {
-            alert("الرمز خطأ");
-        }
+        } else { alert("الرمز خطأ"); }
     }
 
     async function startSystem() {
@@ -213,7 +207,7 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص حالياً.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -235,27 +229,29 @@
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
                 <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="forceOpen('${lesson.link}')">🚀 دخول الحصة مباشرة</button>
+                <button class="btn btn-primary" onclick="bypassAndOpen('${lesson.link}')">🚀 دخول مباشر</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    // الطريقة الأكثر "تحرراً" لفتح الروابط دون تحذيرات أمنية
-    function forceOpen(url) {
-        const finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
+    // الدالة النهائية لتجاوز فحص الروابط المختصرة
+    function bypassAndOpen(url) {
+        let finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
         
-        // فتح نافذة جديدة فارغة أولاً لفك الارتباط بصفحتك الحالية
-        const win = window.open('about:blank', '_blank');
+        // إنشاء نافذة منبثقة فارغة تماماً
+        const win = window.open('', '_blank');
         
-        // منع النافذة الجديدة من معرفة من فتحها (لقطع تتبع الأمان)
+        // مسح أي علاقة أمنية بين النافذة الجديدة والقديمة لمنع التحذيرات
         win.opener = null;
         
-        // التوجه للرابط المطلوب
-        win.location.href = finalUrl;
+        // استخدام الانتقال المباشر (Location Replace) لتجاوز سجل المتصفح وفلترة الروابط المختصرة
+        win.location.replace(finalUrl);
     }
 
     function logout() { sessionStorage.clear(); location.reload(); }
+    
+    // عند إعادة تحميل الصفحة يدوياً، إذا لم تكن هناك جلسة سيعود لصفحة الرمز
     window.onload = () => { if (sessionStorage.getItem('user_role')) startSystem(); };
 </script>
 </body>
