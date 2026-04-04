@@ -6,39 +6,39 @@
     <title>منصة التعلم عن بعد الشاملة</title>
     <style>
         :root {
-            --primary: #2563eb; [cite: 1]
-            --success: #10b981; [cite: 2]
-            --danger: #ef4444; [cite: 2]
-            --bg: #f8fafc; [cite: 2]
-            --card: #ffffff; [cite: 2]
-            --text: #1e293b; [cite: 2]
+            --primary: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; [cite: 3]
-            background-color: var(--bg); [cite: 4]
-            color: var(--text); [cite: 4]
-            margin: 0; [cite: 4]
-            padding: 20px; [cite: 4]
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
         }
 
-        .container { max-width: 600px; margin: 0 auto; } [cite: 4, 5]
+        .container { max-width: 600px; margin: 0 auto; }
 
         .auth-card {
-            background: var(--card); [cite: 6]
-            padding: 30px; [cite: 6]
-            border-radius: 20px; [cite: 6]
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); [cite: 6]
-            text-align: center; [cite: 6]
-            margin-top: 50px; [cite: 6]
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            margin-top: 50px;
         }
 
         .filter-section {
-            background: var(--card); [cite: 7]
-            padding: 20px; [cite: 8]
-            border-radius: 15px; [cite: 8]
-            margin-bottom: 20px; [cite: 8]
-            border: 1px solid #e2e8f0; [cite: 8]
+            background: var(--card);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
         }
 
         .filter-group {
@@ -48,60 +48,60 @@
             margin-top: 10px;
         }
 
-        select, input[type="text"], input[type="password"] {
-            width: 100%; [cite: 9]
-            padding: 12px; [cite: 10]
-            margin: 5px 0; [cite: 10]
-            border-radius: 10px; [cite: 10]
-            border: 1px solid #ddd; [cite: 10]
-            font-size: 0.9rem; [cite: 10]
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
             box-sizing: border-box;
         }
 
         .lesson-card {
-            background: var(--card); [cite: 11]
-            border-radius: 18px; [cite: 12]
-            padding: 20px; [cite: 12]
-            margin-bottom: 15px; [cite: 12]
-            position: relative; [cite: 12]
-            overflow: hidden; [cite: 12]
-            border: 1px solid #e2e8f0; [cite: 12]
-            transition: 0.3s ease; [cite: 12]
+            background: var(--card);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            transition: 0.3s ease;
         }
 
         .active-lesson {
-            border: 2px solid var(--success); [cite: 13]
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); [cite: 14]
-            background: #f0fdf4; [cite: 14]
+            border: 2px solid var(--success);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+            background: #f0fdf4;
         }
 
         .progress-container {
-            position: absolute; [cite: 15]
-            top: 0; left: 0; width: 100%; height: 5px; [cite: 16]
-            background: #f1f5f9; [cite: 16]
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: #f1f5f9;
         }
 
         .progress-bar {
-            height: 100%; [cite: 17]
-            background: var(--success); width: 0%; [cite: 18]
-            transition: width 1s linear; [cite: 18]
+            height: 100%;
+            background: var(--success); width: 0%;
+            transition: width 1s linear;
         }
 
         .btn {
-            display: block; [cite: 19]
-            width: 100%; padding: 14px; [cite: 19]
-            border-radius: 12px; border: none; font-weight: bold; [cite: 20]
-            cursor: pointer; text-decoration: none; text-align: center; [cite: 20]
-            margin-top: 10px; font-size: 1rem; [cite: 20]
+            display: block;
+            width: 100%; padding: 14px;
+            border-radius: 12px; border: none; font-weight: bold;
+            cursor: pointer; text-decoration: none; text-align: center;
+            margin-top: 10px; font-size: 1rem;
         }
-        .btn-primary { background: var(--primary); color: white; } [cite: 20, 21]
-        .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: none; } [cite: 21, 22]
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: none; }
 
         .attendance-log {
-            background: #fff; [cite: 22]
-            border-radius: 15px; padding: 15px; [cite: 23]
-            margin-top: 20px; border: 1px dashed #cbd5e1; [cite: 23]
-            max-height: 400px; overflow-y: auto; [cite: 23]
+            background: #fff;
+            border-radius: 15px; padding: 15px;
+            margin-top: 20px; border: 1px dashed #cbd5e1;
+            max-height: 400px; overflow-y: auto;
         }
         
         label { font-size: 0.85rem; font-weight: bold; color: var(--primary); }
@@ -113,14 +113,14 @@
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك</h2>
         <p>أدخل الرمز للدخول (طالب: 1 | معلم: 2)</p>
-        <input type="text" id="passCode" placeholder="الرمز السري">
+        <input type="text" id="passCode" placeholder="أدخل الرقم 1 أو 2">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center;">
             <h2 id="appTitle">جاري تحميل البيانات...</h2>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer;">خروج</button> [cite: 25]
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer;">خروج</button>
         </div>
 
         <div class="filter-section">
@@ -129,25 +129,24 @@
                     <label>📅 اليوم (أساسي):</label>
                     <select id="daySelect" onchange="updateUI()">
                         <option value="الأحد">الأحد</option>
-                        <option value="الاثنين">الاثنين</option> [cite: 25]
-                        <option value="الثلاثاء">الثلاثاء</option> [cite: 26]
-                        <option value="الأربعاء">الأربعاء</option> [cite: 26]
-                        <option value="الخميس">الخميس</option> [cite: 26]
+                        <option value="الاثنين">الاثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الخميس">الخميس</option>
                     </select>
                 </div>
                 <div>
                     <label>🎓 الصف (أساسي):</label>
                     <select id="gradeSelect" onchange="updateUI()">
-                        <option value="1">الأول</option> [cite: 27]
-                        <option value="2">الثاني</option> [cite: 27]
-                        <option value="3">الثالث</option> [cite: 27]
-                        <option value="4">الرابع</option> [cite: 27]
-                        <option value="5">الخامس</option> [cite: 27]
-                        <option value="6">السادس</option> [cite: 27]
-                        <option value="7">السابع</option> [cite: 27]
-                        <option value="8">الثامن</option> [cite: 27]
-                        <option value="9">التاسع</option> [cite: 27]
-
+                        <option value="1">الأول</option>
+                        <option value="2">الثاني</option>
+                        <option value="3">الثالث</option>
+                        <option value="4">الرابع</option>
+                        <option value="5">الخامس</option>
+                        <option value="6">السادس</option>
+                        <option value="7">السابع</option>
+                        <option value="8">الثامن</option>
+                        <option value="9">التاسع</option>
                     </select>
                 </div>
             </div>
@@ -172,7 +171,7 @@
 
         <div id="lessonsGrid"></div>
 
-        <div id="teacherPanel" style="display:none; margin-top: 30px;"> [cite: 27, 28]
+        <div id="teacherPanel" style="display:none; margin-top: 30px;">
             <hr>
             <h3>📊 سجل الحضور الذكي</h3>
             <button class="btn btn-outline" onclick="showAttendance()">تحديث وعرض سجل الحضور</button>
@@ -182,40 +181,40 @@
 </div>
 
 <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv'; [cite: 28]
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     
-    let rawData = []; [cite: 28, 29]
+    let rawData = [];
 
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL); [cite: 29]
-            const data = await response.text(); [cite: 29]
-            parseCSV(data); [cite: 29]
+            const response = await fetch(sheetURL);
+            const data = await response.text();
+            parseCSV(data);
         } catch (error) {
-            console.error("خطأ في جلب البيانات:", error); [cite: 29]
-            alert("فشل تحميل البيانات من Google Sheets"); [cite: 30]
+            console.error("خطأ في جلب البيانات:", error);
+            alert("فشل تحميل البيانات من Google Sheets");
         }
     }
 
     function parseCSV(csvText) {
-        const lines = csvText.split('\n'); [cite: 30]
-        rawData = []; [cite: 31]
+        const lines = csvText.split('\n');
+        rawData = [];
         let subjectsSet = new Set();
         let teachersSet = new Set();
 
         for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(','); [cite: 31]
-            if (cols.length >= 7) { [cite: 32]
+            const cols = lines[i].split(',');
+            if (cols.length >= 7) {
                 const lesson = {
-                    day: cols[0].trim(), [cite: 32]
-                    grade: cols[1].trim(), [cite: 32]
-                    subject: cols[2].trim(), [cite: 32]
-                    teacher: cols[3].trim(), [cite: 33]
-                    start: cols[4].trim(), [cite: 33]
-                    end: cols[5].trim(), [cite: 33]
-                    link: cols[6].trim() [cite: 33]
+                    day: cols[0].trim(),
+                    grade: cols[1].trim(),
+                    subject: cols[2].trim(),
+                    teacher: cols[3].trim(),
+                    start: cols[4].trim(),
+                    end: cols[5].trim(),
+                    link: cols[6].trim()
                 };
-                rawData.push(lesson); [cite: 34]
+                rawData.push(lesson);
                 subjectsSet.add(lesson.subject);
                 teachersSet.add(lesson.teacher);
             }
@@ -223,7 +222,7 @@
         
         populateDropdown('subjectFilter', subjectsSet);
         populateDropdown('teacherFilter', teachersSet);
-        updateUI(); [cite: 34, 35]
+        updateUI();
     }
 
     function populateDropdown(id, dataSet) {
@@ -236,7 +235,6 @@
         select.value = currentValue;
     }
 
-    // دالة تحويل الأرقام العربية (١٢٣) إلى إنجليزية (123)
     function convertArabicNumbers(str) {
         const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
         return str.replace(/[٠-٩]/g, function(w) {
@@ -245,63 +243,64 @@
     }
 
     function handleLogin() {
-        let inputCode = document.getElementById('passCode').value; [cite: 35]
+        const inputVal = document.getElementById('passCode').value.trim();
+        const code = convertArabicNumbers(inputVal);
         
-        // تحويل أي أرقام عربية مدخلة إلى أرقام إنجليزية قبل الفحص
-        let code = convertArabicNumbers(inputCode);
-        
-        let role = ''; [cite: 36]
-        if (code === "1") role = 'student'; [cite: 36]
-        else if (code === "2") role = 'teacher'; [cite: 36]
+        let role = '';
+        if (code === "1") role = 'student';
+        else if (code === "2") role = 'teacher';
 
-        if (role) { [cite: 37]
-            localStorage.setItem('user_role', role); [cite: 37]
-            if (role === 'student') Notification.requestPermission(); [cite: 38]
-            startSystem(); [cite: 38]
+        if (role) {
+            localStorage.setItem('user_role', role);
+            if (role === 'student' && "Notification" in window) {
+                Notification.requestPermission();
+            }
+            startSystem();
         } else {
-            alert("الرمز غير صحيح!"); [cite: 38]
+            alert("الرمز غير صحيح! أدخل 1 للطالب أو 2 للمعلم.");
         }
     }
 
     async function startSystem() {
-        const role = localStorage.getItem('user_role'); [cite: 39]
-        document.getElementById('loginScreen').style.display = 'none'; [cite: 40]
-        document.getElementById('mainApp').style.display = 'block'; [cite: 40]
+        const role = localStorage.getItem('user_role');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
         
-        if (role === 'teacher') { [cite: 40]
-            document.getElementById('teacherPanel').style.display = 'block'; [cite: 40]
-            document.getElementById('appTitle').innerText = "لوحة التحكم 👨‍🏫"; [cite: 41]
+        if (role === 'teacher') {
+            document.getElementById('teacherPanel').style.display = 'block';
+            document.getElementById('appTitle').innerText = "لوحة التحكم 👨‍🏫";
         } else {
-            document.getElementById('appTitle').innerText = "الجدول الدراسي"; [cite: 41]
+            document.getElementById('appTitle').innerText = "الجدول الدراسي";
         }
 
-        const daysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"]; [cite: 42]
-        const today = daysArr[new Date().getDay()]; [cite: 43]
-        if (daysArr.includes(today)) { [cite: 43]
-            document.getElementById('daySelect').value = today; [cite: 43, 44]
+        const daysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+        const today = daysArr[new Date().getDay()];
+        if (daysArr.includes(today)) {
+            document.getElementById('daySelect').value = today;
         }
 
-        await fetchSheetData(); [cite: 44]
-        setInterval(updateUI, 30000); [cite: 45]
-        if (role === 'student') scheduleNotifications(); [cite: 46]
+        await fetchSheetData();
+        setInterval(updateUI, 30000);
+        if (role === 'student') scheduleNotifications();
     }
 
     function updateUI() {
-        const grid = document.getElementById('lessonsGrid'); [cite: 46]
-        if (!grid) return; [cite: 47]
-        grid.innerHTML = ''; [cite: 47]
+        const grid = document.getElementById('lessonsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
         
-        const selectedDay = document.getElementById('daySelect').value; [cite: 47]
-        const selectedGrade = document.getElementById('gradeSelect').value; [cite: 47]
-        
+        const selectedDay = document.getElementById('daySelect').value;
+        const selectedGrade = document.getElementById('gradeSelect').value;
         const filterSubject = document.getElementById('subjectFilter').value;
         const filterTeacher = document.getElementById('teacherFilter').value;
         
-        const now = new Date(); [cite: 47]
-        const nowMins = now.getHours() * 60 + now.getMinutes(); [cite: 48]
+        const now = new Date();
+        const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        let filtered = rawData.filter(item => item.day === selectedDay && item.grade === selectedGrade); [cite: 48]
+        // فلترة أساسية
+        let filtered = rawData.filter(item => item.day === selectedDay && item.grade === selectedGrade);
 
+        // فلترة عرض إضافية
         if (filterSubject !== "") {
             filtered = filtered.filter(item => item.subject === filterSubject);
         }
@@ -309,89 +308,66 @@
             filtered = filtered.filter(item => item.teacher === filterTeacher);
         }
 
-        if (filtered.length === 0) { [cite: 49]
-            grid.innerHTML = '<p style="text-align:center;">لا توجد حصص مجدولة لهذا الاختيار.</p>'; [cite: 49]
-            return; [cite: 50]
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="text-align:center;">لا توجد حصص مجدولة حالياً لهذا الاختيار.</p>';
+            return;
         }
 
         filtered.forEach(lesson => {
-            const [sH, sM] = lesson.start.split(':').map(Number); [cite: 50]
-            const [eH, eM] = lesson.end.split(':').map(Number); [cite: 50]
-            const startTotal = sH * 60 + sM; [cite: 50]
-            const endTotal = eH * 60 + eM; [cite: 50]
-            const isActive = nowMins >= startTotal && nowMins < endTotal; [cite: 50, 51]
+            const [sH, sM] = lesson.start.split(':').map(Number);
+            const [eH, eM] = lesson.end.split(':').map(Number);
+            const startTotal = sH * 60 + sM;
+            const endTotal = eH * 60 + eM;
+            const isActive = nowMins >= startTotal && nowMins < endTotal;
 
-            const card = document.createElement('div'); [cite: 51]
-            card.className = `lesson-card ${isActive ? 'active-lesson' : ''}`; [cite: 51]
+            const card = document.createElement('div');
+            card.className = `lesson-card ${isActive ? 'active-lesson' : ''}`;
             
-            let progressHtml = ''; [cite: 51]
+            let progressHtml = '';
             if (isActive) {
-                const pct = ((nowMins - startTotal) / (endTotal - startTotal)) * 100; [cite: 51, 52]
-                progressHtml = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`; [cite: 52]
+                const pct = ((nowMins - startTotal) / (endTotal - startTotal)) * 100;
+                progressHtml = `<div class="progress-container"><div class="progress-bar" style="width:${pct}%"></div></div>`;
             }
 
             card.innerHTML = `
                 ${progressHtml}
-                <h3 style="margin:0">${lesson.subject}</h3> [cite: 52]
-                <p style="color:gray; font-size:0.9rem;">👨‍🏫 ${lesson.teacher}</p> [cite: 53]
-                <p>⏰ ${lesson.start} - ${lesson.end}</p> [cite: 53]
-                <button class="btn btn-primary" onclick="joinSession('${lesson.subject}', '${lesson.link}')">🚀 دخول الحصة</button> [cite: 53]
+                <h3 style="margin:0">${lesson.subject}</h3>
+                <p style="color:gray; font-size:0.9rem;">👨‍🏫 ${lesson.teacher}</p>
+                <p>⏰ ${lesson.start} - ${lesson.end}</p>
+                <button class="btn btn-primary" onclick="joinSession('${lesson.subject}', '${lesson.link}')">🚀 دخول الحصة</button>
             `;
-            grid.appendChild(card); [cite: 54]
+            grid.appendChild(card);
         });
     }
 
     function joinSession(subject, url) {
-        const role = localStorage.getItem('user_role'); [cite: 54]
-        if (role === 'student') { [cite: 55]
-            let name = localStorage.getItem('student_name'); [cite: 55]
-            if (!name) { [cite: 56]
-                name = prompt("سجل حضورك.. ادخل اسمك الثلاثي:"); [cite: 56]
-                if (name) localStorage.setItem('student_name', name); [cite: 57]
+        const role = localStorage.getItem('user_role');
+        if (role === 'student') {
+            let name = localStorage.getItem('student_name');
+            if (!name) {
+                name = prompt("سجل حضورك.. ادخل اسمك الثلاثي:");
+                if (name) localStorage.setItem('student_name', name);
                 else return;
             }
-            const logs = JSON.parse(localStorage.getItem('attendance_logs') || '[]'); [cite: 57]
-            logs.push({ name, subject, time: new Date().toLocaleTimeString('ar-EG'), date: new Date().toLocaleDateString('ar-EG') }); [cite: 58]
-            localStorage.setItem('attendance_logs', JSON.stringify(logs)); [cite: 58]
+            const logs = JSON.parse(localStorage.getItem('attendance_logs') || '[]');
+            logs.push({ name, subject, time: new Date().toLocaleTimeString('ar-EG'), date: new Date().toLocaleDateString('ar-EG') });
+            localStorage.setItem('attendance_logs', JSON.stringify(logs));
         }
-        window.open(url, '_blank'); [cite: 59]
+        window.open(url, '_blank');
     }
 
     function scheduleNotifications() {
         rawData.forEach(lesson => {
-            const [h, m] = lesson.start.split(':').map(Number); [cite: 60]
-            const alertTime = new Date(); [cite: 60]
-            alertTime.setHours(h, m - 1, 0); [cite: 60]
-            const diff = alertTime.getTime() - new Date().getTime(); [cite: 60]
-            if (diff > 0) { [cite: 60]
-                setTimeout(() => { [cite: 61]
-                    new Notification(`🔔 اقترب موعد حصة ${lesson.subject}`, { body: "ستبدأ الحصة بعد دقيقة، استعد!" }); [cite: 61]
+            const [h, m] = lesson.start.split(':').map(Number);
+            const alertTime = new Date();
+            alertTime.setHours(h, m - 1, 0);
+            const diff = alertTime.getTime() - new Date().getTime();
+            if (diff > 0) {
+                setTimeout(() => {
+                    new Notification(`🔔 اقترب موعد حصة ${lesson.subject}`, { body: "ستبدأ الحصة بعد دقيقة، استعد!" });
                 }, diff);
             }
         });
     }
 
     function showAttendance() {
-        const display = document.getElementById('attendanceDisplay'); [cite: 62]
-        const logs = JSON.parse(localStorage.getItem('attendance_logs') || '[]'); [cite: 63]
-        display.style.display = 'block'; [cite: 63]
-        if (logs.length === 0) { display.innerHTML = "لا يوجد سجل حضور حالياً."; [cite: 63, 64] return; }
-        const grouped = logs.reduce((acc, obj) => { [cite: 64]
-            acc[obj.subject] = acc[obj.subject] || []; [cite: 64]
-            acc[obj.subject].push(`• ${obj.name} (${obj.time})`); [cite: 64]
-            return acc; [cite: 64]
-        }, {});
-        display.innerHTML = '<h4>قائمة الحضور المسجلة:</h4>'; [cite: 65]
-        for (const sub in grouped) {
-            display.innerHTML += `<b>🔹 ${sub}:</b><br>${grouped[sub].join('<br>')}<br><br>`; [cite: 65, 66]
-        }
-    }
-
-    function logout() { localStorage.clear(); location.reload(); } [cite: 66, 67]
-    
-    window.onload = () => {
-        if (localStorage.getItem('user_role')) startSystem(); [cite: 67, 68]
-    };
-</script>
-</body>
-</html>
