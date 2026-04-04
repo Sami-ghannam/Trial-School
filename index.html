@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src https://docs.google.com; style-src 'self' 'unsafe-inline';">
     <title>منصة التعلم عن بعد الشاملة</title>
     <style>
         :root {
@@ -23,7 +22,6 @@
             color: var(--text);
             margin: 0;
             padding: 15px;
-            line-height: 1.6;
         }
 
         .container { max-width: 600px; margin: 0 auto; width: 100%; }
@@ -52,14 +50,13 @@
             margin-top: 10px;
         }
 
-        /* تحسين المدخلات للهواتف */
         select, input[type="text"] {
             width: 100%;
             padding: 14px;
             margin: 5px 0;
             border-radius: 12px;
             border: 1px solid #ddd;
-            font-size: 16px; /* منع الزووم التلقائي في آيفون */
+            font-size: 16px;
             background-color: #fff;
         }
 
@@ -68,17 +65,13 @@
             border-radius: 18px;
             padding: 20px;
             margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
             position: relative;
             overflow: hidden;
-            border: 1px solid #e2e8f0;
-            transition: transform 0.2s ease;
         }
-
-        .lesson-card:active { transform: scale(0.98); }
 
         .active-lesson {
             border: 2px solid var(--success);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1);
             background: #f0fdf4;
         }
 
@@ -106,7 +99,6 @@
             text-align: center;
             margin-top: 10px;
             font-size: 1rem;
-            touch-action: manipulation;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: none; }
@@ -116,13 +108,10 @@
             border-radius: 15px; padding: 15px;
             margin-top: 20px; border: 1px dashed #cbd5e1;
             max-height: 350px; overflow-y: auto;
-            font-size: 0.9rem;
         }
 
-        /* تعديلات للشاشات الصغيرة جداً */
         @media (max-width: 400px) {
             .filter-group { grid-template-columns: 1fr; }
-            body { padding: 10px; }
         }
     </style>
 </head>
@@ -130,22 +119,22 @@
 
 <div class="container">
     <div id="loginScreen" class="auth-card">
-        <h2 style="margin-bottom:10px;">👋 مرحباً بك</h2>
-        <p style="color:#64748b;">أدخل رمز الدخول</p>
-        <input type="text" id="passCode" inputmode="numeric" placeholder="طالب: 1 | معلم: 2">
+        <h2>👋 مرحباً بك</h2>
+        <p>أدخل الرمز (طالب: 1 | معلم: 2)</p>
+        <input type="text" id="passCode" placeholder="أدخل الرقم هنا">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle" style="margin:0;">جاري التحميل...</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
+            <h3 id="appTitle">تحميل...</h3>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer;">خروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">📅 اليوم:</label>
+                    <label>📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
                         <option value="الأحد">الأحد</option>
                         <option value="الاثنين">الاثنين</option>
@@ -155,16 +144,12 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size:12px; font-weight:bold; color:var(--primary);">🎓 الصف:</label>
+                    <label>🎓 الصف:</label>
                     <select id="gradeSelect" onchange="updateUI()">
-                        <option value="1">الأول</option>
-                        <option value="2">الثاني</option>
-                        <option value="3">الثالث</option>
-                        <option value="4">الرابع</option>
-                        <option value="5">الخامس</option>
-                        <option value="6">السادس</option>
-                        <option value="7">السابع</option>
-                        <option value="8">الثامن</option>
+                        <option value="1">الأول</option><option value="2">الثاني</option>
+                        <option value="3">الثالث</option><option value="4">الرابع</option>
+                        <option value="5">الخامس</option><option value="6">السادس</option>
+                        <option value="7">السابع</option><option value="8">الثامن</option>
                         <option value="9">التاسع</option>
                     </select>
                 </div>
@@ -173,56 +158,36 @@
 
         <div id="lessonsGrid"></div>
 
-        <div id="teacherPanel" style="display:none; margin-top: 25px;">
-            <hr style="border:0; border-top:1px solid #e2e8f0; margin-bottom:20px;">
+        <div id="teacherPanel" style="display:none; margin-top: 20px;">
+            <hr>
             <h3>📊 سجل الحضور</h3>
-            <button class="btn btn-outline" onclick="showAttendance()">تحديث وعرض القائمة</button>
+            <button class="btn btn-outline" onclick="showAttendance()">عرض القائمة</button>
             <div id="attendanceDisplay" class="attendance-log" style="display:none;"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // تأمين HTTPS
-    if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
-        window.location.href = window.location.href.replace('http:', 'https:');
-    }
-
+    // رابط الجدول - تأكد من عمل Publish to Web بصيغة CSV
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
+    
     let rawData = [];
-    let loginAttempts = 0;
-
-    // دوال تخزين آمنة ومتوافقة مع جميع المتصفحات
-    function secureSave(key, value) {
-        try {
-            const strValue = JSON.stringify(value);
-            const encoded = btoa(encodeURIComponent(strValue));
-            localStorage.setItem(key, encoded);
-        } catch (e) { console.error("Storage error", e); }
-    }
-
-    function secureGet(key) {
-        try {
-            const data = localStorage.getItem(key);
-            if (!data) return null;
-            return JSON.parse(decodeURIComponent(atob(data)));
-        } catch (e) { return null; }
-    }
-
-    function sanitize(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
 
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL);
-            if (!response.ok) throw new Error();
+            // إضافة محدد زمني عشوائي لمنع المتصفح من استخدام نسخة قديمة مخزنة
+            const response = await fetch(sheetURL + '&cache_boost=' + Date.now());
+            if (!response.ok) throw new Error("فشل الوصول للرابط");
             const data = await response.text();
+            
+            if (data.includes('<!DOCTYPE html>')) {
+                throw new Error("الرابط غير صحيح (يجب النشر بصيغة CSV وليس Web Page)");
+            }
+            
             parseCSV(data);
         } catch (error) {
-            alert("خطأ في الاتصال بالبيانات، يرجى التحقق من الإنترنت.");
+            console.error(error);
+            alert("⚠️ خطأ في جلب البيانات:\n1. تأكد من نشر الجدول بصيغة CSV.\n2. تأكد من أن الرابط يبدأ بـ https.");
         }
     }
 
@@ -233,12 +198,12 @@
             const cols = lines[i].split(',');
             if (cols.length >= 7) {
                 rawData.push({
-                    day: sanitize(cols[0].trim()),
-                    grade: sanitize(cols[1].trim()),
-                    subject: sanitize(cols[2].trim()),
-                    teacher: sanitize(cols[3].trim()),
-                    start: sanitize(cols[4].trim()),
-                    end: sanitize(cols[5].trim()),
+                    day: cols[0].trim(),
+                    grade: cols[1].trim(),
+                    subject: cols[2].trim(),
+                    teacher: cols[3].trim(),
+                    start: cols[4].trim(),
+                    end: cols[5].trim(),
                     link: cols[6].trim()
                 });
             }
@@ -247,48 +212,32 @@
     }
 
     function handleLogin() {
-        if (loginAttempts >= 5) return alert("محاولات كثيرة خاطئة.");
-        
         const input = document.getElementById('passCode').value.trim();
-        const code = input.replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
-        
-        let role = (code === "1") ? 'student' : (code === "2") ? 'teacher' : '';
-
+        let role = (input === "1") ? 'student' : (input === "2") ? 'teacher' : '';
         if (role) {
-            secureSave('user_role', role);
+            localStorage.setItem('user_role', role);
             startSystem();
         } else {
-            loginAttempts++;
             alert("الرمز غير صحيح.");
         }
     }
 
     async function startSystem() {
-        const role = secureGet('user_role');
+        const role = localStorage.getItem('user_role');
         if (!role) return;
 
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدولي اليومي";
+        document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدولي الدراسي";
         
         if (role === 'teacher') document.getElementById('teacherPanel').style.display = 'block';
 
-        // تحديد اليوم تلقائياً
-        const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-        const today = days[new Date().getDay()];
-        const daySelect = document.getElementById('daySelect');
-        for(let i=0; i<daySelect.options.length; i++) {
-            if(daySelect.options[i].value === today) daySelect.selectedIndex = i;
-        }
-
         await fetchSheetData();
-        setInterval(updateUI, 20000); // تحديث كل 20 ثانية
+        setInterval(updateUI, 30000);
     }
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
-        if (!grid) return;
-        
         const day = document.getElementById('daySelect').value;
         const grade = document.getElementById('gradeSelect').value;
         
@@ -296,7 +245,7 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد دروس مضافة لهذا اليوم.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مضافة.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -316,54 +265,23 @@
 
             card.innerHTML = `
                 ${progress}
-                <h3 style="margin:0 0 5px 0; color:var(--primary);">${lesson.subject}</h3>
-                <div style="font-size:0.85rem; color:#64748b;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</div>
-                <button class="btn btn-primary" onclick="joinSession('${lesson.subject}', '${lesson.link}')">دخول الحصة الآن</button>
+                <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
+                <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
+                <button class="btn btn-primary" onclick="window.open('${lesson.link}', '_blank')">دخول الحصة</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    function joinSession(subject, url) {
-        if (secureGet('user_role') === 'student') {
-            let name = secureGet('student_name') || prompt("يرجى كتابة اسمك الثلاثي لتسجيل الحضور:");
-            if (!name) return;
-            secureSave('student_name', sanitize(name));
-            
-            const logs = secureGet('attendance_logs') || [];
-            logs.push({ name, subject, time: new Date().toLocaleTimeString('ar-EG'), date: new Date().toLocaleDateString('ar-EG') });
-            secureSave('attendance_logs', logs);
-        }
-        
-        // فتح الرابط بطريقة متوافقة مع جميع المتصفحات
-        const win = window.open(url, '_blank');
-        if (win) win.focus();
-        else alert("يرجى السماح بالنوافذ المنبثقة لفتح الحصة.");
-    }
-
     function showAttendance() {
         const display = document.getElementById('attendanceDisplay');
-        const logs = secureGet('attendance_logs') || [];
         display.style.display = 'block';
-        
-        if (!logs.length) { display.innerHTML = "لا يوجد سجلات حضور حالياً."; return; }
-        
-        const grouped = logs.reduce((acc, obj) => {
-            acc[obj.subject] = acc[obj.subject] || [];
-            acc[obj.subject].push(`• ${sanitize(obj.name)} (${obj.time})`);
-            return acc;
-        }, {});
-
-        let html = '';
-        for (const sub in grouped) {
-            html += `<div style="margin-bottom:10px;"><b>📍 ${sub}:</b><br>${grouped[sub].join('<br>')}</div>`;
-        }
-        display.innerHTML = html;
+        display.innerHTML = "سجل الحضور يعمل على المتصفح الحالي فقط.";
     }
 
     function logout() { localStorage.clear(); location.reload(); }
     
-    window.onload = () => { if (secureGet('user_role')) startSystem(); };
+    window.onload = () => { if (localStorage.getItem('user_role')) startSystem(); };
 </script>
 </body>
 </html>
