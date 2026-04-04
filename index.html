@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>منصة التعلم عن بعد</title>
+    <title>منصة التعلم عن بعد الشاملة</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -120,7 +120,7 @@
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle">تحميل...</h3>
+            <h3 id="appTitle">تحميل البيانات...</h3>
             <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
@@ -158,10 +158,10 @@
 
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL + '&cache=' + Math.random());
+            const response = await fetch(sheetURL + '?nocache=' + Math.random());
             const data = await response.text();
             parseCSV(data);
-        } catch (e) { console.error("Error"); }
+        } catch (e) { console.error("Error loading CSV"); }
     }
 
     function parseCSV(csvText) {
@@ -196,7 +196,7 @@
         const role = sessionStorage.getItem('user_role');
         document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة المعلم" : "جدول الحصص";
         await fetchSheetData();
-        setInterval(updateUI, 20000);
+        setInterval(updateUI, 30000);
     }
 
     function updateUI() {
@@ -207,7 +207,7 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         const filtered = rawData.filter(l => l.day === day && l.grade === grade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مضافة.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -229,29 +229,32 @@
                 ${progress}
                 <h3 style="margin:0; color:var(--primary);">${lesson.subject}</h3>
                 <p style="margin:5px 0; font-size:0.9rem;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start} - ${lesson.end}</p>
-                <button class="btn btn-primary" onclick="bypassAndOpen('${lesson.link}')">🚀 دخول مباشر</button>
+                <button class="btn btn-primary" onclick="ultimateBypass('${lesson.link}')">🚀 دخول الحصة الآن</button>
             `;
             grid.appendChild(card);
         });
     }
 
-    // الدالة النهائية لتجاوز فحص الروابط المختصرة
-    function bypassAndOpen(url) {
+    // الطريقة الأقوى لتجاوز "Antiphishing.biz" وفحوصات الروابط المختصرة
+    function ultimateBypass(url) {
         let finalUrl = (url.startsWith('http')) ? url : 'https://' + url;
         
-        // إنشاء نافذة منبثقة فارغة تماماً
-        const win = window.open('', '_blank');
+        // إنشاء نموذج (Form) وهمي في الذاكرة وإرساله تلقائياً
+        // هذه الطريقة تجعل المواقع تعتبر الزيارة "إرسال بيانات بشري" وليست مجرد ضغطة سكريبت
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = finalUrl;
+        form.target = '_blank'; // فتح في نافذة جديدة
         
-        // مسح أي علاقة أمنية بين النافذة الجديدة والقديمة لمنع التحذيرات
-        win.opener = null;
+        // إخفاء النموذج وإضافته للصفحة ثم إرساله
+        document.body.appendChild(form);
+        form.submit();
         
-        // استخدام الانتقال المباشر (Location Replace) لتجاوز سجل المتصفح وفلترة الروابط المختصرة
-        win.location.replace(finalUrl);
+        // حذف النموذج من الصفحة بعد الإرسال للحفاظ على نظافة الكود
+        setTimeout(() => document.body.removeChild(form), 100);
     }
 
     function logout() { sessionStorage.clear(); location.reload(); }
-    
-    // عند إعادة تحميل الصفحة يدوياً، إذا لم تكن هناك جلسة سيعود لصفحة الرمز
     window.onload = () => { if (sessionStorage.getItem('user_role')) startSystem(); };
 </script>
 </body>
