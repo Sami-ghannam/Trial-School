@@ -3,184 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة جنوب الخليل الرقمية</title>
+    <title>منصة جنوب الخليل الرقمية - الإصدار النهائي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
             --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
-            --gold: #f59e0b;
+            --gold: #f59e0b; --nav-bg: #1e293b;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
+        [data-theme="dark"] {
+            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --nav-bg: #020617;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; overflow-x: hidden; }
         
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
+
         /* شاشة الترحيب */
         .welcome-screen { 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; text-align: center; background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            color: white; padding: 20px;
+            min-height: 100vh; text-align: center; padding: 20px; color: white;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
-
-        /* حاوية الشعار الجديد */
-        .logo-container { 
-            max-width: 180px; width: 100%; margin-bottom: 25px; 
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
-            animation: logoBounce 1.5s ease;
-        }
+        .logo-container { max-width: 170px; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); animation: float 3s ease-in-out infinite; }
         .logo-container img { width: 100%; height: auto; }
-        @keyframes logoBounce { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-        .welcome-screen h1 { margin: 10px 0; font-size: 2rem; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .welcome-screen h3 { margin: 5px 0; color: var(--gold); font-weight: normal; font-size: 1.1rem; }
-        .welcome-screen p { margin: 5px 0; opacity: 0.8; font-size: 0.85rem; }
-
-        /* منطقة الأزرار الأفقية */
-        .role-selector { display: flex; gap: 10px; margin-top: 35px; flex-wrap: wrap; justify-content: center; max-width: 600px; }
+        .role-selector { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
         .role-btn { 
-            padding: 12px 25px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.2);
+            padding: 14px 28px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.2);
             background: rgba(255,255,255,0.1); color: white; cursor: pointer; transition: 0.3s; font-weight: bold;
         }
-        .role-btn:hover, .role-btn.active { background: var(--primary); border-color: var(--primary); transform: translateY(-3px); }
+        .role-btn:hover, .role-btn.active { background: var(--primary); border-color: var(--primary); transform: scale(1.05); }
 
-        /* شاشة كلمة السر */
         .auth-container { 
-            max-width: 400px; width: 90%; background: white; padding: 30px; border-radius: 20px; 
+            max-width: 400px; width: 90%; background: var(--card); padding: 30px; border-radius: 20px; 
             margin-top: 25px; display: none; box-shadow: 0 20px 40px rgba(0,0,0,0.4); color: var(--text);
-            animation: authIn 0.5s ease;
+            animation: slideUp 0.5s ease;
         }
-        @keyframes authIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        input, select { 
-            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; 
-            margin: 8px 0; font-family: inherit; box-sizing: border-box; font-size: 1rem;
-        }
-        
-        /* واجهة التطبيق الرئيسي */
-        .main-app { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .filter-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        
-        .lesson-card { 
-            background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; 
-            border: 1px solid #e2e8f0; transition: 0.3s;
-        }
-        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-purple { background: var(--purple); color: white; }
+        /* الواجهة الرئيسية */
+        .main-container { max-width: 850px; margin: 0 auto; padding: 20px; display: none; }
+        .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .live-pulse { color: var(--danger); animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        .summary-area { background: white; padding: 20px; border-radius: 20px; margin-top: 30px; border-top: 5px solid var(--purple); }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .card { background: var(--card); border-radius: 20px; padding: 22px; margin-bottom: 18px; border: 1px solid rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        .active-lesson { border-right: 6px solid var(--success); background: linear-gradient(to left, #f0fdf4, var(--card)); }
+        
+        .btn { padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; }
+        .btn-whatsapp { background: #25d366; color: white; width: auto; padding: 8px 15px; font-size: 0.85rem; margin-top: 10px; }
+
+        .countdown { font-size: 0.85rem; color: var(--gold); font-weight: bold; margin-bottom: 8px; display: block; }
+
+        .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+        .resource-item { background: var(--purple); color: white; padding: 15px; border-radius: 15px; text-decoration: none; text-align: center; font-size: 0.9rem; transition: 0.3s; }
+        .resource-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3); }
+
+        .theme-toggle { position: fixed; top: 20px; left: 20px; background: var(--card); border: none; padding: 12px; border-radius: 50%; cursor: pointer; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        input, select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 8px 0; background: var(--card); color: var(--text); font-family: inherit; }
     </style>
 </head>
 <body>
 
+<canvas id="bg-canvas"></canvas>
+<button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع">🌓</button>
+
 <div id="welcomeScreen" class="welcome-screen">
     <div class="logo-container">
-        <img src="https://lh3.googleusercontent.com/pw/AIL4fc-0131-l91552554-0013000-0111115-0110111115" alt="شعار منصة جنوب الخليل الرقمية">
+        <img src="https://lh3.googleusercontent.com/pw/AIL4fc-0131-l91552554-0013000-0111115-0110111115" alt="شعار المنصة">
     </div>
-    
     <h1>منصة جنوب الخليل الرقمية</h1>
-    <h3>نظام إدارة الحصص الافتراضية الشاملة</h3>
-    <p>تصميم وبرمجة: م. سامي غنام</p>
+    <p style="font-size: 1.1rem; color: var(--gold);">نظام المهارات التقنية المتكامل</p>
+    <p style="opacity: 0.8;">تصميم وبرمجة: أ. سامي محمد جابر غنام</p>
 
     <div class="role-selector">
         <button class="role-btn" onclick="selectRole('student', this)">طالب</button>
         <button class="role-btn" onclick="selectRole('teacher', this)">معلم</button>
         <button class="role-btn" onclick="selectRole('supervisor', this)">مشرف تربوي</button>
-        <button class="role-btn" onclick="selectRole('admin', this)">إدارة</button>
     </div>
 
     <div id="authBox" class="auth-container">
-        <h4 id="authTitle" style="margin-top:0;">تسجيل الدخول</h4>
-        <input type="password" id="passCode" placeholder="أدخل رمز الدخول الخاص بك">
-        <button class="btn btn-primary" onclick="validateLogin()">دخول للمنصة</button>
+        <h3 id="authTitle" style="margin-top:0;">تسجيل الدخول</h3>
+        <input type="password" id="passCode" placeholder="أدخل رمز الدخول">
+        <button class="btn btn-primary" onclick="validateLogin()">دخول للمنصة <i class="fas fa-sign-in-alt"></i></button>
     </div>
 </div>
 
-<div id="mainApp" class="main-app">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 id="userHello" style="margin:0; font-size: 1.2rem;">أهلاً بك</h2>
-        <button onclick="logout()" style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer;">تسجيل خروج</button>
+<div id="mainApp" class="main-container">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <div>
+            <h2 id="userHello" style="margin:0;">مرحباً بك</h2>
+            <p id="currentDayDisplay" style="margin:0; opacity: 0.6; font-size: 0.9rem;"></p>
+        </div>
+        <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج <i class="fas fa-door-open"></i></button>
     </div>
 
-    <div class="filter-section">
-        <div id="filterGrid" class="filter-group"></div>
+    <div id="supervisorStats" class="stats-bar" style="display:none;">
+        <div class="stat-card">
+            <div style="font-size: 0.85rem; opacity: 0.7;">إجمالي حصص اليوم</div>
+            <div class="stat-value" id="totalLessons">0</div>
+        </div>
+        <div class="stat-card">
+            <div style="font-size: 0.85rem; opacity: 0.7;" class="live-pulse">🔴 بث مباشر الآن</div>
+            <div class="stat-value" id="liveCount">0</div>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 15px;">
+        <div id="filterGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
     </div>
 
     <div id="lessonsGrid"></div>
-    <div id="summaryArea" style="display:none;"></div>
+
+    <div id="studentResources" style="display:none; margin-top: 30px;">
+        <h3 style="border-right: 4px solid var(--purple); padding-right: 10px;">📚 مكتبة التميز الرقمية</h3>
+        <div class="resources-grid">
+            <a href="https://www.youtube.com/c/PalestinianEducationTV" target="_blank" class="resource-item"><i class="fas fa-tv"></i> قناة فلسطين التعليمية</a>
+            <a href="https://rawafed.edu.ps" target="_blank" class="resource-item"><i class="fas fa-graduation-cap"></i> بوابة روافد</a>
+            <a href="#" class="resource-item"><i class="fas fa-code"></i> مهارات البرمجة</a>
+            <a href="#" class="resource-item"><i class="fas fa-robot"></i> عالم الروبوت</a>
+        </div>
+    </div>
 </div>
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    let rawData = [];
-    let selectedRole = '';
+    let rawData = [], selectedRole = '';
 
-    // قائمة الرموز السرية للمشرفين
-    const SUPERVISOR_CODES = ["123456789", "987654321"]; 
+    // إعداد الخلفية المتحركة (النقاط التقنية)
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let particles = [];
+    class Particle {
+        constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*1.5 + 0.5; this.speedX = Math.random()*0.5 + 0.2; }
+        update() { this.x += this.speedX; if(this.x > canvas.width) this.x = 0; }
+        draw() { ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+    }
+    for(let i=0; i<60; i++) particles.push(new Particle());
+    function animate() { ctx.clearRect(0,0,canvas.width, canvas.height); particles.forEach(p => {p.update(); p.draw();}); requestAnimationFrame(animate); }
+    animate();
+
+    function toggleTheme() {
+        const current = document.body.getAttribute('data-theme');
+        document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
 
     function selectRole(role, btn) {
         selectedRole = role;
         document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
-        const titles = { student: "دخول الطلاب", teacher: "بوابة المعلمين", supervisor: "منصة الإشراف", admin: "لوحة الإدارة" };
-        document.getElementById('authTitle').innerText = titles[role];
         document.getElementById('authBox').style.display = 'block';
-        document.getElementById('passCode').focus();
+        document.getElementById('authTitle').innerText = "بوابة " + btn.innerText;
     }
 
     function validateLogin() {
         const code = document.getElementById('passCode').value;
-        let isValid = false;
-
-        // التحقق من الرموز بناءً على الدور المختار
-        if (selectedRole === 'supervisor' && SUPERVISOR_CODES.includes(code)) isValid = true;
-        else if (selectedRole === 'student' && code === "1234") isValid = true;
-        else if (selectedRole === 'teacher' && code === "5678") isValid = true;
-        else if (selectedRole === 'admin' && code === "0000") isValid = true;
-
-        if (isValid) {
-            sessionStorage.setItem('isLoggedIn', 'true');
+        const roles = { student: "1234", teacher: "5678", supervisor: "123456789" };
+        if (code === roles[selectedRole]) {
             sessionStorage.setItem('user_role', selectedRole);
             startApp();
-        } else {
-            alert("رمز الدخول غير صحيح لهذا الدور! يرجى التأكد مرة أخرى.");
-        }
+        } else alert("عذراً، الرمز غير صحيح!");
     }
 
     async function fetchData() {
-        try {
-            const res = await fetch(sheetURL + '&cache=' + Date.now());
-            const text = await res.text();
-            const rows = text.split('\n').slice(1);
-            rawData = rows.map(r => {
-                const c = r.split(',');
-                return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6], section: (c[7] || "أ").trim() };
-            });
-            renderFilters();
-            updateDashboard();
-        } catch(e) { console.error("خطأ في جلب البيانات من Google Sheets"); }
+        const res = await fetch(sheetURL + '&cache=' + Date.now());
+        const text = await res.text();
+        rawData = text.split('\n').slice(1).map(r => {
+            const c = r.split(',');
+            return { day: c[0].trim(), grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6], section: (c[7] || "أ").trim() };
+        });
+        renderFilters(); 
+        updateDashboard();
     }
 
     function renderFilters() {
-        const role = sessionStorage.getItem('user_role');
         const grid = document.getElementById('filterGrid');
-        const dayOptions = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"].map(d => `<option value="${d}">${d}</option>`).join('');
-        const gradeOptions = Array.from({length: 12}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('');
-
-        let html = `<div style="grid-column: span 2;"><label>اليوم الدراسي:</label><select id="fDay" onchange="updateDashboard()">${dayOptions}</select></div>`;
+        const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+        const todayStr = days[new Date().getDay()] || "الأحد";
         
-        if (role === 'supervisor' || role === 'admin') {
-            const teachers = [...new Set(rawData.map(i => i.teacher))].map(t => `<option value="${t}">${t}</option>`).join('');
-            html += `<div><label>الصف:</label><select id="fGrade" onchange="updateDashboard()"><option value="">الكل</option>${gradeOptions}</select></div>
-                     <div><label>الشعبة:</label><select id="fSection" onchange="updateDashboard()"><option value="">الكل</option><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select></div>
-                     <div style="grid-column: span 2;"><label>المعلم:</label><select id="fTeacher" onchange="updateDashboard()"><option value="">كل المعلمين</option>${teachers}</select></div>`;
-        } else {
-            html += `<div><label>الصف:</label><select id="fGrade" onchange="updateDashboard()"><option value="">اختر الصف...</option>${gradeOptions}</select></div>
-                     <div><label>الشعبة:</label><select id="fSection" onchange="updateDashboard()"><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select></div>`;
-        }
+        let html = `<div style="grid-column: span 2;"><label style="font-size:0.8rem;">📅 اليوم الدراسي</label><select id="fDay" onchange="updateDashboard()">${days.map(d => `<option value="${d}" ${d===todayStr?'selected':''}>${d}</option>`).join('')}</select></div>`;
+        html += `<div><label style="font-size:0.8rem;">🎓 الصف</label><select id="fGrade" onchange="updateDashboard()"><option value="">اختر الصف...</option>${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}</select></div>`;
+        html += `<div><label style="font-size:0.8rem;">👥 الشعبة</label><select id="fSection" onchange="updateDashboard()"><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select></div>`;
         grid.innerHTML = html;
     }
 
@@ -190,53 +200,86 @@
         const grade = document.getElementById('fGrade').value;
         const section = document.getElementById('fSection').value;
         
-        const grid = document.getElementById('lessonsGrid');
         if (role === 'student' && !grade) {
-            grid.innerHTML = '<p style="text-align:center; padding:40px;">يرجى تحديد الصف لعرض الحصص الدراسية</p>';
+            document.getElementById('lessonsGrid').innerHTML = '<p style="text-align:center; padding:50px; opacity:0.5;">يرجى اختيار الصف لعرض جدولك الحصصي</p>';
             return;
         }
 
-        let filtered = rawData.filter(d => d.day.trim() === day);
+        let filtered = rawData.filter(d => d.day === day);
         if (grade) filtered = filtered.filter(d => d.grade.trim() === grade);
         if (section) filtered = filtered.filter(d => d.section.trim() === section);
-        
-        if (role === 'supervisor') {
-            const teacher = document.getElementById('fTeacher').value;
-            if (teacher) filtered = filtered.filter(d => d.teacher.trim() === teacher);
-            filtered.sort((a,b) => parseInt(a.grade) - parseInt(b.grade));
-        }
 
-        renderCards(filtered);
-    }
-
-    function renderCards(list) {
-        const grid = document.getElementById('lessonsGrid');
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        grid.innerHTML = list.length ? '' : '<p style="text-align:center;">لا توجد حصص مطابقة لهذا الاختيار</p>';
-        list.forEach(l => {
-            const startM = (parseInt(l.start.split(':')[0]) * 60) + parseInt(l.start.split(':')[1]);
-            const endM = (parseInt(l.end.split(':')[0]) * 60) + parseInt(l.end.split(':')[1]);
-            const isLive = nowMins >= startM && nowMins <= endM;
+        if (role === 'supervisor') {
+            document.getElementById('supervisorStats').style.display = 'grid';
+            document.getElementById('totalLessons').innerText = filtered.length;
+            const live = filtered.filter(l => isCurrentlyLive(l.start, l.end, nowMins));
+            document.getElementById('liveCount').innerText = live.length;
+            filtered.sort((a,b) => parseInt(a.grade) - parseInt(b.grade));
+        }
 
-            grid.innerHTML += `<div class="lesson-card ${isLive ? 'active-lesson' : ''}">
-                <h3 style="margin:0">${l.subject}</h3>
-                <p>الصف: ${l.grade} (${l.section}) | المعلم: ${l.teacher}</p>
-                <div style="color:var(--primary); font-weight:bold;">⏰ ${l.start} - ${l.end}</div>
-                <button class="btn btn-primary" onclick="window.open('${l.link}')">دخول الحصة</button>
+        if (role === 'student') document.getElementById('studentResources').style.display = 'block';
+
+        renderCards(filtered, nowMins);
+    }
+
+    function isCurrentlyLive(start, end, nowMins) {
+        const s = (parseInt(start.split(':')[0])*60) + parseInt(start.split(':')[1]);
+        const e = (parseInt(end.split(':')[0])*60) + parseInt(end.split(':')[1]);
+        return nowMins >= s && nowMins <= e;
+    }
+
+    function renderCards(list, nowMins) {
+        const grid = document.getElementById('lessonsGrid');
+        grid.innerHTML = list.length ? '' : '<p style="text-align:center; padding:20px;">لا يوجد حصص مطابقة لهذا اليوم.</p>';
+        
+        list.forEach(l => {
+            const sM = (parseInt(l.start.split(':')[0])*60) + parseInt(l.start.split(':')[1]);
+            const eM = (parseInt(l.end.split(':')[0])*60) + parseInt(l.end.split(':')[1]);
+            const isLive = nowMins >= sM && nowMins <= eM;
+            
+            // حساب العد التنازلي
+            let countdownHtml = "";
+            if (!isLive && (sM - nowMins) > 0 && (sM - nowMins) <= 15) {
+                countdownHtml = `<span class="countdown">⏳ تبدأ بعد ${sM - nowMins} دقيقة</span>`;
+            }
+
+            grid.innerHTML += `
+            <div class="card ${isLive ? 'active-lesson' : ''}">
+                ${countdownHtml}
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h3 style="margin:0; color:var(--primary);">${l.subject}</h3>
+                        <p style="margin:5px 0; font-size:0.9rem;">الصف: ${l.grade} (${l.section}) | المعلم: ${l.teacher}</p>
+                    </div>
+                    <div style="text-align:left;">
+                        <span style="font-weight:bold; font-size:0.9rem;">⏰ ${l.start} - ${l.end}</span>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button class="btn btn-primary" onclick="window.open('${l.link}')">دخول الحصة <i class="fas fa-video"></i></button>
+                    <button class="btn btn-whatsapp" onclick="shareLesson('${l.subject}', '${l.link}')"><i class="fab fa-whatsapp"></i> مشاركة</button>
+                </div>
             </div>`;
         });
+    }
+
+    function shareLesson(subject, link) {
+        const text = `مرحباً، إليك رابط حصة ${subject} على منصة جنوب الخليل: ${link}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function startApp() {
         document.getElementById('welcomeScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
         fetchData();
+        setInterval(updateDashboard, 60000); // تحديث تلقائي كل دقيقة
     }
 
     function logout() { sessionStorage.clear(); location.reload(); }
-    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) startApp(); };
+    window.onload = () => { if(sessionStorage.getItem('user_role')) startApp(); };
 </script>
 </body>
 </html>
