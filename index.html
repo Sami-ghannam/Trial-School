@@ -3,48 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة جنوب الخليل الرقمية - نظام الرقابة والتحكم</title>
+    <title>منصة جنوب الخليل الرقمية - نظام الألوان الذكي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --warning: #f59e0b; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; 
-            --purple: #8b5cf6; --gray: #94a3b8;
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gray: #94a3b8;
         }
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; }
+        .container { max-width: 800px; margin: 0 auto; }
         
-        /* الهوية البصرية */
+        /* الهوية والبناء */
         .auth-card { background: var(--card); padding: 30px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; }
         .logo-box { width: 120px; height: 120px; margin: 0 auto 15px; background: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* الفلاتر والتحكم */
         .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        
-        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; }
+        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; margin: 5px 0; }
 
-        /* البطاقات والجداول */
-        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; transition: 0.3s; }
-        .active-row { border-right: 5px solid var(--success); background: #f0fdf4 ! bruising; }
+        /* نظام البطاقات الملونة */
+        .lesson-card { border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 2px solid transparent; transition: 0.4s; position: relative; }
         
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-open { background: var(--primary); color: white; }
+        /* حالة 1: الحصة متاحة (أخضر) */
+        .state-available { background: #f0fdf4; border-color: var(--success); color: #166534; }
+        .btn-available { background: var(--success); color: white; cursor: pointer; }
+
+        /* حالة 2: الحصة مغلقة/قادمة (رمادي) */
+        .state-locked { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
         .btn-locked { background: var(--gray); color: white; cursor: not-allowed; }
-        .btn-ended { background: #fee2e2; color: var(--danger); cursor: not-allowed; }
 
-        /* جدول المشرف */
-        .summary-area { margin-top: 30px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--purple); }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        .data-table th { background: #f8fafc; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
-        .data-table td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        /* حالة 3: الحصة انتهت (أحمر) */
+        .state-ended { background: #fef2f2; border-color: #fecaca; color: #991b1b; opacity: 0.8; }
+        .btn-ended { background: var(--danger); color: white; cursor: not-allowed; }
 
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-        .bg-live { background: var(--success); color: white; }
-        .bg-wait { background: var(--warning); color: white; }
-        .bg-off { background: var(--gray); color: white; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; font-size: 1rem; transition: 0.3s; margin-top: 10px; }
+        .btn:hover:not(:disabled) { transform: scale(1.02); opacity: 0.9; }
+
+        /* الجداول للمشرف */
+        .summary-area { margin-top: 30px; background: white; padding: 20px; border-radius: 15px; border-top: 5px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
+        .data-table th, .data-table td { padding: 10px; text-align: center; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -54,34 +53,27 @@
         <div class="logo-box"><img src="شعار نهائي.png" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
         <h2>منصة جنوب الخليل الرقمية</h2>
         <input type="text" id="sysPass" placeholder="أدخل رمز الدخول">
-        <button class="btn btn-open" onclick="handleLogin()">دخول النظام</button>
+        <button class="btn btn-available" onclick="handleLogin()">دخول</button>
     </div>
 
     <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 id="appTitle" style="margin:0; color:var(--primary);">بوابة التعلم والرقابة</h3>
-            <button onclick="location.reload()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin:0; color:var(--primary);">بوابة التعلم والرقابة</h3>
+            <button onclick="location.reload()" style="color:var(--danger); border:none; background:none; font-weight:bold; cursor:pointer;">خروج</button>
         </div>
 
         <div class="filter-section">
-            <div class="filter-grid">
-                <div style="grid-column: span 2;">
-                    <label>📅 اليوم الدراسي:</label>
-                    <select id="daySelect" onchange="updateUI()">
-                        <option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option>
-                        <option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option>
-                        <option value="الخميس">الخميس</option>
-                    </select>
-                </div>
-                <div id="gradeFilterArea">
-                    <label>🎓 الصف:</label>
-                    <select id="gradeSelect" onchange="updateUI()">
-                        <option value="">إختر الصف...</option>
-                        <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
-                    </select>
-                </div>
-                <div id="extraFilterArea"></div>
-            </div>
+            <label>اليوم:</label>
+            <select id="daySelect" onchange="updateUI()">
+                <option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option>
+                <option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option>
+                <option value="الخميس">الخميس</option>
+            </select>
+            <label>الصف:</label>
+            <select id="gradeSelect" onchange="updateUI()">
+                <option value="">إختر الصف...</option>
+                <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
+            </select>
         </div>
 
         <div id="lessonsGrid"></div>
@@ -96,28 +88,24 @@
     function getMins(t) { if(!t) return 0; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
     async function fetchData() {
-        const r = await fetch(sheetURL + '&cache=' + new Date().getTime());
+        const r = await fetch(sheetURL + '&t=' + Date.now());
         const t = await r.text();
         rawData = t.split('\n').slice(1).map(row => {
             const c = row.split(',');
             return { day: c[0].trim(), grade: c[1].trim(), sub: c[2].trim(), teacher: c[3].trim(), s: c[4].trim(), e: c[5].trim(), link: c[6].trim() };
-        }).filter(i => i.day !== "");
+        });
         updateUI();
+        setInterval(updateUI, 15000); // تحديث كل 15 ثانية لضمان دقة الألوان
     }
 
     function handleLogin() {
         const code = document.getElementById('sysPass').value;
-        let role = (code === "123456789") ? 'supervisor' : (code === "1234" ? 'student' : (code === "5678" ? 'teacher' : ''));
-        if (role) {
-            sessionStorage.setItem('role', role);
+        if (["1234", "5678", "123456789"].includes(code)) {
+            sessionStorage.setItem('role', code === "123456789" ? 'supervisor' : 'user');
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            if(role === 'supervisor') {
-                document.getElementById('extraFilterArea').innerHTML = '<label>📡 الحالة:</label><select id="statusFilter" onchange="updateUI()"><option value="all">كل الجدول</option><option value="live">الحصص الفاعلة الآن</option></select>';
-            }
             fetchData();
-            setInterval(updateUI, 20000); 
-        } else alert("الرمز غير صحيح");
+        } else alert("الرمز خطأ");
     }
 
     function updateUI() {
@@ -127,62 +115,43 @@
         const grid = document.getElementById('lessonsGrid');
         const summary = document.getElementById('summaryArea');
 
-        const now = new Date();
-        const nowMins = now.getHours() * 60 + now.getMinutes();
-
+        const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
         let list = rawData.filter(i => i.day === day);
         if(grade) list = list.filter(i => i.grade === grade);
 
-        // 1. عرض البطاقات (للطالب والمعلم والمشرف)
-        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<p align="center">يرجى اختيار الصف لعرض الحصص</p>' : '';
+        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<p align="center">يرجى اختيار الصف</p>' : '';
         
         list.forEach(l => {
             const start = getMins(l.s), end = getMins(l.e);
-            let btnType = "locked", btnText = `يفتح ${l.s}`, btnClass = "btn-locked";
+            let cardState = "state-locked", btnText = `يفتح ${l.s}`, btnClass = "btn-locked", canOpen = false;
 
+            // منطق الألوان الثلاثي
             if (nowMins >= (start - 10) && nowMins <= (end + 2)) {
-                btnType = "open"; btnText = "دخول الحصة الآن"; btnClass = "btn-open";
+                cardState = "state-available"; btnText = "دخول الحصة الآن"; btnClass = "btn-available"; canOpen = true;
             } else if (nowMins > (end + 2)) {
-                btnType = "ended"; btnText = "انتهت الحصة"; btnClass = "btn-ended";
+                cardState = "state-ended"; btnText = "انتهت الحصة"; btnClass = "btn-ended"; canOpen = false;
             }
 
             if (role === 'supervisor' || grade) {
                 grid.innerHTML += `
-                <div class="lesson-card ${btnType === 'open' ? 'active-row' : ''}">
+                <div class="lesson-card ${cardState}">
                     <h3 style="margin:0">${l.sub}</h3>
-                    <p style="margin:5px 0">الصف: ${l.grade} | المعلم: ${l.teacher}</p>
-                    <b style="color:var(--primary)">⏰ ${l.s} - ${l.e}</b>
-                    <button class="btn ${btnClass}" ${btnType==='open' ? `onclick="window.open('${l.link}')"` : 'disabled'}>${btnText}</button>
+                    <p>الصف: ${l.grade} | المعلم: ${l.teacher}</p>
+                    <b>⏰ الوقت: ${l.s} - ${l.e}</b>
+                    <button class="btn ${btnClass}" ${canOpen ? `onclick="window.open('${l.link}')"` : 'disabled'}>${btnText}</button>
                 </div>`;
             }
         });
 
-        // 2. عرض الجداول التفصيلية (خاصة للمشرف)
+        // جدول المشرف (الرصد الميداني)
         if (role === 'supervisor') {
-            const statusF = document.getElementById('statusFilter').value;
-            let tableList = (statusF === 'live') ? list.filter(i => nowMins >= getMins(i.s) && nowMins <= getMins(i.e)) : list;
-            
-            summary.innerHTML = `
-            <div class="summary-area">
-                <h4>📊 رصد الحصص الميداني (${day}):</h4>
-                <table class="data-table">
-                    <tr><th>الصف</th><th>المادة</th><th>المعلم</th><th>الوقت</th><th>الحالة</th></tr>
-                    ${tableList.map(l => {
-                        const s = getMins(l.s), e = getMins(l.e);
-                        let state = '<span class="badge bg-off">مستقبلية</span>';
-                        if(nowMins >= s && nowMins <= e) state = '<span class="badge bg-live">جارية الآن</span>';
-                        else if(nowMins > e) state = '<span class="badge bg-off" style="opacity:0.5">انتهت</span>';
-                        else if(nowMins >= s-10) state = '<span class="badge bg-wait">استعداد</span>';
-                        
-                        return `<tr><td>${l.grade}</td><td>${l.sub}</td><td>${l.teacher}</td><td>${l.s}-${l.e}</td><td>${state}</td></tr>`;
-                    }).join('')}
-                </table>
-            </div>`;
-        } else if (grade) {
-            // جدول ملخص للطالب
-            summary.innerHTML = `<div class="summary-area"><h4>📋 جدول حصصك اليوم:</h4><table class="data-table"><tr><th>المادة</th><th>الوقت</th><th>الحالة</th></tr>
-            ${list.map(l => `<tr><td>${l.sub}</td><td>${l.s}-${l.e}</td><td>${nowMins > getMins(l.e) ? 'انتهت' : (nowMins >= getMins(l.s) ? 'جارية' : 'انتظار')}</td></tr>`).join('')}
-            </table></div>`;
+            summary.innerHTML = `<div class="summary-area"><h4>📊 جدول الرصد الميداني:</h4><table class="data-table">
+                <tr><th>الصف</th><th>المادة</th><th>المعلم</th><th>الوقت</th><th>الحالة</th></tr>
+                ${list.map(l => {
+                    const s = getMins(l.s), e = getMins(l.e);
+                    let st = nowMins > e+2 ? '<span style="color:red">انتهت</span>' : (nowMins >= s-10 ? '<span style="color:green">جارية</span>' : 'قادمة');
+                    return `<tr><td>${l.grade}</td><td>${l.sub}</td><td>${l.teacher}</td><td>${l.s}-${l.e}</td><td>${st}</td></tr>`;
+                }).join('')}</table></div>`;
         }
     }
 </script>
