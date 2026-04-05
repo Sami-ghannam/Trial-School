@@ -31,7 +31,6 @@
         .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
         .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
         
-        /* تصميم الجداول الاحترافي */
         .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
         .data-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
@@ -71,7 +70,6 @@
         </div>
 
         <div id="lessonsGrid"></div>
-        
         <div id="summaryArea" style="display:none;"></div>
     </div>
 </div>
@@ -83,6 +81,13 @@
     let rawData = [];
 
     function smartClean(t) { return t ? t.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '') : ""; }
+
+    // تحويل الوقت النصي (HH:mm) إلى دقائق لسهولة الترتيب والفلترة
+    function getMinutes(timeStr) {
+        if(!timeStr) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+    }
 
     async function fetchSheetData() {
         const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
@@ -134,52 +139,47 @@
         const grid = document.getElementById('lessonsGrid');
         const summaryArea = document.getElementById('summaryArea');
         const role = sessionStorage.getItem('user_role');
-        
         const dayVal = document.getElementById('daySelect').value;
         const gradeVal = document.getElementById('gradeSelect')?.value;
-        const teacherSelect = document.getElementById('teacherSelect');
-        const teacherVal = teacherSelect ? teacherSelect.value : null;
+        const teacherVal = document.getElementById('teacherSelect')?.value;
 
-        const sDay = smartClean(dayVal);
-        const now = new Date();
-        const nowMins = now.getHours() * 60 + now.getMinutes();
-        const todayStr = new Date().toLocaleDateString();
-
-        let canShow = false;
-        if (role === 'student') {
-            if (dayVal && gradeVal) canShow = true;
-        } else {
-            if (dayVal && teacherVal) canShow = true;
-        }
-
-        if (!canShow) {
-            grid.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">يرجى اختيار اليوم والمعطيات الأساسية للعرض.</p>';
+        if (!dayVal || (role === 'student' && !gradeVal) || (role === 'teacher' && !teacherVal)) {
+            grid.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">يرجى اختيار المعطيات المطلوبة أعلاه.</p>';
             summaryArea.style.display = 'none';
             return;
         }
 
+        const sDay = smartClean(dayVal);
+        const now = new Date();
+        const nowMins = now.getHours() * 60 + now.getMinutes();
+
         let filtered = [];
+        let summaryList = [];
+
         if (role === 'teacher') {
-            filtered = rawData.filter(i => {
-                const matchDay = smartClean(i.day) === sDay;
-                const matchTeacher = i.teacher.trim() === teacherVal;
-                const matchGrade = gradeVal === "" ? true : smartClean(i.grade) === smartClean(gradeVal);
-                return matchDay && matchTeacher && matchGrade;
-            });
+            // المعلم يرى الحصص حسب الصف (إذا اختاره) أو كل حصصه، مرتبة زمنياً
+            summaryList = rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal)
+                                 .sort((a, b) => getMinutes(a.start) - getMinutes(b.start));
+            
+            filtered = summaryList.filter(i => gradeVal === "" ? true : smartClean(i.grade) === smartClean(gradeVal));
+            
             summaryArea.style.display = 'block';
-            renderSummaryTable(rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal), nowMins, "جدول المعلم");
+            renderSummaryTable(summaryList, nowMins, "جدول المعلم الشامل");
         } else {
-            filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === smartClean(gradeVal));
+            // الطالب يرى حصصه مرتبة زمنياً
+            filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === smartClean(gradeVal))
+                              .sort((a, b) => getMinutes(a.start) - getMinutes(b.start));
+            
             summaryArea.style.display = 'block';
             renderSummaryTable(filtered, nowMins, "جدول حصص اليوم");
         }
 
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مطابقة لهذا الاختيار.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مطابقة حالياً.</p>';
 
         filtered.forEach(l => {
-            const startMins = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
+            const startMins = getMinutes(l.start);
             const isOpen = (nowMins >= startMins - 5 && nowMins <= startMins + 20);
-            const key = `atnd_${todayStr}_${l.grade}_${l.subject}`;
+            const key = `atnd_${new Date().toLocaleDateString()}_${l.grade}_${l.subject}`;
             const status = localStorage.getItem(key);
 
             let timer = isOpen ? `<div class="timer-box">⏱️ متبقي: ${startMins + 20 - nowMins - 1}د و ${60 - now.getSeconds()}ث</div>` : "";
@@ -198,15 +198,13 @@
     function renderSummaryTable(lessons, nowMins, title) {
         const area = document.getElementById('summaryArea');
         const role = sessionStorage.getItem('user_role');
-        
         let html = `<div class="summary-area"><h4>📋 ${title}:</h4><table class="data-table">
             <tr>${role === 'teacher' ? '<th>الصف</th>' : ''}<th>المادة</th><th>الوقت</th></tr>`;
         
         lessons.forEach(l => {
-            const startM = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
-            const endM = l.end.split(':').map(Number)[0] * 60 + l.end.split(':').map(Number)[1];
+            const startM = getMinutes(l.start);
+            const endM = getMinutes(l.end);
             const isNow = (nowMins >= startM && nowMins <= endM);
-            
             html += `<tr class="${isNow ? 'current-row' : ''}">
                 ${role === 'teacher' ? `<td>${l.grade}</td>` : ''}
                 <td>${l.subject}</td>
@@ -217,14 +215,12 @@
     }
 
     function openSession(url, subject, grade, start) {
-        const today = new Date().toLocaleDateString();
-        const key = `atnd_${today}_${grade}_${subject}`;
-        const timeKey = key + "_time";
+        const key = `atnd_${new Date().toLocaleDateString()}_${grade}_${subject}`;
         const status = localStorage.getItem(key);
         const now = new Date();
 
         if (status === 'in') {
-            const diff = (now - new Date(localStorage.getItem(timeKey))) / 60000;
+            const diff = (now - new Date(localStorage.getItem(key + "_time"))) / 60000;
             if (diff < 10) return proceed(url);
             if (confirm("هل تريد تسجيل الخروج النهائي؟")) {
                 sendToForm(localStorage.getItem(key+'_name'), grade, subject, "خروج");
@@ -233,7 +229,7 @@
         } else {
             const name = prompt("أدخل اسمك الرباعي لتسجيل الدخول:");
             if (name && name.trim().length > 8) {
-                localStorage.setItem(key, 'in'); localStorage.setItem(key+'_name', name); localStorage.setItem(timeKey, now.toISOString());
+                localStorage.setItem(key, 'in'); localStorage.setItem(key+'_name', name); localStorage.setItem(key + "_time", now.toISOString());
                 sendToForm(name, grade, subject, "دخول"); proceed(url);
             }
         }
