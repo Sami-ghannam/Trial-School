@@ -49,7 +49,7 @@
             margin-top: 10px;
         }
 
-        select, input[type="text"] {
+        select, input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px;
             margin: 5px 0;
@@ -67,7 +67,6 @@
             position: relative;
             overflow: hidden;
             border: 1px solid #e2e8f0;
-            transition: 0.3s ease;
         }
 
         .active-lesson {
@@ -84,7 +83,6 @@
         .progress-bar {
             height: 100%;
             background: var(--success); width: 0%;
-            transition: width 1s linear;
         }
 
         .btn {
@@ -106,14 +104,14 @@
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك</h2>
         <p>أدخل الرمز للدخول (طالب: 1234 | معلم: 5678)</p>
-        <input type="text" id="passCode" placeholder="أدخل الرقم هنا">
+        <input type="password" id="sysPassCode" autocomplete="off" placeholder="الرمز السري">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="appTitle">تحميل...</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
         <div class="filter-section">
@@ -142,6 +140,7 @@
                         <option value="7">السابع</option>
                         <option value="8">الثامن</option>
                         <option value="9">التاسع</option>
+                        <option value="10">العاشر</option>
                     </select>
                 </div>
             </div>
@@ -173,6 +172,7 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     let rawData = [];
 
+    // تنظيف البيانات والأرقام
     function smartClean(text) {
         if (!text) return "";
         let str = text.toString().trim();
@@ -183,7 +183,7 @@
 
     async function fetchSheetData() {
         try {
-            const response = await fetch(sheetURL + '&t=' + Date.now());
+            const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
             const data = await response.text();
             parseCSV(data);
         } catch (e) { console.error("Error loading CSV"); }
@@ -225,23 +225,35 @@
     }
 
     function handleLogin() {
-        const code = smartClean(document.getElementById('passCode').value);
+        const input = document.getElementById('sysPassCode');
+        const code = smartClean(input.value);
         let role = (code === "1234") ? 'student' : (code === "5678") ? 'teacher' : '';
+        
         if (role) {
-            // استخدام sessionStorage لجعل الدخول مؤقتاً
+            // نستخدم sessionStorage فقط لضمان انتهاء الجلسة بإغلاق المتصفح
+            sessionStorage.setItem('isLoggedIn', 'true');
             sessionStorage.setItem('user_role', role);
+            input.value = ''; // مسح الخانة للأمان
             startSystem();
-        } else { alert("الرمز غير صحيح (استخدم 1234 أو 5678)"); }
+        } else { 
+            alert("الرمز غير صحيح!"); 
+        }
     }
 
     async function startSystem() {
         const role = sessionStorage.getItem('user_role');
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة التحكم 👨‍🏫" : "الجدول الدراسي 🎓";
-        document.getElementById('teacherFiltersSection').style.display = (role === 'teacher') ? 'block' : 'none';
-        await fetchSheetData();
-        setInterval(updateUI, 30000);
+        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+
+        if (isLoggedIn === 'true' && role) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة التحكم 👨‍🏫" : "الجدول الدراسي 🎓";
+            document.getElementById('teacherFiltersSection').style.display = (role === 'teacher') ? 'block' : 'none';
+            await fetchSheetData();
+            setInterval(updateUI, 30000);
+        } else {
+            logout(); // إذا لم تكن البيانات مكتملة، يطرد المستخدم لشاشة الدخول
+        }
     }
 
     function updateUI() {
@@ -270,7 +282,7 @@
             if (fTeach) filtered = filtered.filter(i => i.teacher === fTeach);
         }
 
-        grid.innerHTML = filtered.length ? '' : '<p class="no-data">لا توجد حصص مجدولة لهذا اليوم والصف.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p class="no-data">لا توجد حصص مجدولة.</p>';
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
@@ -304,11 +316,21 @@
         win.location.replace(url.trim().startsWith('http') ? url.trim() : 'https://' + url.trim());
     }
 
-    function logout() { sessionStorage.clear(); location.reload(); }
+    function logout() { 
+        // مسح كل شيء من الذاكرة لضمان طلب كلمة السر
+        sessionStorage.clear(); 
+        localStorage.clear(); // مسح الذاكرة الدائمة أيضاً للاحتياط
+        location.reload(); 
+    }
 
     window.onload = () => { 
-        // استعادة الجلسة فقط إذا كانت موجودة في التبويب الحالي
-        if (sessionStorage.getItem('user_role')) startSystem(); 
+        // التحقق من وجود جلسة نشطة فعلياً
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            startSystem();
+        } else {
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
     };
 </script>
 </body>
