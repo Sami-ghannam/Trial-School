@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>منصة التعلم عن بعد الشاملة</title>
+    <title>منصة التعلم الرقمي الذكية - جنوب الخليل</title>
     <style>
         :root {
             --primary: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
             --bg: #f8fafc;
             --card: #ffffff;
             --text: #1e293b;
@@ -17,88 +18,49 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
+            background-color: var(--bg); color: var(--text);
+            margin: 0; padding: 20px;
         }
 
         .container { max-width: 600px; margin: 0 auto; }
 
         .auth-card {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-            margin-top: 50px;
+            background: var(--card); padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px;
         }
 
         .filter-section {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
+            background: var(--card); padding: 20px; border-radius: 15px;
+            margin-bottom: 20px; border: 1px solid #e2e8f0;
         }
 
-        .filter-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
+        .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 
-        select, input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin: 5px 0;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 0.9rem;
-            outline: none;
+        select, input[type="password"] {
+            width: 100%; padding: 12px; margin: 5px 0;
+            border-radius: 10px; border: 1px solid #ddd; outline: none;
         }
 
         .lesson-card {
-            background: var(--card);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
+            background: var(--card); border-radius: 18px; padding: 20px;
+            margin-bottom: 15px; border: 1px solid #e2e8f0;
         }
 
-        .active-lesson {
-            border: 2px solid var(--success);
-            background: #f0fdf4;
-        }
+        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
 
         .btn {
-            display: block;
-            width: 100%; padding: 14px;
+            display: block; width: 100%; padding: 14px;
             border-radius: 12px; border: none; font-weight: bold;
-            cursor: pointer; text-decoration: none; text-align: center;
-            margin-top: 10px; font-size: 1rem;
-            transition: 0.3s;
+            cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s;
         }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-out { background: var(--warning); color: white; }
         
-        .no-data { text-align: center; padding: 20px; color: #64748b; font-style: italic; }
-        label { font-size: 0.8rem; font-weight: bold; color: var(--primary); }
         .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
-
-        /* تنسيق زر سجل الحضور */
+        .remaining-box { font-size: 0.85rem; font-weight: bold; color: var(--warning); margin-bottom: 8px; }
         .admin-btn {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 6px 12px;
-            background-color: var(--success);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: bold;
+            display: inline-block; margin-top: 8px; padding: 6px 12px;
+            background-color: var(--success); color: white; border-radius: 8px; font-size: 0.8rem; text-decoration: none;
         }
     </style>
 </head>
@@ -106,9 +68,9 @@
 
 <div class="container">
     <div id="loginScreen" class="auth-card">
-        <h2>👋 مرحباً بك</h2>
-        <p>أدخل الرمز للدخول (طالب: 1234 | معلم: 5678)</p>
-        <input type="password" id="sysPassCode" autocomplete="off" placeholder="الرمز السري">
+        <h2>👋 مرحباً بك في المنصة</h2>
+        <p>أدخل الرمز (طالب: 1234 | معلم: 5678)</p>
+        <input type="password" id="sysPassCode" placeholder="الرمز السري">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
@@ -116,8 +78,9 @@
         <div style="display:flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
             <div>
                 <h3 id="appTitle" style="margin:0;">تحميل...</h3>
-                <div id="adminLinkArea"></div> </div>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
+                <div id="adminLinkArea"></div> 
+            </div>
+            <button id="logoutBtn" onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
         <div class="filter-section">
@@ -146,25 +109,8 @@
                         <option value="7">السابع</option>
                         <option value="8">الثامن</option>
                         <option value="9">التاسع</option>
+                        <option value="10">العاشر</option>
                     </select>
-                </div>
-            </div>
-
-            <div id="teacherFiltersSection" style="display:none;">
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-                <div class="filter-group">
-                    <div>
-                        <label>📚 المادة:</label>
-                        <select id="subjectFilter" onchange="updateUI()">
-                            <option value="">الكل</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>👨‍🏫 المعلم:</label>
-                        <select id="teacherFilter" onchange="updateUI()">
-                            <option value="">الكل</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
@@ -174,17 +120,14 @@
 </div>
 
 <script>
-    // --- إعدادات الروابط (تأكد من وضع الرابط الصحيح للإكسل) ---
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSderel93nwlCLrQJW6fL6Jd6jSr4EzIjUdZes0H4otpkXfj8Q/formResponse";
-    
-    // ضع هنا رابط ملف إكسل الحضور (جوجل شيت) المفتوح للمشاركة
     const ATTENDANCE_RECORD_URL = "https://docs.google.com/spreadsheets/d/1qlNjnI6NGh3O1aFPy04rNOPbfZinoLIh5aXCU_2GDrM/edit?usp=sharing";
 
-    const ENTRY_NAME = "entry.1542579219";    // حقل الاسم الرباعي
-    const ENTRY_GRADE = "entry.1978441942";   // حقل الصف
-    const ENTRY_SUBJECT = "entry.500841186";  // حقل المادة
-    const ENTRY_STATUS = "entry.1811602553"; // حقل الحالة الإدارية
+    const ENTRY_NAME = "entry.1542579219";   
+    const ENTRY_GRADE = "entry.1978441942";  
+    const ENTRY_SUBJECT = "entry.500841186"; 
+    const ENTRY_STATUS = "entry.1811602553"; 
 
     let rawData = [];
 
@@ -207,30 +150,16 @@
     function parseCSV(csvText) {
         const lines = csvText.split(/\r?\n/);
         rawData = [];
-        let subjects = new Set();
-        let teachers = new Set();
         for (let i = 1; i < lines.length; i++) {
             const cols = lines[i].split(',');
             if (cols.length >= 7) {
-                const lesson = {
+                rawData.push({
                     day: cols[0].trim(), grade: cols[1].trim(), subject: cols[2].trim(),
                     teacher: cols[3].trim(), start: cols[4].trim(), end: cols[5].trim(), link: cols[6].trim()
-                };
-                rawData.push(lesson);
-                subjects.add(lesson.subject);
-                teachers.add(lesson.teacher);
+                });
             }
         }
-        fillDropdown('subjectFilter', subjects);
-        fillDropdown('teacherFilter', teachers);
         updateUI();
-    }
-
-    function fillDropdown(id, set) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.innerHTML = '<option value="">الكل</option>';
-        set.forEach(v => { if(v) el.innerHTML += `<option value="${v}">${v}</option>`; });
     }
 
     function handleLogin() {
@@ -240,39 +169,32 @@
         if (role) {
             sessionStorage.setItem('isLoggedIn', 'true');
             sessionStorage.setItem('user_role', role);
-            input.value = '';
             startSystem();
         } else { alert("الرمز غير صحيح!"); }
     }
 
     async function startSystem() {
-        const role = sessionStorage.getItem('user_role');
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            
-            // تخصيص الواجهة حسب الرتبة
+            const role = sessionStorage.getItem('user_role');
+            document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة التحكم 👨‍🏫" : "الجدول الدراسي 🎓";
             if (role === 'teacher') {
-                document.getElementById('appTitle').innerText = "لوحة التحكم 👨‍🏫";
                 document.getElementById('adminLinkArea').innerHTML = `<a href="${ATTENDANCE_RECORD_URL}" target="_blank" class="admin-btn">📊 سجل الحضور المباشر</a>`;
-                document.getElementById('teacherFiltersSection').style.display = 'block';
-            } else {
-                document.getElementById('appTitle').innerText = "الجدول الدراسي 🎓";
-                document.getElementById('adminLinkArea').innerHTML = "";
-                document.getElementById('teacherFiltersSection').style.display = 'none';
             }
-
             await fetchSheetData();
             setInterval(updateUI, 1000);
-        } else { logout(); }
+        }
     }
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
+        const logoutBtn = document.getElementById('logoutBtn');
         const sDay = smartClean(document.getElementById('daySelect').value);
         const sGrade = smartClean(document.getElementById('gradeSelect').value);
+        
         if (!sDay || !sGrade) {
-            grid.innerHTML = '<p class="no-data">يرجى اختيار اليوم والصف أولاً.</p>';
+            grid.innerHTML = '<p style="text-align:center; color:#64748b;">يرجى اختيار اليوم والصف.</p>';
             return;
         }
 
@@ -280,30 +202,41 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
         const nowSecs = now.getSeconds();
         const role = sessionStorage.getItem('user_role');
+        const today = new Date().toLocaleDateString();
 
         let filtered = rawData.filter(item => smartClean(item.day) === sDay && smartClean(item.grade) === sGrade);
-        grid.innerHTML = filtered.length ? '' : '<p class="no-data">لا توجد حصص مجدولة.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص.</p>';
+
+        let hasActiveLesson = false;
 
         filtered.forEach(lesson => {
             const [sH, sM] = lesson.start.split(':').map(Number);
             const startMins = sH * 60 + sM;
             const openTime = startMins - 5;
             const finalDeadline = startMins + 20;
-
             const isCurrentlyOpen = (nowMins >= openTime && nowMins <= finalDeadline);
-            let timerHTML = '';
-            let btnStyle = isCurrentlyOpen ? 'btn-primary' : 'background: #cbd5e1; cursor: not-allowed;';
-            let btnText = isCurrentlyOpen ? '🚀 دخول وتسجيل الحضور' : '🔒 الرابط مغلق حالياً';
-            let disabledAttr = isCurrentlyOpen ? '' : 'disabled';
+            
+            const attendanceKey = `status_${today}_${lesson.grade}_${lesson.subject}`;
+            const currentStatus = localStorage.getItem(attendanceKey);
 
-            if (!isCurrentlyOpen) {
-                if (nowMins < openTime) {
-                    const diffMins = openTime - nowMins - 1;
-                    const diffSecs = 60 - nowSecs;
-                    timerHTML = `<div class="timer-box">⏳ يفتح بعد: ${diffMins} د و ${diffSecs} ث</div>`;
-                } else {
-                    timerHTML = `<div class="timer-box">❌ انتهى وقت الدخول (مغلق)</div>`;
-                }
+            if (isCurrentlyOpen) hasActiveLesson = true;
+
+            let timerHTML = '';
+            let btnText = isCurrentlyOpen ? '🚀 دخول وتسجيل الحضور' : '🔒 الرابط مغلق حالياً';
+            let btnClass = 'btn-primary';
+
+            if (nowMins < openTime) {
+                const diffMins = openTime - nowMins - 1;
+                const diffSecs = 60 - nowSecs;
+                timerHTML = `<div class="timer-box">⏳ يفتح بعد: ${diffMins} د و ${diffSecs} ث</div>`;
+            } else if (isCurrentlyOpen) {
+                const remainingMins = finalDeadline - nowMins - 1;
+                const remainingSecs = 60 - nowSecs;
+                timerHTML = `<div class="remaining-box">⏱️ متبقي للإغلاق: ${remainingMins} د و ${remainingSecs} ث</div>`;
+                if (currentStatus === 'in') { btnText = '⬅️ تسجيل خروج من الحصة'; btnClass = 'btn-out'; }
+                else if (currentStatus === 'out') { btnText = '✅ تم توثيق الحضور والغياب'; btnClass = 'background:#10b981;'; }
+            } else {
+                timerHTML = `<div class="timer-box">❌ انتهى وقت تسجيل الحضور</div>`;
             }
 
             const card = document.createElement('div');
@@ -312,35 +245,58 @@
                 ${timerHTML}
                 <h3 style="margin:0">${lesson.subject}</h3>
                 <p style="color:gray; font-size:0.9rem; margin:5px 0;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start}</p>
-                <button class="btn" style="${btnStyle}" ${disabledAttr} 
+                <button class="btn ${btnClass}" 
+                    ${isCurrentlyOpen && currentStatus !== 'out' ? '' : 'disabled style="background:#cbd5e1;"'} 
                     onclick="openSession('${lesson.link}', '${lesson.subject}', '${lesson.grade}', '${lesson.start}')">
                     ${btnText}
                 </button>
             `;
             grid.appendChild(card);
         });
+
+        if (role === 'student' && hasActiveLesson) logoutBtn.style.display = 'none';
+        else logoutBtn.style.display = 'block';
     }
 
     function openSession(url, subject, grade, startTime) {
         const role = sessionStorage.getItem('user_role');
+        const today = new Date().toLocaleDateString();
+        const attendanceKey = `status_${today}_${grade}_${subject}`;
+        const timeKey = `last_time_${today}_${grade}_${subject}`;
+        const currentStatus = localStorage.getItem(attendanceKey);
+        const lastActiveTime = localStorage.getItem(timeKey);
         const now = new Date();
-        const nowMins = now.getHours() * 60 + now.getMinutes();
-        const [sH, sM] = startTime.split(':').map(Number);
-        const startMins = sH * 60 + sM;
-        const teacherDeadline = startMins + 15;
-        const finalDeadline = startMins + 20;
 
         if (role === 'student') {
-            const name = prompt("نظام الحضور: أدخل اسمك الرباعي للدخول:");
-            if (name && name.trim().length > 8) {
-                sendToForm(name, grade, subject, "حضور طالب");
-                proceed(url);
-            } else { alert("يجب إدخال الاسم الرباعي كاملاً."); }
-        } else {
-            if (nowMins > teacherDeadline) {
-                alert("تم تسجيل دخولك كمتأخر. سيتم إخطار الإدارة.");
-                sendToForm("نظام آلي", grade, subject, "تأخر معلم");
+            // منطق الاستثناء: إذا عاد الطالب خلال أقل من 10 دقائق
+            if (currentStatus === 'in' && lastActiveTime) {
+                const diff = (now - new Date(lastActiveTime)) / (1000 * 60);
+                if (diff < 10) { proceed(url); return; }
             }
+
+            // تسجيل خروج
+            if (currentStatus === 'in') {
+                const sName = localStorage.getItem(attendanceKey + '_name');
+                if (confirm(`مرحباً ${sName}، هل تريد توثيق خروجك النهائي؟`)) {
+                    sendToForm(sName, grade, subject, "خروج طالب (نهاية الحصة)");
+                    localStorage.setItem(attendanceKey, 'out');
+                    localStorage.removeItem(timeKey);
+                    alert("تم تسجيل الخروج بنجاح.");
+                    proceed(url);
+                }
+                return;
+            }
+
+            // تسجيل دخول
+            const name = prompt("نظام الحضور: أدخل اسمك الرباعي:");
+            if (name && name.trim().length > 8) {
+                localStorage.setItem(attendanceKey, 'in'); 
+                localStorage.setItem(attendanceKey + '_name', name);
+                localStorage.setItem(timeKey, now.toISOString());
+                sendToForm(name, grade, subject, "دخول طالب (بداية الحصة)");
+                proceed(url);
+            } else { alert("يرجى إدخال الاسم الرباعي."); }
+        } else {
             proceed(url);
         }
     }
@@ -360,7 +316,7 @@
         win.location.replace(url.trim().startsWith('http') ? url.trim() : 'https://' + url.trim());
     }
 
-    function logout() { sessionStorage.clear(); localStorage.clear(); location.reload(); }
+    function logout() { sessionStorage.clear(); location.reload(); }
 
     window.onload = () => { if (sessionStorage.getItem('isLoggedIn') === 'true') startSystem(); };
 </script>
