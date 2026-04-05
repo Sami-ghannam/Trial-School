@@ -3,144 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
     <title>منصة جنوب الخليل الرقمية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gray: #94a3b8;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; transition: 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .container { max-width: 750px; margin: 0 auto; }
         
-        /* أيقونات التواصل والمعلومات */
-        .top-nav-icons { position: absolute; top: 20px; left: 20px; display: flex; gap: 12px; z-index: 100; }
-        .icon-circle { width: 42px; height: 42px; background: white; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .icon-circle:hover { background: var(--primary); color: white; transform: translateY(-3px); }
-
-        /* شاشة الدخول المحدثة */
-        .auth-card { background: var(--card); padding: 40px 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; position: relative; border: 1px solid #f1f5f9; }
+        .auth-card { background: var(--card); padding: 40px 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 40px; position: relative; }
         
-        /* حاوية الشعار */
-        .logo-box { width: 150px; height: 150px; margin: 0 auto 25px; background: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); overflow: hidden; }
-        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        /* معالجة الشعار */
+        .logo-wrapper { width: 130px; height: 130px; margin: 0 auto 20px; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .logo-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        input[type="text"] { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #d1d5db; outline: none; font-size: 1rem; text-align: center; box-sizing: border-box; }
-        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
-        .btn-main:hover { background: #1d4ed8; transform: translateY(-2px); }
-
-        /* تنسيق الجداول والبطاقات (النسخة المستقرة) */
-        .filter-section { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .lesson-card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; }
-        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
+        .lesson-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; transition: 0.3s; }
+        .active-now { border: 2px solid var(--success); background: #f0fdf4; }
         
-        /* النوافذ المنبثقة */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 25px; width: 85%; max-width: 450px; position: relative; }
+        /* أزرار الحالة */
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .btn-open { background: var(--primary); color: white; }
+        .btn-locked { background: var(--gray); color: white; cursor: not-allowed; opacity: 0.7; }
+        .btn-ended { background: #fee2e2; color: var(--danger); cursor: not-allowed; }
+
+        .status-badge { font-size: 0.85rem; font-weight: bold; margin-top: 8px; display: block; }
+        
+        #mainApp { display: none; }
+        select, input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="loginScreen" class="auth-card">
-        <div class="top-nav-icons">
-            <div class="icon-circle" onclick="openM('aboutM')"><i class="fas fa-info"></i></div>
-            <div class="icon-circle" onclick="openM('contactM')"><i class="fas fa-envelope"></i></div>
+        <div class="logo-wrapper">
+            <img src="شعار نهائي.png" alt="الشعار" onerror="this.src='https://via.placeholder.com/150?text=LOGO'">
         </div>
-        <div class="logo-box">
-            <img src="شعار نهائي.png" alt="شعار جنوب الخليل" onerror="this.src='https://via.placeholder.com/150?text=جنوب+الخليل'">
-        </div>
-        <h2 style="margin:0;">منصة جنوب الخليل الرقمية</h2>
-        <p style="color: #64748b; margin-bottom: 25px;">بوابة التعلم والرقابة الذكية</p>
-        <input type="text" id="sysPassCode" placeholder="أدخل الرمز (طالب: 1234)">
-        <button class="btn-main" onclick="handleLogin()">دخول المنصة</button>
-        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 20px;">إعداد: أ. سامي محمد جابر غنام</p>
+        <h2>منصة جنوب الخليل الرقمية</h2>
+        <input type="text" id="passCode" placeholder="أدخل الرمز">
+        <button class="btn btn-open" onclick="login()">دخول</button>
     </div>
 
-    <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px;">
-            <h3 id="roleTitle" style="color:var(--primary)">لوحة التحكم</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; font-weight:bold; cursor:pointer;">خروج</button>
+    <div id="mainApp">
+        <div style="display:flex; justify-content: space-between; margin-bottom: 20px;">
+            <h3>جدول الحصص الذكي</h3>
+            <button onclick="location.reload()" style="color:red; border:none; background:none; cursor:pointer;">خروج</button>
         </div>
-        <div id="filterGrid" class="filter-section"></div>
-        <div id="lessonsGrid"></div>
-        <div id="summaryArea"></div>
+        <div id="filters" style="background:white; padding:15px; border-radius:15px; margin-bottom:20px;">
+            <select id="daySelect" onchange="updateUI()"><option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option><option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option><option value="الخميس">الخميس</option></select>
+            <select id="gradeSelect" onchange="updateUI()"><option value="">اختر الصف...</option><script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}</option>`)</script></select>
+        </div>
+        <div id="grid"></div>
     </div>
 </div>
 
-<div id="aboutM" class="modal"><div class="modal-content"><span onclick="closeM('aboutM')" style="float:left; cursor:pointer; font-size:20px;">×</span><h3>حول البرنامج</h3><p>منصة رقمية متكاملة لخدمة الميدان التربوي في مديرية جنوب الخليل، تهدف لتنظيم الحصص الافتراضية وتعزيز مهارات التكنولوجيا والرقابة الميدانية.</p></div></div>
-<div id="contactM" class="modal"><div class="modal-content"><span onclick="closeM('contactM')" style="float:left; cursor:pointer; font-size:20px;">×</span><h3>تواصل معنا</h3><p>أ. سامي غنام<br>البريد: <a href="mailto:sami.ghannam@shebron.edu.ps">sami.ghannam@shebron.edu.ps</a></p></div></div>
-
 <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    let rawData = [];
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
+    let data = [];
 
-    function openM(id) { document.getElementById(id).style.display = 'block'; }
-    function closeM(id) { document.getElementById(id).style.display = 'none'; }
+    function login() {
+        const p = document.getElementById('passCode').value;
+        if(["1234", "5678", "123456789"].includes(p)) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            loadData();
+        } else alert("خطأ في الرمز");
+    }
 
-    async function fetchSheetData() {
-        const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
-        const data = await response.text();
-        rawData = data.split('\n').slice(1).map(l => {
-            const c = l.split(',');
-            return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6] };
+    async function loadData() {
+        const r = await fetch(url + '&t=' + Date.now());
+        const t = await r.text();
+        data = t.split('\n').slice(1).map(row => {
+            const c = row.split(',');
+            return { day: c[0].trim(), grade: c[1].trim(), sub: c[2].trim(), teacher: c[3].trim(), s: c[4].trim(), e: c[5].trim(), link: c[6].trim() };
         });
-        renderFilters();
         updateUI();
-    }
-
-    function handleLogin() {
-        const code = document.getElementById('sysPassCode').value;
-        let role = (code === "123456789") ? 'supervisor' : (code === "1234" ? 'student' : (code === "5678" ? 'teacher' : ''));
-        if (role) {
-            sessionStorage.setItem('isLogged', 'true');
-            sessionStorage.setItem('role', role);
-            startApp();
-        } else alert("الرمز غير صحيح");
-    }
-
-    function renderFilters() {
-        const role = sessionStorage.getItem('role');
-        const grid = document.getElementById('filterGrid');
-        const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-        grid.innerHTML = `<select id="daySelect" onchange="updateUI()" style="width:100%; padding:10px; border-radius:8px;">${days.map(d => `<option value="${d}">${d}</option>`).join('')}</select>
-        <select id="gradeSelect" onchange="updateUI()" style="width:100%; padding:10px; border-radius:8px; margin-top:10px;"><option value="">إختر الصف...</option>${[1,2,3,4,5,6,7,8,9,10,11,12].map(g => `<option value="${g}">${g}</option>`).join('')}</select>`;
+        setInterval(updateUI, 30000); // تحديث الحالة كل 30 ثانية
     }
 
     function updateUI() {
-        const role = sessionStorage.getItem('role');
-        const grid = document.getElementById('lessonsGrid');
+        const grid = document.getElementById('grid');
         const day = document.getElementById('daySelect').value;
         const grade = document.getElementById('gradeSelect').value;
-        
-        if (!grade && role !== 'supervisor') {
-            grid.innerHTML = '<p align="center">يرجى اختيار الصف...</p>';
-            return;
-        }
+        if(!grade) return;
 
-        let filtered = rawData.filter(i => i.day.trim() === day.trim());
-        if(grade) filtered = filtered.filter(i => i.grade.trim() === grade.trim());
+        const now = new Date();
+        const nowMins = now.getHours() * 60 + now.getMinutes();
 
-        grid.innerHTML = filtered.length ? '' : '<p align="center">لا يوجد حصص</p>';
-        filtered.forEach(l => {
-            grid.innerHTML += `<div class="lesson-card">
-                <h3>${l.subject}</h3>
-                <p>المعلم: ${l.teacher} | الوقت: ${l.start} - ${l.end}</p>
-                <button class="btn-main" onclick="window.open('${l.link}')">دخول الحصة</button>
-            </div>`;
+        let list = data.filter(i => i.day === day && i.grade === grade);
+        grid.innerHTML = "";
+
+        list.forEach(l => {
+            const startM = getMins(l.s);
+            const endM = getMins(l.e);
+            
+            let status = "locked"; // مغلق
+            let btnText = "الرابط مغلق حالياً";
+            let btnClass = "btn-locked";
+
+            // فحص التوقيت (10 دقائق قبل، و 2 دقيقة بعد)
+            if (nowMins >= (startM - 10) && nowMins <= (endM + 2)) {
+                status = "open";
+                btnText = "دخول الحصة الآن";
+                btnClass = "btn-open";
+            } else if (nowMins > (endM + 2)) {
+                status = "ended";
+                btnText = "انتهى وقت الحصة";
+                btnClass = "btn-ended";
+            } else {
+                btnText = `يفتح الساعة ${l.s}`;
+            }
+
+            grid.innerHTML += `
+                <div class="lesson-card ${status === 'open' ? 'active-now' : ''}">
+                    <h3 style="margin:0">${l.sub}</h3>
+                    <p>المعلم: ${l.teacher} | الوقت: ${l.s} - ${l.e}</p>
+                    <button class="btn ${btnClass}" 
+                        ${status === 'open' ? `onclick="window.open('${l.link}')"` : 'disabled'}>
+                        ${btnText}
+                    </button>
+                    ${status === 'open' ? '<span class="status-badge" style="color:var(--success)">● متاحة الآن</span>' : ''}
+                </div>`;
         });
     }
 
-    function startApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        fetchSheetData();
+    function getMins(t) {
+        if(!t) return 0;
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
     }
-
-    function logout() { sessionStorage.clear(); location.reload(); }
-    window.onload = () => { if(sessionStorage.getItem('isLogged')) startApp(); };
 </script>
 </body>
 </html>
