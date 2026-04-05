@@ -4,64 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>منصة التعلم الرقمي الذكية - جنوب الخليل</title>
+    <title>منصة جنوب الخليل الرقمية</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
+            --primary: #2563eb; --success: #10b981; --danger: #ef4444;
+            --warning: #f59e0b; --bg: #f8fafc; --card: #ffffff; --text: #1e293b;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg); color: var(--text);
-            margin: 0; padding: 20px;
-        }
-
-        .container { max-width: 600px; margin: 0 auto; }
-
-        .auth-card {
-            background: var(--card); padding: 30px; border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px;
-        }
-
-        .filter-section {
-            background: var(--card); padding: 20px; border-radius: 15px;
-            margin-bottom: 20px; border: 1px solid #e2e8f0;
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 650px; margin: 0 auto; }
+        
+        .auth-card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; }
+        .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-
-        select, input[type="password"] {
-            width: 100%; padding: 12px; margin: 5px 0;
-            border-radius: 10px; border: 1px solid #ddd; outline: none;
-        }
-
-        .lesson-card {
-            background: var(--card); border-radius: 18px; padding: 20px;
-            margin-bottom: 15px; border: 1px solid #e2e8f0;
-        }
-
+        
+        select, input[type="password"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        
+        /* بطاقات الحصص */
+        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; }
         .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
-
-        .btn {
-            display: block; width: 100%; padding: 14px;
-            border-radius: 12px; border: none; font-weight: bold;
-            cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s;
-        }
+        
+        .btn { display: block; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-out { background: var(--warning); color: white; }
-        
+
+        .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
         .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
-        .remaining-box { font-size: 0.85rem; font-weight: bold; color: var(--warning); margin-bottom: 8px; }
-        .admin-btn {
-            display: inline-block; margin-top: 8px; padding: 6px 12px;
-            background-color: var(--success); color: white; border-radius: 8px; font-size: 0.8rem; text-decoration: none;
-        }
+        
+        /* جدول المعلم الاحترافي في نهاية الصفحة */
+        .teacher-summary { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        .teacher-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        .teacher-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
+        .teacher-table td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        .current-row { background-color: #f0fdf4; font-weight: bold; color: var(--success); }
     </style>
 </head>
 <body>
@@ -69,256 +44,170 @@
 <div class="container">
     <div id="loginScreen" class="auth-card">
         <h2>👋 مرحباً بك في المنصة</h2>
-        <p>أدخل الرمز (طالب: 1234 | معلم: 5678)</p>
-        <input type="password" id="sysPassCode" placeholder="الرمز السري">
+        <input type="password" id="sysPassCode" placeholder="أدخل الرمز السري">
         <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
     </div>
 
     <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-            <div>
-                <h3 id="appTitle" style="margin:0;">تحميل...</h3>
-                <div id="adminLinkArea"></div> 
-            </div>
-            <button id="logoutBtn" onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="appTitle" style="margin:0;">تحميل...</h3>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
                 <div>
-                    <label>📅 اليوم:</label>
+                    <label style="font-size: 0.8rem; font-weight: bold;">📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
-                        <option value="">---</option>
-                        <option value="الأحد">الأحد</option>
-                        <option value="الاثنين">الاثنين</option>
-                        <option value="الثلاثاء">الثلاثاء</option>
-                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option>
                         <option value="الخميس">الخميس</option>
                     </select>
                 </div>
-                <div>
-                    <label>🎓 الصف:</label>
-                    <select id="gradeSelect" onchange="updateUI()">
-                        <option value="">---</option>
-                        <option value="1">الأول</option>
-                        <option value="2">الثاني</option>
-                        <option value="3">الثالث</option>
-                        <option value="4">الرابع</option>
-                        <option value="5">الخامس</option>
-                        <option value="6">السادس</option>
-                        <option value="7">السابع</option>
-                        <option value="8">الثامن</option>
-                        <option value="9">التاسع</option>
-                        <option value="10">العاشر</option>
-                    </select>
-                </div>
+                <div id="dynamicFilterArea">
+                    </div>
             </div>
         </div>
 
         <div id="lessonsGrid"></div>
+
+        <div id="teacherSummaryArea" style="display:none;"></div>
     </div>
 </div>
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSderel93nwlCLrQJW6fL6Jd6jSr4EzIjUdZes0H4otpkXfj8Q/formResponse";
-    const ATTENDANCE_RECORD_URL = "https://docs.google.com/spreadsheets/d/1qlNjnI6NGh3O1aFPy04rNOPbfZinoLIh5aXCU_2GDrM/edit?usp=sharing";
-
-    const ENTRY_NAME = "entry.1542579219";   
-    const ENTRY_GRADE = "entry.1978441942";  
-    const ENTRY_SUBJECT = "entry.500841186"; 
-    const ENTRY_STATUS = "entry.1811602553"; 
 
     let rawData = [];
 
-    function smartClean(text) {
-        if (!text) return "";
-        let str = text.toString().trim();
-        const ar = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
-        for (let i = 0; i < 10; i++) str = str.replace(ar[i], i);
-        return str.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '');
-    }
+    function smartClean(t) { return t ? t.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '') : ""; }
 
     async function fetchSheetData() {
-        try {
-            const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
-            const data = await response.text();
-            parseCSV(data);
-        } catch (e) { console.error("Error loading CSV"); }
-    }
-
-    function parseCSV(csvText) {
-        const lines = csvText.split(/\r?\n/);
-        rawData = [];
-        for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(',');
-            if (cols.length >= 7) {
-                rawData.push({
-                    day: cols[0].trim(), grade: cols[1].trim(), subject: cols[2].trim(),
-                    teacher: cols[3].trim(), start: cols[4].trim(), end: cols[5].trim(), link: cols[6].trim()
-                });
-            }
-        }
+        const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
+        const data = await response.text();
+        const lines = data.split(/\r?\n/);
+        rawData = lines.slice(1).map(l => {
+            const c = l.split(',');
+            return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6] };
+        });
+        setupFilters();
         updateUI();
     }
 
-    function handleLogin() {
-        const input = document.getElementById('sysPassCode');
-        const code = smartClean(input.value);
-        let role = (code === "1234") ? 'student' : (code === "5678") ? 'teacher' : '';
-        if (role) {
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('user_role', role);
-            startSystem();
-        } else { alert("الرمز غير صحيح!"); }
+    function setupFilters() {
+        const role = sessionStorage.getItem('user_role');
+        const area = document.getElementById('dynamicFilterArea');
+        if (role === 'teacher') {
+            let teachers = [...new Set(rawData.map(i => i.teacher.trim()))];
+            area.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">👤 المعلم:</label>
+                <select id="teacherSelect" onchange="updateUI()">${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select>`;
+        } else {
+            area.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">🎓 الصف:</label>
+                <select id="gradeSelect" onchange="updateUI()">${[1,2,3,4,5,6,7,8,9,10].map(g => `<option value="${g}">${g}</option>`).join('')}</select>`;
+        }
     }
 
-    async function startSystem() {
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            const role = sessionStorage.getItem('user_role');
-            document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة التحكم 👨‍🏫" : "الجدول الدراسي 🎓";
-            if (role === 'teacher') {
-                document.getElementById('adminLinkArea').innerHTML = `<a href="${ATTENDANCE_RECORD_URL}" target="_blank" class="admin-btn">📊 سجل الحضور المباشر</a>`;
-            }
-            await fetchSheetData();
-            setInterval(updateUI, 1000);
-        }
+    function handleLogin() {
+        const code = smartClean(document.getElementById('sysPassCode').value);
+        let role = (code === "1234") ? 'student' : (code === "5678") ? 'teacher' : '';
+        if (role) { sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('user_role', role); startSystem(); }
+        else alert("خطأ في الرمز!");
+    }
+
+    function startSystem() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        fetchSheetData();
+        setInterval(updateUI, 1000);
     }
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const summaryArea = document.getElementById('teacherSummaryArea');
+        const role = sessionStorage.getItem('user_role');
         const sDay = smartClean(document.getElementById('daySelect').value);
-        const sGrade = smartClean(document.getElementById('gradeSelect').value);
-        
-        if (!sDay || !sGrade) {
-            grid.innerHTML = '<p style="text-align:center; color:#64748b;">يرجى اختيار اليوم والصف.</p>';
-            return;
-        }
-
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
-        const nowSecs = now.getSeconds();
-        const role = sessionStorage.getItem('user_role');
-        const today = new Date().toLocaleDateString();
+        const todayStr = new Date().toLocaleDateString();
 
-        let filtered = rawData.filter(item => smartClean(item.day) === sDay && smartClean(item.grade) === sGrade);
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص.</p>';
+        let filtered = [];
+        if (role === 'teacher') {
+            const sTeacher = document.getElementById('teacherSelect').value;
+            filtered = rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === sTeacher);
+            summaryArea.style.display = 'block';
+            renderTeacherTable(filtered, nowMins);
+        } else {
+            const sGrade = smartClean(document.getElementById('gradeSelect').value);
+            filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === sGrade);
+            summaryArea.style.display = 'none';
+        }
 
-        let hasActiveLesson = false;
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مجدولة لهذا اليوم.</p>';
 
-        filtered.forEach(lesson => {
-            const [sH, sM] = lesson.start.split(':').map(Number);
-            const startMins = sH * 60 + sM;
-            const openTime = startMins - 5;
-            const finalDeadline = startMins + 20;
-            const isCurrentlyOpen = (nowMins >= openTime && nowMins <= finalDeadline);
+        filtered.forEach(l => {
+            const startMins = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
+            const isOpen = (nowMins >= startMins - 5 && nowMins <= startMins + 20);
+            const key = `atnd_${todayStr}_${l.grade}_${l.subject}`;
+            const status = localStorage.getItem(key);
+
+            let timer = isOpen ? `<div class="timer-box">⏱️ متبقي: ${startMins + 20 - nowMins - 1}د و ${60 - now.getSeconds()}ث</div>` : "";
+            let btnText = status === 'in' ? '⬅️ تسجيل خروج' : (status === 'out' ? '✅ تم الحضور' : '🚀 دخول الحصة');
             
-            const attendanceKey = `status_${today}_${lesson.grade}_${lesson.subject}`;
-            const currentStatus = localStorage.getItem(attendanceKey);
-
-            if (isCurrentlyOpen) hasActiveLesson = true;
-
-            let timerHTML = '';
-            let btnText = isCurrentlyOpen ? '🚀 دخول وتسجيل الحضور' : '🔒 الرابط مغلق حالياً';
-            let btnClass = 'btn-primary';
-
-            if (nowMins < openTime) {
-                const diffMins = openTime - nowMins - 1;
-                const diffSecs = 60 - nowSecs;
-                timerHTML = `<div class="timer-box">⏳ يفتح بعد: ${diffMins} د و ${diffSecs} ث</div>`;
-            } else if (isCurrentlyOpen) {
-                const remainingMins = finalDeadline - nowMins - 1;
-                const remainingSecs = 60 - nowSecs;
-                timerHTML = `<div class="remaining-box">⏱️ متبقي للإغلاق: ${remainingMins} د و ${remainingSecs} ث</div>`;
-                if (currentStatus === 'in') { btnText = '⬅️ تسجيل خروج من الحصة'; btnClass = 'btn-out'; }
-                else if (currentStatus === 'out') { btnText = '✅ تم توثيق الحضور والغياب'; btnClass = 'background:#10b981;'; }
-            } else {
-                timerHTML = `<div class="timer-box">❌ انتهى وقت تسجيل الحضور</div>`;
-            }
-
-            const card = document.createElement('div');
-            card.className = `lesson-card ${isCurrentlyOpen ? 'active-lesson' : ''}`;
-            card.innerHTML = `
-                ${timerHTML}
-                <h3 style="margin:0">${lesson.subject}</h3>
-                <p style="color:gray; font-size:0.9rem; margin:5px 0;">👨‍🏫 ${lesson.teacher} | ⏰ ${lesson.start}</p>
-                <button class="btn ${btnClass}" 
-                    ${isCurrentlyOpen && currentStatus !== 'out' ? '' : 'disabled style="background:#cbd5e1;"'} 
-                    onclick="openSession('${lesson.link}', '${lesson.subject}', '${lesson.grade}', '${lesson.start}')">
-                    ${btnText}
-                </button>
-            `;
-            grid.appendChild(card);
+            grid.innerHTML += `<div class="lesson-card ${isOpen ? 'active-lesson' : ''}">
+                ${timer}<h3 style="margin:0">${l.subject} (الصف: ${l.grade})</h3>
+                <p style="color:gray; font-size:0.85rem; margin:5px 0;">👨‍🏫 ${l.teacher}</p>
+                <div class="time-badge">⏰ الحصة: من ${l.start} إلى ${l.end}</div>
+                <button class="btn ${status==='in'?'btn-out':'btn-primary'}" ${isOpen && status !== 'out' ? '' : 'disabled style="background:#cbd5e1;"'} 
+                onclick="openSession('${l.link}','${l.subject}','${l.grade}','${l.start}')">${btnText}</button>
+            </div>`;
         });
-
-        if (role === 'student' && hasActiveLesson) logoutBtn.style.display = 'none';
-        else logoutBtn.style.display = 'block';
     }
 
-    function openSession(url, subject, grade, startTime) {
-        const role = sessionStorage.getItem('user_role');
+    function renderTeacherTable(filtered, nowMins) {
+        const area = document.getElementById('teacherSummaryArea');
+        let html = `<div class="teacher-summary"><h4>📋 ملخص جدولك اليومي:</h4><table class="teacher-table">
+            <tr><th>الصف</th><th>المادة</th><th>الوقت</th></tr>`;
+        filtered.forEach(l => {
+            const startM = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
+            const endM = l.end.split(':').map(Number)[0] * 60 + l.end.split(':').map(Number)[1];
+            const isNow = (nowMins >= startM && nowMins <= endM);
+            html += `<tr class="${isNow ? 'current-row' : ''}"><td>${l.grade}</td><td>${l.subject}</td><td>${l.start} - ${l.end}</td></tr>`;
+        });
+        area.innerHTML = html + `</table></div>`;
+    }
+
+    function openSession(url, subject, grade, start) {
         const today = new Date().toLocaleDateString();
-        const attendanceKey = `status_${today}_${grade}_${subject}`;
-        const timeKey = `last_time_${today}_${grade}_${subject}`;
-        const currentStatus = localStorage.getItem(attendanceKey);
-        const lastActiveTime = localStorage.getItem(timeKey);
+        const key = `atnd_${today}_${grade}_${subject}`;
+        const timeKey = key + "_time";
+        const status = localStorage.getItem(key);
         const now = new Date();
 
-        if (role === 'student') {
-            // منطق الاستثناء: إذا عاد الطالب خلال أقل من 10 دقائق
-            if (currentStatus === 'in' && lastActiveTime) {
-                const diff = (now - new Date(lastActiveTime)) / (1000 * 60);
-                if (diff < 10) { proceed(url); return; }
+        if (status === 'in') {
+            const diff = (now - new Date(localStorage.getItem(timeKey))) / 60000;
+            if (diff < 10) return proceed(url);
+            if (confirm("هل تريد تسجيل الخروج النهائي؟")) {
+                sendToForm(localStorage.getItem(key+'_name'), grade, subject, "خروج");
+                localStorage.setItem(key, 'out'); proceed(url);
             }
-
-            // تسجيل خروج
-            if (currentStatus === 'in') {
-                const sName = localStorage.getItem(attendanceKey + '_name');
-                if (confirm(`مرحباً ${sName}، هل تريد توثيق خروجك النهائي؟`)) {
-                    sendToForm(sName, grade, subject, "خروج طالب (نهاية الحصة)");
-                    localStorage.setItem(attendanceKey, 'out');
-                    localStorage.removeItem(timeKey);
-                    alert("تم تسجيل الخروج بنجاح.");
-                    proceed(url);
-                }
-                return;
-            }
-
-            // تسجيل دخول
-            const name = prompt("نظام الحضور: أدخل اسمك الرباعي:");
-            if (name && name.trim().length > 8) {
-                localStorage.setItem(attendanceKey, 'in'); 
-                localStorage.setItem(attendanceKey + '_name', name);
-                localStorage.setItem(timeKey, now.toISOString());
-                sendToForm(name, grade, subject, "دخول طالب (بداية الحصة)");
-                proceed(url);
-            } else { alert("يرجى إدخال الاسم الرباعي."); }
         } else {
-            proceed(url);
+            const name = prompt("أدخل اسمك الرباعي لتسجيل الدخول:");
+            if (name && name.trim().length > 8) {
+                localStorage.setItem(key, 'in'); localStorage.setItem(key+'_name', name); localStorage.setItem(timeKey, now.toISOString());
+                sendToForm(name, grade, subject, "دخول"); proceed(url);
+            }
         }
     }
 
-    function sendToForm(name, grade, subject, status) {
-        const formData = new FormData();
-        formData.append(ENTRY_NAME, name);
-        formData.append(ENTRY_GRADE, grade);
-        formData.append(ENTRY_SUBJECT, subject);
-        formData.append(ENTRY_STATUS, status);
-        fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: formData });
+    function sendToForm(n, g, s, st) {
+        const f = new FormData(); f.append("entry.1542579219", n); f.append("entry.1978441942", g); f.append("entry.500841186", s); f.append("entry.1811602553", st);
+        fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: f });
     }
 
-    function proceed(url) {
-        const win = window.open('', '_blank');
-        win.opener = null;
-        win.location.replace(url.trim().startsWith('http') ? url.trim() : 'https://' + url.trim());
-    }
-
+    function proceed(u) { window.open(u.startsWith('http') ? u : 'https://'+u, '_blank'); }
     function logout() { sessionStorage.clear(); location.reload(); }
-
-    window.onload = () => { if (sessionStorage.getItem('isLoggedIn') === 'true') startSystem(); };
+    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')==='true') startSystem(); };
 </script>
 </body>
 </html>
