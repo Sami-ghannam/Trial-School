@@ -8,7 +8,7 @@
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --warning: #f59e0b; --bg: #f8fafc; --card: #ffffff; --text: #1e293b;
+            --warning: #f59e0b; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --info: #0ea5e9;
         }
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
@@ -29,7 +29,9 @@
         .btn-out { background: var(--warning); color: white; }
 
         .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
-        .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
+        .timer-box { font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; }
+        .timer-soon { color: var(--info); } /* لون أزرق للتنبيه المسبق */
+        .timer-now { color: var(--danger); } /* لون أحمر للوقت الحالي */
         
         .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
@@ -82,7 +84,6 @@
 
     function smartClean(t) { return t ? t.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '') : ""; }
 
-    // تحويل الوقت النصي (HH:mm) إلى دقائق لسهولة الترتيب والفلترة
     function getMinutes(timeStr) {
         if(!timeStr) return 0;
         const [h, m] = timeStr.split(':').map(Number);
@@ -154,22 +155,15 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
 
         let filtered = [];
-        let summaryList = [];
-
         if (role === 'teacher') {
-            // المعلم يرى الحصص حسب الصف (إذا اختاره) أو كل حصصه، مرتبة زمنياً
-            summaryList = rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal)
+            const summaryList = rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal)
                                  .sort((a, b) => getMinutes(a.start) - getMinutes(b.start));
-            
             filtered = summaryList.filter(i => gradeVal === "" ? true : smartClean(i.grade) === smartClean(gradeVal));
-            
             summaryArea.style.display = 'block';
             renderSummaryTable(summaryList, nowMins, "جدول المعلم الشامل");
         } else {
-            // الطالب يرى حصصه مرتبة زمنياً
             filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === smartClean(gradeVal))
                               .sort((a, b) => getMinutes(a.start) - getMinutes(b.start));
-            
             summaryArea.style.display = 'block';
             renderSummaryTable(filtered, nowMins, "جدول حصص اليوم");
         }
@@ -178,15 +172,24 @@
 
         filtered.forEach(l => {
             const startMins = getMinutes(l.start);
-            const isOpen = (nowMins >= startMins - 5 && nowMins <= startMins + 20);
             const key = `atnd_${new Date().toLocaleDateString()}_${l.grade}_${l.subject}`;
             const status = localStorage.getItem(key);
+            
+            // منطق العداد الزمني الجديد
+            let timerHTML = "";
+            const isOpen = (nowMins >= startMins - 5 && nowMins <= startMins + 20);
+            const isSoon = (nowMins >= startMins - 30 && nowMins < startMins - 5);
 
-            let timer = isOpen ? `<div class="timer-box">⏱️ متبقي: ${startMins + 20 - nowMins - 1}د و ${60 - now.getSeconds()}ث</div>` : "";
+            if (isOpen) {
+                timerHTML = `<div class="timer-box timer-now">⏱️ متبقي على الإغلاق: ${startMins + 20 - nowMins - 1}د و ${60 - now.getSeconds()}ث</div>`;
+            } else if (isSoon) {
+                timerHTML = `<div class="timer-box timer-soon">🔔 تبدأ الحصة بعد: ${startMins - nowMins - 1}د و ${60 - now.getSeconds()}ث</div>`;
+            }
+
             let btnText = status === 'in' ? '⬅️ تسجيل خروج' : (status === 'out' ? '✅ تم الحضور' : '🚀 دخول الحصة');
             
             grid.innerHTML += `<div class="lesson-card ${isOpen ? 'active-lesson' : ''}">
-                ${timer}<h3 style="margin:0">${l.subject}</h3>
+                ${timerHTML}<h3 style="margin:0">${l.subject}</h3>
                 <p style="color:gray; font-size:0.85rem; margin:5px 0;">👨‍🏫 ${l.teacher} | الصف: ${l.grade}</p>
                 <div class="time-badge">⏰ الحصة: من ${l.start} إلى ${l.end}</div>
                 <button class="btn ${status==='in'?'btn-out':'btn-primary'}" ${isOpen && status !== 'out' ? '' : 'disabled style="background:#cbd5e1;"'} 
