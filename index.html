@@ -4,65 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>منصة جنوب الخليل الرقمية</title>
+    <title>منصة جنوب الخليل - نظام الشعب المستقلة</title>
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --warning: #f59e0b; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; 
-            --info: #0ea5e9; --purple: #8b5cf6;
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
         }
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 700px; margin: 0 auto; }
+        .container { max-width: 750px; margin: 0 auto; }
         
         .auth-card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; }
         .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .full-width { grid-column: span 2; }
         
-        select, input[type="password"], input[type="text"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
+        select, input[type="text"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
         
         .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; transition: 0.3s; }
-        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
+        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
         .supervisor-card { border-right: 5px solid var(--purple); }
 
         .btn { display: block; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: white; }
         .btn-purple { background: var(--purple); color: white; }
-        .btn-out { background: var(--warning); color: white; }
+        .btn-primary { background: var(--primary); color: white; }
 
         .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
-        .timer-box { font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; }
-        .timer-soon { color: var(--info); }
-        .timer-now { color: var(--danger); }
         
-        .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
-        .supervisor-summary { border-top-color: var(--purple); }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        .data-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
-        .data-table td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; }
-        .current-row { background-color: #f0fdf4; font-weight: bold; color: var(--success); }
-        .live-badge { background: var(--success); color: white; padding: 2px 6px; border-radius: 5px; font-size: 0.7rem; }
+        .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; border-top: 4px solid var(--purple); }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
+        .data-table th { background: #f8fafc; color: #64748b; padding: 10px; text-align: center; border-bottom: 2px solid #e2e8f0; }
+        .data-table td { padding: 10px; text-align: center; border-bottom: 1px solid #f1f5f9; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="loginScreen" class="auth-card">
-        <h2>👋 مرحباً بك في المنصة</h2>
-        <input type="text" id="sysPassCode" placeholder="الرمز السري أو رقم الهوية">
-        <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
+        <h2>👋 منصة جنوب الخليل</h2>
+        <input type="text" id="sysPassCode" placeholder="أدخل الرمز أو رقم الهوية">
+        <button class="btn btn-primary" onclick="handleLogin()">دخول</button>
     </div>
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle" style="margin:0;">المنصة التعليمية</h3>
+            <h3 style="margin:0;">بوابة التعلم والرقابة</h3>
             <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
-            <div id="filterGrid" class="filter-group">
-                </div>
+            <div id="filterGrid" class="filter-group"></div>
         </div>
 
         <div id="lessonsGrid"></div>
@@ -72,11 +63,7 @@
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSderel93nwlCLrQJW6fL6Jd6jSr4EzIjUdZes0H4otpkXfj8Q/formResponse";
-
-    // قائمة أرقام الهوية المسموح بها للمشرفين
-    const SUPERVISORS = ["415269083", "410767032"]; 
-
+    const SUPERVISORS = ["123456789", "987654321"]; 
     let rawData = [];
 
     function smartClean(t) { return t ? t.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '') : ""; }
@@ -88,7 +75,9 @@
         const lines = data.split(/\r?\n/);
         rawData = lines.slice(1).map(l => {
             const c = l.split(',');
-            return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6] };
+            // جلب الشعبة من العمود الثامن (Index 7)، وإذا كانت فارغة نضع "أ"
+            let section = c[7] ? c[7].trim() : "أ";
+            return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6], section: section };
         });
         setupFilters();
         updateUI();
@@ -96,159 +85,98 @@
 
     function handleLogin() {
         const code = smartClean(document.getElementById('sysPassCode').value);
-        let role = '';
-        if (SUPERVISORS.includes(code)) role = 'supervisor';
-        else if (code === "1234") role = 'student';
-        else if (code === "5678") role = 'teacher';
-
-        if (role) {
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('user_role', role);
-            startSystem();
-        } else alert("خطأ في الدخول!");
+        let role = SUPERVISORS.includes(code) ? 'supervisor' : (code === "1234" ? 'student' : (code === "5678" ? 'teacher' : ''));
+        if (role) { sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('user_role', role); startSystem(); }
+        else alert("عذراً، الرمز غير صحيح");
     }
 
     function setupFilters() {
         const role = sessionStorage.getItem('user_role');
         const grid = document.getElementById('filterGrid');
         const daySelect = `<div class="full-width"><label>📅 اليوم:</label><select id="daySelect" onchange="updateUI()"><option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option><option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option><option value="الخميس">الخميس</option></select></div>`;
-        const teachers = [...new Set(rawData.map(i => i.teacher.trim()))];
-        const gradeOptions = `<option value="">---</option>${[1,2,3,4,5,6,7,8,9,10,11,12].map(g => `<option value="${g}">${g}</option>`).join('')}`;
+        
+        const grades = [1,2,3,4,5,6,7,8,9,10,11,12];
+        const gradeOptions = `<option value="">إختر الصف...</option>${grades.map(g => `<option value="${g}">${g}</option>`).join('')}`;
+        const sectionOptions = `<option value="أ">شعبة (أ)</option><option value="ب">شعبة (ب)</option><option value="ج">شعبة (ج)</option><option value="د">شعبة (د)</option>`;
 
         if (role === 'supervisor') {
+            const teachers = [...new Set(rawData.map(i => i.teacher.trim()))];
             grid.innerHTML = daySelect + `
-                <div><label>📡 الحصص الفاعلة:</label><select id="activeOnly" onchange="updateUI()"><option value="all">كل الجدول</option><option value="live">الفاعلة الآن فقط</option></select></div>
-                <div><label>👤 المعلم:</label><select id="teacherSelect" onchange="updateUI()"><option value="">---</option>${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>`;
-        } else if (role === 'teacher') {
-            grid.innerHTML = daySelect + `
-                <div><label>👤 المعلم:</label><select id="teacherSelect" onchange="updateUI()"><option value="">---</option>${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>
-                <div><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select></div>`;
+                <div><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions.replace('إختر الصف...', 'كل الصفوف')}</select></div>
+                <div><label>👥 الشعبة:</label><select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option>${sectionOptions}</select></div>
+                <div><label>📡 الحالة:</label><select id="activeOnly" onchange="updateUI()"><option value="all">كل الجدول</option><option value="live">الفاعلة الآن</option></select></div>
+                <div><label>👤 المعلم:</label><select id="teacherSelect" onchange="updateUI()"><option value="">كل المعلمين</option>${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>`;
         } else {
-            grid.innerHTML = daySelect + `<div class="full-width"><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select></div>`;
+            grid.innerHTML = daySelect + `
+                <div><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select></div>
+                <div><label>👥 الشعبة:</label><select id="sectionSelect" onchange="updateUI()">${sectionOptions}</select></div>`;
         }
     }
 
     function updateUI() {
+        const role = sessionStorage.getItem('user_role');
         const grid = document.getElementById('lessonsGrid');
         const summaryArea = document.getElementById('summaryArea');
-        const role = sessionStorage.getItem('user_role');
         const dayVal = document.getElementById('daySelect').value;
+        const gradeVal = document.getElementById('gradeSelect')?.value;
+        const sectionVal = document.getElementById('sectionSelect')?.value;
+        
+        if (role !== 'supervisor' && (!gradeVal || gradeVal === "")) {
+            grid.innerHTML = '<p style="text-align:center; padding:30px; color:#94a3b8;">يرجى اختيار الصف لمتابعة الجدول.</p>';
+            summaryArea.style.display = 'none';
+            return;
+        }
+
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
         const sDay = smartClean(dayVal);
+        let filtered = rawData.filter(i => smartClean(i.day) === sDay);
 
-        let filtered = rawData.filter(i => smartClean(i.day) === sDay).sort((a,b) => getMinutes(a.start) - getMinutes(b.start));
+        // فلترة دقيقة بناءً على الأعمدة المستقلة
+        if (gradeVal) filtered = filtered.filter(i => smartClean(i.grade) === smartClean(gradeVal));
+        if (sectionVal) filtered = filtered.filter(i => smartClean(i.section) === smartClean(sectionVal));
 
         if (role === 'supervisor') {
             const activeOnly = document.getElementById('activeOnly').value;
             const teacherVal = document.getElementById('teacherSelect').value;
             if (activeOnly === 'live') filtered = filtered.filter(i => nowMins >= getMinutes(i.start) - 5 && nowMins <= getMinutes(i.end) + 10);
             if (teacherVal) filtered = filtered.filter(i => i.teacher.trim() === teacherVal);
+            filtered.sort((a, b) => parseInt(a.grade) - parseInt(b.grade));
             renderSupervisorTable(filtered, nowMins);
-        } else if (role === 'teacher') {
-            const teacherVal = document.getElementById('teacherSelect').value;
-            const gradeVal = document.getElementById('gradeSelect').value;
-            if (!teacherVal) { grid.innerHTML = '<p style="text-align:center;">يرجى اختيار المعلم.</p>'; return; }
-            const teacherLessons = filtered.filter(i => i.teacher.trim() === teacherVal);
-            renderSummaryTable(teacherLessons, nowMins, "جدول المعلم الشامل");
-            filtered = teacherLessons.filter(i => gradeVal === "" ? true : smartClean(i.grade) === smartClean(gradeVal));
         } else {
-            const gradeVal = document.getElementById('gradeSelect').value;
-            if (!gradeVal) { grid.innerHTML = '<p style="text-align:center;">يرجى اختيار الصف.</p>'; return; }
-            filtered = filtered.filter(i => smartClean(i.grade) === smartClean(gradeVal));
-            renderSummaryTable(filtered, nowMins, "جدول حصص اليوم");
+            filtered.sort((a,b) => getMinutes(a.start) - getMinutes(b.start));
         }
-
         renderCards(filtered, nowMins, role);
     }
 
     function renderCards(list, nowMins, role) {
         const grid = document.getElementById('lessonsGrid');
-        grid.innerHTML = list.length ? '' : '<p style="text-align:center; padding:20px;">لا توجد حصص للعرض.</p>';
+        grid.innerHTML = list.length ? '' : '<p style="text-align:center; padding:20px; color:#94a3b8;">لا توجد دروس حالياً لهذه الشعبة.</p>';
         
         list.forEach(l => {
-            const startMins = getMinutes(l.start);
-            const endMins = getMinutes(l.end);
-            const key = `atnd_${new Date().toLocaleDateString()}_${l.grade}_${l.subject}`;
-            const status = localStorage.getItem(key);
-            
-            let canOpen = false;
-            if (role === 'supervisor') canOpen = true; // المشرف دائماً مفتوح
-            else if (role === 'teacher') canOpen = (nowMins >= startMins - 20 && nowMins <= endMins + 10);
-            else canOpen = (nowMins >= startMins - 5 && nowMins <= startMins + 20);
-
-            let timerHTML = "";
-            const isSoon = (nowMins >= startMins - 30 && nowMins < (role === 'teacher' ? startMins - 20 : startMins - 5));
-
-            if (canOpen && role !== 'supervisor') {
-                const closeLimit = (role === 'teacher') ? endMins + 10 : startMins + 20;
-                timerHTML = `<div class="timer-box timer-now">⏱️ يغلق بعد: ${closeLimit - nowMins - 1}د</div>`;
-            } else if (isSoon) {
-                const openLimit = (role === 'teacher') ? startMins - 20 : startMins - 5;
-                timerHTML = `<div class="timer-box timer-soon">🔔 يفتح بعد: ${openLimit - nowMins - 1}د</div>`;
-            }
-
-            let btnText = (role === 'supervisor') ? '👁️ دخول إشرافي' : (status === 'in' ? '⬅️ تسجيل خروج' : (status === 'out' ? '✅ تم الحضور' : '🚀 دخول الحصة'));
-            let btnClass = (role === 'supervisor') ? 'btn-purple' : (status === 'in' ? 'btn-out' : 'btn-primary');
-            
-            grid.innerHTML += `<div class="lesson-card ${canOpen ? 'active-lesson' : ''} ${role==='supervisor'?'supervisor-card':''}">
-                ${timerHTML}<h3 style="margin:0">${l.subject}</h3>
-                <p style="color:gray; font-size:0.85rem; margin:5px 0;">👨‍🏫 ${l.teacher} | الصف: ${l.grade}</p>
+            const isLive = (nowMins >= getMinutes(l.start) - 5 && nowMins <= getMinutes(l.end) + 10);
+            grid.innerHTML += `<div class="lesson-card ${isLive ? 'active-lesson' : ''} ${role==='supervisor'?'supervisor-card':''}">
+                <h3 style="margin:0">${l.subject}</h3>
+                <p style="font-size:0.85rem; margin:5px 0;">الصف: <b>${l.grade}</b> | شعبة: <b>${l.section}</b></p>
+                <p style="font-size:0.85rem; color:#64748b;">المعلم: ${l.teacher}</p>
                 <div class="time-badge">⏰ ${l.start} - ${l.end}</div>
-                <button class="btn ${btnClass}" ${canOpen && status !== 'out' ? '' : 'disabled style="background:#cbd5e1;"'} 
-                onclick="${role === 'supervisor' ? `proceed('${l.link}')` : `openSession('${l.link}','${l.subject}','${l.grade}','${l.start}')`}">${btnText}</button>
+                <button class="btn ${role==='supervisor' ? 'btn-purple' : 'btn-primary'}" onclick="window.open('${l.link}','_blank')">دخول الحصة</button>
             </div>`;
         });
     }
 
-    function renderSummaryTable(lessons, nowMins, title) {
-        const area = document.getElementById('summaryArea');
-        area.className = "summary-area";
-        area.style.display = 'block';
-        let html = `<h4>📋 ${title}:</h4><table class="data-table"><tr><th>الصف</th><th>المادة</th><th>الوقت</th></tr>`;
-        lessons.forEach(l => {
-            const isNow = (nowMins >= getMinutes(l.start) && nowMins <= getMinutes(l.end));
-            html += `<tr class="${isNow ? 'current-row' : ''}"><td>${l.grade}</td><td>${l.subject}</td><td>${l.start}-${l.end}</td></tr>`;
-        });
-        area.innerHTML = html + `</table>`;
-    }
-
     function renderSupervisorTable(list, nowMins) {
         const area = document.getElementById('summaryArea');
-        area.className = "summary-area supervisor-summary";
         area.style.display = 'block';
         const live = list.filter(i => nowMins >= getMinutes(i.start) && nowMins <= getMinutes(i.end));
-        let html = `<h4>📊 الحصص الفاعلة الآن بالميدان:</h4><table class="data-table"><tr><th>الصف</th><th>المادة</th><th>المعلم</th><th>الحالة</th><th>الطلبة</th></tr>`;
-        live.forEach(l => {
-            html += `<tr><td>${l.grade}</td><td>${l.subject}</td><td>${l.teacher}</td><td><span class="live-badge">بث مباشر</span></td><td>--</td></tr>`;
+        let html = `<div class="summary-area"><h4>📊 جدول الحصص للمشرف:</h4><table class="data-table"><tr><th>الصف</th><th>شعبة</th><th>المادة</th><th>المعلم</th></tr>`;
+        list.forEach(l => {
+            html += `<tr><td>${l.grade}</td><td>${l.section}</td><td>${l.subject}</td><td>${l.teacher}</td></tr>`;
         });
-        area.innerHTML = (live.length ? html : '<p style="text-align:center;">لا توجد حصص فاعلة حالياً.</p>') + `</table>`;
+        area.innerHTML = (list.length ? html : '<p style="text-align:center;">لا توجد بيانات.</p>') + `</table></div>`;
     }
 
-    function openSession(url, subject, grade, start) {
-        const key = `atnd_${new Date().toLocaleDateString()}_${grade}_${subject}`;
-        const status = localStorage.getItem(key);
-        if (status === 'in') {
-            if (confirm("هل تريد تسجيل الخروج؟")) {
-                sendToForm(localStorage.getItem(key+'_name'), grade, subject, "خروج");
-                localStorage.setItem(key, 'out'); proceed(url);
-            }
-        } else {
-            const name = prompt("أدخل اسمك الرباعي:");
-            if (name && name.trim().length > 8) {
-                localStorage.setItem(key, 'in'); localStorage.setItem(key+'_name', name);
-                sendToForm(name, grade, subject, "دخول"); proceed(url);
-            }
-        }
-    }
-
-    function sendToForm(n, g, s, st) {
-        const f = new FormData(); f.append("entry.1542579219", n); f.append("entry.1978441942", g); f.append("entry.500841186", s); f.append("entry.1811602553", st);
-        fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: f });
-    }
-
-    function proceed(u) { window.open(u.startsWith('http') ? u : 'https://'+u, '_blank'); }
-    function startSystem() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; fetchSheetData(); setInterval(updateUI, 1000); }
+    function startSystem() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; fetchSheetData(); }
     function logout() { sessionStorage.clear(); location.reload(); }
     window.onload = () => { if(sessionStorage.getItem('isLoggedIn')==='true') startSystem(); };
 </script>
