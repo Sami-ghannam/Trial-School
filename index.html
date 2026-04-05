@@ -3,211 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة جنوب الخليل الرقمية - الإصدار 1.0</title>
+    <title>منصة جنوب الخليل الرقمية v1.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
-            --gold: #f59e0b;
-        }
+        :root { --primary: #2563eb; --success: #10b981; --danger: #ef4444; --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gold: #f59e0b; }
         [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; }
-
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
         
-        /* شاشة الترحيب */
-        .welcome-screen { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; text-align: center; padding: 20px; color: white;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%); position: relative;
-        }
+        .welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: white; position: relative; }
+        .top-info-bar { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .info-icon { background: rgba(255,255,255,0.2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); }
+        
+        .logo-container { max-width: 150px; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
+        .logo-container img { width: 100%; height: auto; border-radius: 10px; }
 
-        .top-info-bar { position: absolute; top: 20px; right: 20px; display: flex; gap: 15px; z-index: 100; }
-        .info-icon { background: rgba(255, 255, 255, 0.2); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; font-size: 1.2rem; border: 1px solid rgba(255,255,255,0.3); }
-        .info-icon:hover { background: var(--primary); transform: rotate(15deg); }
-
-        .logo-container { max-width: 160px; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); animation: float 3s ease-in-out infinite; }
-        .logo-container img { width: 100%; height: auto; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-
-        .role-selector { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
-        .role-btn { padding: 12px 25px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .auth-container { max-width: 350px; width: 90%; background: var(--card); padding: 25px; border-radius: 20px; margin-top: 20px; display: none; color: var(--text); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .role-btn { padding: 12px 20px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; cursor: pointer; margin: 5px; font-weight: bold; }
         .role-btn.active { background: var(--primary); border-color: var(--primary); }
 
-        .auth-container { max-width: 400px; width: 90%; background: var(--card); padding: 30px; border-radius: 20px; margin-top: 25px; display: none; box-shadow: 0 20px 40px rgba(0,0,0,0.4); color: var(--text); }
-
-        /* الواجهة الرئيسية */
-        .main-container { max-width: 850px; margin: 0 auto; padding: 20px; display: none; }
+        .main-container { max-width: 800px; margin: 0 auto; padding: 20px; display: none; }
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
-        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
-
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); position: relative; }
-        .active-lesson { border-right: 6px solid var(--success); background: #f0fdf4; }
-        [data-theme="dark"] .active-lesson { background: #064e3b; }
-
-        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background: var(--primary); color: white; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         
-        /* النوافذ المنبثقة */
-        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card); margin: 15% auto; padding: 25px; border-radius: 20px; width: 85%; max-width: 500px; position: relative; line-height: 1.6; }
-        .close-modal { position: absolute; top: 15px; left: 20px; font-size: 20px; cursor: pointer; color: var(--danger); }
-
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin: 5px 0; background: var(--card); color: var(--text); }
-        .theme-toggle { position: fixed; bottom: 20px; left: 20px; background: var(--card); border: none; padding: 12px; border-radius: 50%; cursor: pointer; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); transition: 0.3s; }
+        .active-lesson { border-right: 5px solid var(--success); background: #f0fdf4; border-color: var(--success); }
+        
+        .btn-primary { background: var(--primary); color: white; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background: var(--card); margin: 20% auto; padding: 20px; border-radius: 15px; width: 80%; max-width: 400px; position: relative; }
+        
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin: 5px 0; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-
 <div id="welcomeScreen" class="welcome-screen">
     <div class="top-info-bar">
-        <div class="info-icon" onclick="openModal('aboutModal')"><i class="fas fa-info-circle"></i></div>
-        <div class="info-icon" onclick="openModal('contactModal')"><i class="fas fa-envelope"></i></div>
+        <div class="info-icon" onclick="openM('aboutM')"><i class="fas fa-info"></i></div>
+        <div class="info-icon" onclick="openM('contactM')"><i class="fas fa-envelope"></i></div>
     </div>
     <div class="logo-container">
-        <img src="https://lh3.googleusercontent.com/pw/AIL4fc-0131-l91552554-0013000-0111115-0110111115" alt="الشعار">
+        <img src="https://lh3.googleusercontent.com/pw/AIL4fc-0131-l91552554-0013000-0111115-0110111115" alt="LOGO">
     </div>
-    <h1>منصة جنوب الخليل الرقمية</h1>
-    <p>تصميم وبرمجة: م. سامي محمد غنام</p>
-    <div class="role-selector">
-        <button class="role-btn" onclick="selectRole('student', this)">طالب</button>
-        <button class="role-btn" onclick="selectRole('teacher', this)">معلم</button>
-        <button class="role-btn" onclick="selectRole('supervisor', this)">مشرف تربوي</button>
+    <h2>منصة جنوب الخليل الرقمية</h2>
+    <div id="roles">
+        <button class="role-btn" onclick="selR('student', this)">طالب</button>
+        <button class="role-btn" onclick="selR('teacher', this)">معلم</button>
+        <button class="role-btn" onclick="selR('supervisor', this)">مشرف</button>
     </div>
     <div id="authBox" class="auth-container">
-        <h3 id="authTitle">تسجيل الدخول</h3>
-        <input type="password" id="passCode" placeholder="أدخل الرمز">
-        <button class="btn btn-primary" onclick="validateLogin()">دخول</button>
+        <input type="password" id="pass" placeholder="أدخل الرمز">
+        <button class="btn-primary" onclick="login()">دخول</button>
     </div>
 </div>
 
 <div id="mainApp" class="main-container">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 id="userHello">مرحباً بك</h2>
-        <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
+    <div style="display:flex; justify-content: space-between; margin-bottom: 20px;">
+        <h3 id="hello">مرحباً بك</h3>
+        <button onclick="location.reload()" style="border:none; background:none; color:red; cursor:pointer;">خروج</button>
     </div>
-    <div id="supervisorStats" class="stats-bar" style="display:none;">
-        <div class="stat-card">الحصص الكلية: <span id="totalLessons" class="stat-value">0</span></div>
-        <div class="stat-card">المباشرة الآن: <span id="liveCount" class="stat-value" style="color:var(--danger)">0</span></div>
+    <div id="sStats" class="stats-bar" style="display:none;">
+        <div class="stat-card">حصص اليوم: <b id="tL">0</b></div>
+        <div class="stat-card" style="color:red;">مباشر الآن: <b id="lL">0</b></div>
     </div>
-    <div class="card" id="filtersCard"></div>
-    <div id="lessonsGrid"></div>
+    <div class="card" id="filterArea"></div>
+    <div id="grid"></div>
 </div>
 
-<div id="aboutModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('aboutModal')">×</span><h3>حول البرنامج</h3><p>تعد منصة جنوب الخليل الرقمية (الإصدار الأول) نظاماً مبتكراً لإدارة وتسهيل الوصول للحصص الافتراضية. تهدف المنصة إلى ردم الفجوة بين الطالب والمعلم والمشرف في بيئة تعليمية ذكية ومنظمة تخدم مديرية جنوب الخليل.</p></div></div>
-<div id="contactModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('contactModal')">×</span><h3>تواصل معنا</h3><p>يسعدنا تلقي مقترحاتكم عبر البريد الإلكتروني:</p><p align="center"><b>sami.ghannam@shebron.edu.ps</b></p></div></div>
+<div id="aboutM" class="modal"><div class="modal-content"><h3 onclick="closeM('aboutM')" style="cursor:pointer; float:left;">×</h3><h3>حول البرنامج</h3><p>منصة رقمية لمديرية جنوب الخليل لتنظيم الوصول للحصص الافتراضية والمهارات الرقمية. الإصدار 1.0.</p></div></div>
+<div id="contactM" class="modal"><div class="modal-content"><h3 onclick="closeM('contactM')" style="cursor:pointer; float:left;">×</h3><h3>راسلنا</h3><p>الايميل: sami.ghannam@shebron.edu.ps</p></div></div>
 
 <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    let rawData = [], selectedRole = '';
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
+    let data = [], role = '';
 
-    function openModal(id) { document.getElementById(id).style.display = 'block'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+    function openM(id) { document.getElementById(id).style.display = 'block'; }
+    function closeM(id) { document.getElementById(id).style.display = 'none'; }
 
-    function selectRole(role, btn) {
-        selectedRole = role;
-        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    function selR(r, b) {
+        role = r;
+        document.querySelectorAll('.role-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
         document.getElementById('authBox').style.display = 'block';
     }
 
-    function validateLogin() {
-        const code = document.getElementById('passCode').value;
-        const roles = { student: "1234", teacher: "5678", supervisor: "123456789" };
-        if (code === roles[selectedRole]) {
-            sessionStorage.setItem('user_role', selectedRole);
-            startApp();
-        } else alert("الرمز غير صحيح!");
+    function login() {
+        const p = document.getElementById('pass').value;
+        const keys = { student: "1234", teacher: "5678", supervisor: "123456789" };
+        if(p === keys[role]) {
+            sessionStorage.setItem('r', role);
+            start();
+        } else alert("خطأ!");
     }
 
-    async function fetchData() {
+    async function start() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        
         try {
-            const res = await fetch(sheetURL + '&c=' + Date.now());
-            const text = await res.text();
-            rawData = text.split('\n').slice(1).map(r => {
-                const c = r.split(',');
-                return { day: (c[0]||'').trim(), grade: (c[1]||'').trim(), subject: (c[2]||'').trim(), teacher: (c[3]||'').trim(), start: (c[4]||'').trim(), end: (c[5]||'').trim(), link: (c[6]||'').trim(), section: (c[7] || "أ").trim() };
-            });
-            renderFilters();
-            updateDashboard();
-        } catch(e) { alert("حدث خطأ في جلب البيانات"); }
+            const r = await fetch(url + '&t=' + Date.now());
+            const t = await r.text();
+            data = t.split('\n').slice(1).map(row => {
+                const c = row.split(',');
+                return { 
+                    day: (c[0]||"").trim(), grade: (c[1]||"").trim(), 
+                    sub: (c[2]||"").trim(), teacher: (c[3]||"").trim(), 
+                    s: (c[4]||"").trim(), e: (c[5]||"").trim(), 
+                    link: (c[6]||"").trim(), sec: (c[7]||"أ").trim() 
+                };
+            }).filter(x => x.day !== "");
+            
+            initFilters();
+            draw();
+        } catch(e) { console.error(e); }
     }
 
-    function renderFilters() {
-        const role = sessionStorage.getItem('user_role');
-        const card = document.getElementById('filtersCard');
+    function initFilters() {
+        const area = document.getElementById('filterArea');
         const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-        let html = `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div style="grid-column: span 2;"><select id="fDay" onchange="updateDashboard()">${days.map(d => `<option value="${d}">${d}</option>`).join('')}</select></div>
-            <div><select id="fGrade" onchange="updateDashboard()"><option value="">الصف (الكل)</option>${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}</select></div>
-            <div><select id="fSection" onchange="updateDashboard()"><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select></div>
-        </div>`;
-        card.innerHTML = html;
+        area.innerHTML = `
+            <select id="d" onchange="draw()">${days.map(x => `<option value="${x}">${x}</option>`).join('')}</select>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <select id="g" onchange="draw()"><option value="">كل الصفوف</option>${[1,2,3,4,5,6,7,8,9,10,11,12].map(x=>`<option value="${x}">${x}</option>`).join('')}</select>
+                <select id="sec" onchange="draw()"><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select>
+            </div>`;
     }
 
-    function updateDashboard() {
-        const role = sessionStorage.getItem('user_role');
-        const day = document.getElementById('fDay').value;
-        const grade = document.getElementById('fGrade').value;
-        const section = document.getElementById('fSection').value;
-        const grid = document.getElementById('lessonsGrid');
+    function draw() {
+        const d = document.getElementById('d').value;
+        const g = document.getElementById('g').value;
+        const s = document.getElementById('sec').value;
+        const gr = document.getElementById('grid');
+        const r = sessionStorage.getItem('r');
 
-        if (role === 'student' && !grade) {
-            grid.innerHTML = '<p align="center">يرجى اختيار الصف لعرض الحصص</p>';
-            return;
-        }
-
-        let filtered = rawData.filter(d => d.day === day);
-        if (grade) filtered = filtered.filter(d => d.grade === grade);
-        if (section) filtered = filtered.filter(d => d.section === section);
+        let list = data.filter(x => x.day === d);
+        if(g) list = list.filter(x => x.grade === g);
+        if(s) list = list.filter(x => x.sec === s);
 
         const now = new Date();
-        const nowMins = now.getHours() * 60 + now.getMinutes();
+        const mins = now.getHours() * 60 + now.getMinutes();
 
-        if (role === 'supervisor') {
-            document.getElementById('supervisorStats').style.display = 'grid';
-            document.getElementById('totalLessons').innerText = filtered.length;
-            const live = filtered.filter(l => isLive(l.start, l.end, nowMins));
-            document.getElementById('liveCount').innerText = live.length;
-            filtered.sort((a,b) => parseInt(a.grade) - parseInt(b.grade));
+        if(r === 'supervisor') {
+            document.getElementById('sStats').style.display = 'grid';
+            document.getElementById('tL').innerText = list.length;
+            document.getElementById('lL').innerText = list.filter(x => checkLive(x.s, x.e, mins)).length;
         }
 
-        renderCards(filtered, nowMins);
-    }
-
-    function isLive(s, e, now) {
-        if(!s || !e) return false;
-        const sM = (parseInt(s.split(':')[0])*60) + parseInt(s.split(':')[1]);
-        const eM = (parseInt(e.split(':')[0])*60) + parseInt(e.split(':')[1]);
-        return now >= sM && now <= eM;
-    }
-
-    function renderCards(list, now) {
-        const grid = document.getElementById('lessonsGrid');
-        grid.innerHTML = list.length ? '' : '<p align="center">لا يوجد حصص مطابقة</p>';
-        list.forEach(l => {
-            const live = isLive(l.start, l.end, now);
-            grid.innerHTML += `<div class="card ${live ? 'active-lesson' : ''}">
-                <h3 style="margin:0; color:var(--primary)">${l.subject}</h3>
-                <p>الصف: ${l.grade} (${l.section}) | المعلم: ${l.teacher}</p>
-                <b>⏰ ${l.start} - ${l.end}</b>
-                <button class="btn btn-primary" onclick="window.open('${l.link}')">دخول الحصة</button>
-            </div>`;
+        gr.innerHTML = list.length ? "" : "<p align='center'>لا توجد بيانات</p>";
+        list.forEach(x => {
+            const live = checkLive(x.s, x.e, mins);
+            gr.innerHTML += `
+                <div class="card ${live ? 'active-lesson' : ''}">
+                    <h3 style="margin:0">${x.sub}</h3>
+                    <p style="margin:5px 0">الصف: ${x.grade} (${x.sec}) | المعلم: ${x.teacher}</p>
+                    <b>⏰ ${x.s} - ${x.e}</b>
+                    <button class="btn-primary" onclick="window.open('${x.link}')">دخول الحصة</button>
+                </div>`;
         });
     }
 
-    function startApp() {
-        document.getElementById('welcomeScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        fetchData();
+    function checkLive(start, end, now) {
+        if(!start || !end) return false;
+        const sM = (parseInt(start.split(':')[0])*60) + parseInt(start.split(':')[1]);
+        const eM = (parseInt(end.split(':')[0])*60) + parseInt(end.split(':')[1]);
+        return now >= sM && now <= eM;
     }
 
-    function logout() { sessionStorage.clear(); location.reload(); }
-    window.onload = () => { if(sessionStorage.getItem('user_role')) startApp(); };
+    window.onload = () => { if(sessionStorage.getItem('r')) start(); };
 </script>
 </body>
 </html>
