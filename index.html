@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>منصة العنقود الرقمية</title>
+    <title>منصة جنوب الخليل الرقمية</title>
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
@@ -31,10 +31,11 @@
         .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
         .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
         
-        .teacher-summary { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
-        .teacher-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
-        .teacher-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
-        .teacher-table td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        /* تصميم الجداول الاحترافي */
+        .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
+        .data-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
+        .data-table td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; }
         .current-row { background-color: #f0fdf4; font-weight: bold; color: var(--success); }
     </style>
 </head>
@@ -70,7 +71,8 @@
         </div>
 
         <div id="lessonsGrid"></div>
-        <div id="teacherSummaryArea" style="display:none;"></div>
+        
+        <div id="summaryArea" style="display:none;"></div>
     </div>
 </div>
 
@@ -130,7 +132,7 @@
 
     function updateUI() {
         const grid = document.getElementById('lessonsGrid');
-        const summaryArea = document.getElementById('teacherSummaryArea');
+        const summaryArea = document.getElementById('summaryArea');
         const role = sessionStorage.getItem('user_role');
         
         const dayVal = document.getElementById('daySelect').value;
@@ -143,12 +145,10 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
         const todayStr = new Date().toLocaleDateString();
 
-        // منطق التحقق من الاختيارات الأساسية
         let canShow = false;
         if (role === 'student') {
             if (dayVal && gradeVal) canShow = true;
         } else {
-            // المعلم يجب أن يختار اليوم واسمه فقط (الصف اختياري)
             if (dayVal && teacherVal) canShow = true;
         }
 
@@ -160,7 +160,6 @@
 
         let filtered = [];
         if (role === 'teacher') {
-            // فلترة المعلم: إذا اختار صفاً نطبق الفلترة، وإذا تركه "---" نجلب كل صفوفه
             filtered = rawData.filter(i => {
                 const matchDay = smartClean(i.day) === sDay;
                 const matchTeacher = i.teacher.trim() === teacherVal;
@@ -168,11 +167,11 @@
                 return matchDay && matchTeacher && matchGrade;
             });
             summaryArea.style.display = 'block';
-            renderTeacherTable(rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal), nowMins);
+            renderSummaryTable(rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal), nowMins, "جدول المعلم");
         } else {
-            // فلترة الطالب: اليوم والصف إلزاميان
             filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === smartClean(gradeVal));
-            summaryArea.style.display = 'none';
+            summaryArea.style.display = 'block';
+            renderSummaryTable(filtered, nowMins, "جدول حصص اليوم");
         }
 
         grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مطابقة لهذا الاختيار.</p>';
@@ -196,15 +195,23 @@
         });
     }
 
-    function renderTeacherTable(allTeacherLessonsToday, nowMins) {
-        const area = document.getElementById('teacherSummaryArea');
-        let html = `<div class="teacher-summary"><h4>📋 جدولك الكامل ليوم (${document.getElementById('daySelect').value}):</h4><table class="teacher-table">
-            <tr><th>الصف</th><th>المادة</th><th>الوقت</th></tr>`;
-        allTeacherLessonsToday.forEach(l => {
+    function renderSummaryTable(lessons, nowMins, title) {
+        const area = document.getElementById('summaryArea');
+        const role = sessionStorage.getItem('user_role');
+        
+        let html = `<div class="summary-area"><h4>📋 ${title}:</h4><table class="data-table">
+            <tr>${role === 'teacher' ? '<th>الصف</th>' : ''}<th>المادة</th><th>الوقت</th></tr>`;
+        
+        lessons.forEach(l => {
             const startM = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
             const endM = l.end.split(':').map(Number)[0] * 60 + l.end.split(':').map(Number)[1];
             const isNow = (nowMins >= startM && nowMins <= endM);
-            html += `<tr class="${isNow ? 'current-row' : ''}"><td>${l.grade}</td><td>${l.subject}</td><td>${l.start} - ${l.end}</td></tr>`;
+            
+            html += `<tr class="${isNow ? 'current-row' : ''}">
+                ${role === 'teacher' ? `<td>${l.grade}</td>` : ''}
+                <td>${l.subject}</td>
+                <td>${l.start} - ${l.end}</td>
+            </tr>`;
         });
         area.innerHTML = html + `</table></div>`;
     }
