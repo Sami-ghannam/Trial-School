@@ -17,12 +17,12 @@
         .auth-card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; }
         .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .full-width { grid-column: span 2; }
         
-        select, input[type="password"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        select, input[type="password"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; font-family: inherit; font-size: 0.95rem; }
         
-        /* بطاقات الحصص */
-        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; }
-        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
+        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; transition: 0.3s; }
+        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
         
         .btn { display: block; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; }
@@ -31,7 +31,6 @@
         .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
         .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
         
-        /* جدول المعلم الاحترافي في نهاية الصفحة */
         .teacher-summary { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .teacher-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
         .teacher-table th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
@@ -50,27 +49,27 @@
 
     <div id="mainApp" style="display:none;">
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle" style="margin:0;">تحميل...</h3>
+            <h3 id="appTitle" style="margin:0;">المنصة التعليمية</h3>
             <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
         </div>
 
         <div class="filter-section">
             <div class="filter-group">
-                <div>
+                <div class="full-width">
                     <label style="font-size: 0.8rem; font-weight: bold;">📅 اليوم:</label>
                     <select id="daySelect" onchange="updateUI()">
+                        <option value="">---</option>
                         <option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option>
                         <option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option>
                         <option value="الخميس">الخميس</option>
                     </select>
                 </div>
-                <div id="dynamicFilterArea">
-                    </div>
+                <div id="filterCol1"></div>
+                <div id="filterCol2"></div>
             </div>
         </div>
 
         <div id="lessonsGrid"></div>
-
         <div id="teacherSummaryArea" style="display:none;"></div>
     </div>
 </div>
@@ -97,14 +96,21 @@
 
     function setupFilters() {
         const role = sessionStorage.getItem('user_role');
-        const area = document.getElementById('dynamicFilterArea');
+        const col1 = document.getElementById('filterCol1');
+        const col2 = document.getElementById('filterCol2');
+        const gradeOptions = `<option value="">---</option>${[1,2,3,4,5,6,7,8,9,10].map(g => `<option value="${g}">${g}</option>`).join('')}`;
+
         if (role === 'teacher') {
             let teachers = [...new Set(rawData.map(i => i.teacher.trim()))];
-            area.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">👤 المعلم:</label>
-                <select id="teacherSelect" onchange="updateUI()">${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select>`;
+            col1.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">👤 المعلم:</label>
+                <select id="teacherSelect" onchange="updateUI()"><option value="">---</option>${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select>`;
+            col2.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">🎓 الصف (اختياري):</label>
+                <select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select>`;
         } else {
-            area.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">🎓 الصف:</label>
-                <select id="gradeSelect" onchange="updateUI()">${[1,2,3,4,5,6,7,8,9,10].map(g => `<option value="${g}">${g}</option>`).join('')}</select>`;
+            col1.className = "full-width";
+            col1.innerHTML = `<label style="font-size:0.8rem; font-weight:bold;">🎓 الصف:</label>
+                <select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select>`;
+            col2.innerHTML = "";
         }
     }
 
@@ -126,24 +132,50 @@
         const grid = document.getElementById('lessonsGrid');
         const summaryArea = document.getElementById('teacherSummaryArea');
         const role = sessionStorage.getItem('user_role');
-        const sDay = smartClean(document.getElementById('daySelect').value);
+        
+        const dayVal = document.getElementById('daySelect').value;
+        const gradeVal = document.getElementById('gradeSelect')?.value;
+        const teacherSelect = document.getElementById('teacherSelect');
+        const teacherVal = teacherSelect ? teacherSelect.value : null;
+
+        const sDay = smartClean(dayVal);
         const now = new Date();
         const nowMins = now.getHours() * 60 + now.getMinutes();
         const todayStr = new Date().toLocaleDateString();
 
+        // منطق التحقق من الاختيارات الأساسية
+        let canShow = false;
+        if (role === 'student') {
+            if (dayVal && gradeVal) canShow = true;
+        } else {
+            // المعلم يجب أن يختار اليوم واسمه فقط (الصف اختياري)
+            if (dayVal && teacherVal) canShow = true;
+        }
+
+        if (!canShow) {
+            grid.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">يرجى اختيار اليوم والمعطيات الأساسية للعرض.</p>';
+            summaryArea.style.display = 'none';
+            return;
+        }
+
         let filtered = [];
         if (role === 'teacher') {
-            const sTeacher = document.getElementById('teacherSelect').value;
-            filtered = rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === sTeacher);
+            // فلترة المعلم: إذا اختار صفاً نطبق الفلترة، وإذا تركه "---" نجلب كل صفوفه
+            filtered = rawData.filter(i => {
+                const matchDay = smartClean(i.day) === sDay;
+                const matchTeacher = i.teacher.trim() === teacherVal;
+                const matchGrade = gradeVal === "" ? true : smartClean(i.grade) === smartClean(gradeVal);
+                return matchDay && matchTeacher && matchGrade;
+            });
             summaryArea.style.display = 'block';
-            renderTeacherTable(filtered, nowMins);
+            renderTeacherTable(rawData.filter(i => smartClean(i.day) === sDay && i.teacher.trim() === teacherVal), nowMins);
         } else {
-            const sGrade = smartClean(document.getElementById('gradeSelect').value);
-            filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === sGrade);
+            // فلترة الطالب: اليوم والصف إلزاميان
+            filtered = rawData.filter(i => smartClean(i.day) === sDay && smartClean(i.grade) === smartClean(gradeVal));
             summaryArea.style.display = 'none';
         }
 
-        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مجدولة لهذا اليوم.</p>';
+        grid.innerHTML = filtered.length ? '' : '<p style="text-align:center;">لا توجد حصص مطابقة لهذا الاختيار.</p>';
 
         filtered.forEach(l => {
             const startMins = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
@@ -155,8 +187,8 @@
             let btnText = status === 'in' ? '⬅️ تسجيل خروج' : (status === 'out' ? '✅ تم الحضور' : '🚀 دخول الحصة');
             
             grid.innerHTML += `<div class="lesson-card ${isOpen ? 'active-lesson' : ''}">
-                ${timer}<h3 style="margin:0">${l.subject} (الصف: ${l.grade})</h3>
-                <p style="color:gray; font-size:0.85rem; margin:5px 0;">👨‍🏫 ${l.teacher}</p>
+                ${timer}<h3 style="margin:0">${l.subject}</h3>
+                <p style="color:gray; font-size:0.85rem; margin:5px 0;">👨‍🏫 ${l.teacher} | الصف: ${l.grade}</p>
                 <div class="time-badge">⏰ الحصة: من ${l.start} إلى ${l.end}</div>
                 <button class="btn ${status==='in'?'btn-out':'btn-primary'}" ${isOpen && status !== 'out' ? '' : 'disabled style="background:#cbd5e1;"'} 
                 onclick="openSession('${l.link}','${l.subject}','${l.grade}','${l.start}')">${btnText}</button>
@@ -164,11 +196,11 @@
         });
     }
 
-    function renderTeacherTable(filtered, nowMins) {
+    function renderTeacherTable(allTeacherLessonsToday, nowMins) {
         const area = document.getElementById('teacherSummaryArea');
-        let html = `<div class="teacher-summary"><h4>📋 ملخص جدولك اليومي:</h4><table class="teacher-table">
+        let html = `<div class="teacher-summary"><h4>📋 جدولك الكامل ليوم (${document.getElementById('daySelect').value}):</h4><table class="teacher-table">
             <tr><th>الصف</th><th>المادة</th><th>الوقت</th></tr>`;
-        filtered.forEach(l => {
+        allTeacherLessonsToday.forEach(l => {
             const startM = l.start.split(':').map(Number)[0] * 60 + l.start.split(':').map(Number)[1];
             const endM = l.end.split(':').map(Number)[0] * 60 + l.end.split(':').map(Number)[1];
             const isNow = (nowMins >= startM && nowMins <= endM);
