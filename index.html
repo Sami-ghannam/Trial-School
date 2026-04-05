@@ -87,6 +87,19 @@
         .no-data { text-align: center; padding: 20px; color: #64748b; font-style: italic; }
         label { font-size: 0.8rem; font-weight: bold; color: var(--primary); }
         .timer-box { font-size: 0.85rem; font-weight: bold; color: var(--danger); margin-bottom: 8px; }
+
+        /* تنسيق زر سجل الحضور */
+        .admin-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: var(--success);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -100,8 +113,10 @@
     </div>
 
     <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle">تحميل...</h3>
+        <div style="display:flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <div>
+                <h3 id="appTitle" style="margin:0;">تحميل...</h3>
+                <div id="adminLinkArea"></div> </div>
             <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
         </div>
 
@@ -159,13 +174,18 @@
 </div>
 
 <script>
-    // --- إعدادات الروابط (يجب تعبئتها من قبلك) ---
+    // --- إعدادات الروابط (تأكد من وضع الرابط الصحيح للإكسل) ---
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSderel93nwlCLrQJW6fL6Jd6jSr4EzIjUdZes0H4otpkXfj8Q/formResponse";
+    
+    // ضع هنا رابط ملف إكسل الحضور (جوجل شيت) المفتوح للمشاركة
+    const ATTENDANCE_RECORD_URL = "https://docs.google.com/spreadsheets/d/1qlNjnI6NGh3O1aFPy04rNOPbfZinoLIh5aXCU_2GDrM/edit?usp=sharing";
+
     const ENTRY_NAME = "entry.1542579219";    // حقل الاسم الرباعي
     const ENTRY_GRADE = "entry.1978441942";   // حقل الصف
     const ENTRY_SUBJECT = "entry.500841186";  // حقل المادة
     const ENTRY_STATUS = "entry.1811602553"; // حقل الحالة الإدارية
+
     let rawData = [];
 
     function smartClean(text) {
@@ -230,10 +250,19 @@
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('appTitle').innerText = (role === 'teacher') ? "لوحة التحكم 👨‍🏫" : "الجدول الدراسي 🎓";
-            document.getElementById('teacherFiltersSection').style.display = (role === 'teacher') ? 'block' : 'none';
+            
+            // تخصيص الواجهة حسب الرتبة
+            if (role === 'teacher') {
+                document.getElementById('appTitle').innerText = "لوحة التحكم 👨‍🏫";
+                document.getElementById('adminLinkArea').innerHTML = `<a href="${ATTENDANCE_RECORD_URL}" target="_blank" class="admin-btn">📊 سجل الحضور المباشر</a>`;
+                document.getElementById('teacherFiltersSection').style.display = 'block';
+            } else {
+                document.getElementById('appTitle').innerText = "الجدول الدراسي 🎓";
+                document.getElementById('adminLinkArea').innerHTML = "";
+                document.getElementById('teacherFiltersSection').style.display = 'none';
+            }
+
             await fetchSheetData();
-            // تحديث الواجهة كل ثانية لضمان دقة المؤقت والعد التنازلي
             setInterval(updateUI, 1000);
         } else { logout(); }
     }
@@ -298,16 +327,8 @@
         const nowMins = now.getHours() * 60 + now.getMinutes();
         const [sH, sM] = startTime.split(':').map(Number);
         const startMins = sH * 60 + sM;
-        
-        const openTime = startMins - 5;
         const teacherDeadline = startMins + 15;
         const finalDeadline = startMins + 20;
-
-        // فحص الأمان الزمني النهائي
-        if (nowMins < openTime || nowMins > finalDeadline) {
-            alert("عذراً، الرابط مغلق حالياً.");
-            return;
-        }
 
         if (role === 'student') {
             const name = prompt("نظام الحضور: أدخل اسمك الرباعي للدخول:");
@@ -316,7 +337,6 @@
                 proceed(url);
             } else { alert("يجب إدخال الاسم الرباعي كاملاً."); }
         } else {
-            // منطق المعلم
             if (nowMins > teacherDeadline) {
                 alert("تم تسجيل دخولك كمتأخر. سيتم إخطار الإدارة.");
                 sendToForm("نظام آلي", grade, subject, "تأخر معلم");
@@ -342,9 +362,7 @@
 
     function logout() { sessionStorage.clear(); localStorage.clear(); location.reload(); }
 
-    window.onload = () => { 
-        if (sessionStorage.getItem('isLoggedIn') === 'true') startSystem(); 
-    };
+    window.onload = () => { if (sessionStorage.getItem('isLoggedIn') === 'true') startSystem(); };
 </script>
 </body>
 </html>
