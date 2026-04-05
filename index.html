@@ -4,54 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>منصة جنوب الخليل - بوابة التعليم والرقابة</title>
+    <title>منصة جنوب الخليل الرقمية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --warning: #f59e0b; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; 
-            --info: #0ea5e9; --purple: #8b5cf6;
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; transition: 0.3s; }
         .container { max-width: 750px; margin: 0 auto; }
         
-        /* أيقونات المعلومات والتواصل */
-        .top-nav-icons { position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; z-index: 100; }
-        .icon-circle { width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
-        .icon-circle:hover { transform: scale(1.1); background: var(--purple); }
+        /* أيقونات التواصل والمعلومات */
+        .top-nav-icons { position: absolute; top: 20px; left: 20px; display: flex; gap: 12px; z-index: 100; }
+        .icon-circle { width: 42px; height: 42px; background: white; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .icon-circle:hover { background: var(--primary); color: white; transform: translateY(-3px); }
 
-        .auth-card { background: var(--card); padding: 30px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; position: relative; }
-        .logo-main { max-width: 140px; margin-bottom: 15px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        /* شاشة الدخول المحدثة */
+        .auth-card { background: var(--card); padding: 40px 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; position: relative; border: 1px solid #f1f5f9; }
+        
+        /* حاوية الشعار */
+        .logo-box { width: 150px; height: 150px; margin: 0 auto 25px; background: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); overflow: hidden; }
+        .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .full-width { grid-column: span 2; }
-        
-        select, input[type="text"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
-        
-        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; transition: 0.3s; }
+        input[type="text"] { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #d1d5db; outline: none; font-size: 1rem; text-align: center; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
+        .btn-main:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        /* تنسيق الجداول والبطاقات (النسخة المستقرة) */
+        .filter-section { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .lesson-card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; }
         .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
-        .supervisor-card { border-right: 5px solid var(--purple); }
-
-        .btn { display: block; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s; font-family: inherit; }
-        .btn-purple { background: var(--purple); color: white; }
-        .btn-primary { background: var(--primary); color: white; }
-
-        /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 15% auto; padding: 25px; border-radius: 20px; width: 85%; max-width: 450px; position: relative; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .close-btn { position: absolute; top: 15px; left: 20px; font-size: 24px; cursor: pointer; color: var(--danger); }
-
-        .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
-        .live-indicator { color: var(--danger); font-weight: bold; font-size: 0.8rem; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         
-        .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--purple); }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-        .data-table th { background: #f8fafc; color: #64748b; padding: 10px; text-align: center; border-bottom: 2px solid #e2e8f0; }
-        .data-table td { padding: 10px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        /* النوافذ المنبثقة */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 25px; width: 85%; max-width: 450px; position: relative; }
     </style>
 </head>
 <body>
@@ -59,179 +46,101 @@
 <div class="container">
     <div id="loginScreen" class="auth-card">
         <div class="top-nav-icons">
-            <div class="icon-circle" onclick="toggleModal('aboutModal')" title="حول البرنامج"><i class="fas fa-info"></i></div>
-            <div class="icon-circle" onclick="toggleModal('contactModal')" title="راسلنا"><i class="fas fa-envelope"></i></div>
+            <div class="icon-circle" onclick="openM('aboutM')"><i class="fas fa-info"></i></div>
+            <div class="icon-circle" onclick="openM('contactM')"><i class="fas fa-envelope"></i></div>
         </div>
-        <img src="https://lh3.googleusercontent.com/d/13db5fe72-7442-44b8-bcd1-e14f71e0f70a" class="logo-main" alt="شعار نهائي">
-        <h2 style="margin-top:0;">منصة جنوب الخليل الرقمية</h2>
-        <p style="color:#64748b; margin-bottom:20px;">بوابة التعليم والرقابة الذكية</p>
-        <input type="text" id="sysPassCode" placeholder="أدخل الرمز أو رقم الهوية">
-        <button class="btn btn-primary" onclick="handleLogin()">دخول النظام</button>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 15px;">تصميم وبرمجة: أ. سامي محمد جابر غنام</p>
+        <div class="logo-box">
+            <img src="شعار نهائي.png" alt="شعار جنوب الخليل" onerror="this.src='https://via.placeholder.com/150?text=جنوب+الخليل'">
+        </div>
+        <h2 style="margin:0;">منصة جنوب الخليل الرقمية</h2>
+        <p style="color: #64748b; margin-bottom: 25px;">بوابة التعلم والرقابة الذكية</p>
+        <input type="text" id="sysPassCode" placeholder="أدخل الرمز (طالب: 1234)">
+        <button class="btn-main" onclick="handleLogin()">دخول المنصة</button>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 20px;">إعداد: أ. سامي محمد جابر غنام</p>
     </div>
 
     <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 id="appTitle" style="margin:0; color:var(--primary);">بوابة التعلم والرقابة</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px;">
+            <h3 id="roleTitle" style="color:var(--primary)">لوحة التحكم</h3>
+            <button onclick="logout()" style="color:var(--danger); border:none; background:none; font-weight:bold; cursor:pointer;">خروج</button>
         </div>
-
-        <div class="filter-section">
-            <div id="filterGrid" class="filter-group"></div>
-        </div>
-
+        <div id="filterGrid" class="filter-section"></div>
         <div id="lessonsGrid"></div>
-        <div id="summaryArea" style="display:none;"></div>
+        <div id="summaryArea"></div>
     </div>
 </div>
 
-<div id="aboutModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="toggleModal('aboutModal')">&times;</span>
-        <h3 style="color:var(--primary);"><i class="fas fa-info-circle"></i> حول البرنامج</h3>
-        <p style="line-height:1.6;">تعد منصة جنوب الخليل الرقمية (الإصدار الأول) نظاماً مبتكراً لإدارة وتسهيل الوصول للحصص الافتراضية والمهارات الرقمية. تهدف المنصة إلى تعزيز الرقابة التربوية وتيسير العملية التعليمية في مديرية جنوب الخليل عبر واجهة ذكية تربط المعلم والطالب والمشرف.</p>
-    </div>
-</div>
-
-<div id="contactModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="toggleModal('contactModal')">&times;</span>
-        <h3 style="color:var(--success);"><i class="fas fa-paper-plane"></i> راسلنا</h3>
-        <p>نسعد باستقبال تغذيتكم الراجعة أو مقترحاتكم لتطوير أداء المنصة عبر البريد الإلكتروني المباشر:</p>
-        <div style="background:#f8fafc; padding:15px; border-radius:10px; text-align:center; font-weight:bold; border:1px dashed var(--primary);">
-            <a href="mailto:sami.ghannam@shebron.edu.ps" style="color:var(--primary); text-decoration:none;">sami.ghannam@shebron.edu.ps</a>
-        </div>
-    </div>
-</div>
+<div id="aboutM" class="modal"><div class="modal-content"><span onclick="closeM('aboutM')" style="float:left; cursor:pointer; font-size:20px;">×</span><h3>حول البرنامج</h3><p>منصة رقمية متكاملة لخدمة الميدان التربوي في مديرية جنوب الخليل، تهدف لتنظيم الحصص الافتراضية وتعزيز مهارات التكنولوجيا والرقابة الميدانية.</p></div></div>
+<div id="contactM" class="modal"><div class="modal-content"><span onclick="closeM('contactM')" style="float:left; cursor:pointer; font-size:20px;">×</span><h3>تواصل معنا</h3><p>أ. سامي غنام<br>البريد: <a href="mailto:sami.ghannam@shebron.edu.ps">sami.ghannam@shebron.edu.ps</a></p></div></div>
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    const SUPERVISORS = ["123456789", "987654321"]; 
     let rawData = [];
 
-    function toggleModal(id) {
-        const m = document.getElementById(id);
-        m.style.display = (m.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function smartClean(t) { return t ? t.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '') : ""; }
-    function getMinutes(timeStr) { if(!timeStr) return 0; const [h, m] = timeStr.split(':').map(Number); return h * 60 + m; }
+    function openM(id) { document.getElementById(id).style.display = 'block'; }
+    function closeM(id) { document.getElementById(id).style.display = 'none'; }
 
     async function fetchSheetData() {
         const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
         const data = await response.text();
-        const lines = data.split(/\r?\n/);
-        rawData = lines.slice(1).map(l => {
+        rawData = data.split('\n').slice(1).map(l => {
             const c = l.split(',');
             return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6] };
         });
-        setupFilters();
+        renderFilters();
         updateUI();
     }
 
     function handleLogin() {
-        const code = smartClean(document.getElementById('sysPassCode').value);
-        let role = SUPERVISORS.includes(code) ? 'supervisor' : (code === "1234" ? 'student' : (code === "5678" ? 'teacher' : ''));
-        if (role) { sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('user_role', role); startSystem(); }
-        else alert("عذراً، الرمز غير صحيح");
+        const code = document.getElementById('sysPassCode').value;
+        let role = (code === "123456789") ? 'supervisor' : (code === "1234" ? 'student' : (code === "5678" ? 'teacher' : ''));
+        if (role) {
+            sessionStorage.setItem('isLogged', 'true');
+            sessionStorage.setItem('role', role);
+            startApp();
+        } else alert("الرمز غير صحيح");
     }
 
-    function setupFilters() {
-        const role = sessionStorage.getItem('user_role');
+    function renderFilters() {
+        const role = sessionStorage.getItem('role');
         const grid = document.getElementById('filterGrid');
         const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-        const daySelect = `<div class="full-width"><label>📅 اليوم الدراسي:</label><select id="daySelect" onchange="updateUI()">${days.map(d => `<option value="${d}">${d}</option>`).join('')}</select></div>`;
-        const grades = [1,2,3,4,5,6,7,8,9,10,11,12];
-        const gradeOptions = `<option value="">إختر الصف...</option>${grades.map(g => `<option value="${g}">${g}</option>`).join('')}`;
-
-        if (role === 'supervisor') {
-            const teachers = [...new Set(rawData.map(i => i.teacher.trim()))];
-            grid.innerHTML = daySelect + `
-                <div><label>📡 الحالة:</label><select id="activeOnly" onchange="updateUI()"><option value="all">كل الجدول</option><option value="live">الحصص الفاعلة الآن</option></select></div>
-                <div><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions.replace('إختر الصف...', 'كل الصفوف')}</select></div>
-                <div class="full-width"><label>👤 المعلم:</label><select id="teacherSelect" onchange="updateUI()"><option value="">كل المعلمين</option>${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>`;
-        } else {
-            grid.innerHTML = daySelect + `<div class="full-width"><label>🎓 الصف الدراسي:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select></div>`;
-        }
+        grid.innerHTML = `<select id="daySelect" onchange="updateUI()" style="width:100%; padding:10px; border-radius:8px;">${days.map(d => `<option value="${d}">${d}</option>`).join('')}</select>
+        <select id="gradeSelect" onchange="updateUI()" style="width:100%; padding:10px; border-radius:8px; margin-top:10px;"><option value="">إختر الصف...</option>${[1,2,3,4,5,6,7,8,9,10,11,12].map(g => `<option value="${g}">${g}</option>`).join('')}</select>`;
     }
 
     function updateUI() {
-        const role = sessionStorage.getItem('user_role');
+        const role = sessionStorage.getItem('role');
         const grid = document.getElementById('lessonsGrid');
-        const summaryArea = document.getElementById('summaryArea');
-        const dayVal = document.getElementById('daySelect').value;
-        const gradeVal = document.getElementById('gradeSelect')?.value;
+        const day = document.getElementById('daySelect').value;
+        const grade = document.getElementById('gradeSelect').value;
         
-        if (role !== 'supervisor' && (!gradeVal || gradeVal === "")) {
-            grid.innerHTML = '<p style="text-align:center; padding:30px; color:#94a3b8;">يرجى اختيار الصف لعرض جدول الحصص.</p>';
-            summaryArea.style.display = 'none';
+        if (!grade && role !== 'supervisor') {
+            grid.innerHTML = '<p align="center">يرجى اختيار الصف...</p>';
             return;
         }
 
-        const now = new Date();
-        const nowMins = now.getHours() * 60 + now.getMinutes();
-        const sDay = smartClean(dayVal);
-        let filtered = rawData.filter(i => smartClean(i.day) === sDay);
+        let filtered = rawData.filter(i => i.day.trim() === day.trim());
+        if(grade) filtered = filtered.filter(i => i.grade.trim() === grade.trim());
 
-        if (role === 'supervisor') {
-            const activeOnly = document.getElementById('activeOnly').value;
-            const teacherVal = document.getElementById('teacherSelect').value;
-            if (activeOnly === 'live') filtered = filtered.filter(i => nowMins >= getMinutes(i.start) - 5 && nowMins <= getMinutes(i.end) + 10);
-            if (teacherVal) filtered = filtered.filter(i => i.teacher.trim() === teacherVal);
-            if (gradeVal) filtered = filtered.filter(i => smartClean(i.grade) === smartClean(gradeVal));
-            filtered.sort((a, b) => parseInt(a.grade) - parseInt(b.grade));
-            renderSupervisorTable(filtered, nowMins);
-        } else {
-            filtered = filtered.filter(i => smartClean(i.grade) === smartClean(gradeVal)).sort((a,b) => getMinutes(a.start) - getMinutes(b.start));
-            renderNormalTable(filtered, nowMins, "ملخص حصص اليوم");
-        }
-
-        renderCards(filtered, nowMins, role);
-    }
-
-    function renderCards(list, nowMins, role) {
-        const grid = document.getElementById('lessonsGrid');
-        grid.innerHTML = list.length ? '' : '<p style="text-align:center; padding:20px; color:#94a3b8;">لا توجد حصص مطابقة لهذا اليوم.</p>';
-        
-        list.forEach(l => {
-            const start = getMinutes(l.start);
-            const end = getMinutes(l.end);
-            const isLive = (nowMins >= start - 5 && nowMins <= end + 10);
-            
-            grid.innerHTML += `<div class="lesson-card ${isLive ? 'active-lesson' : ''} ${role==='supervisor'?'supervisor-card':''}">
-                <h3 style="margin:0">${l.subject}</h3>
-                <p style="font-size:0.85rem; margin:5px 0;">الصف: <b>${l.grade}</b> | المعلم: ${l.teacher}</p>
-                <div class="time-badge">⏰ ${l.start} - ${l.end}</div>
-                ${isLive ? `<div class="live-indicator"><i class="fas fa-signal"></i> حصة فاعلة الآن</div>` : ''}
-                <button class="btn ${role==='supervisor' ? 'btn-purple' : 'btn-primary'}" onclick="window.open('${l.link}','_blank')">دخول الحصة الآن</button>
+        grid.innerHTML = filtered.length ? '' : '<p align="center">لا يوجد حصص</p>';
+        filtered.forEach(l => {
+            grid.innerHTML += `<div class="lesson-card">
+                <h3>${l.subject}</h3>
+                <p>المعلم: ${l.teacher} | الوقت: ${l.start} - ${l.end}</p>
+                <button class="btn-main" onclick="window.open('${l.link}')">دخول الحصة</button>
             </div>`;
         });
     }
 
-    function renderNormalTable(lessons, nowMins, title) {
-        const area = document.getElementById('summaryArea');
-        area.style.display = 'block';
-        let html = `<div class="summary-area"><h4>📋 ${title}:</h4><table class="data-table"><tr><th>المادة</th><th>المعلم</th><th>الوقت</th></tr>`;
-        lessons.forEach(l => {
-            html += `<tr><td>${l.subject}</td><td>${l.teacher}</td><td>${l.start}-${l.end}</td></tr>`;
-        });
-        area.innerHTML = html + `</table></div>`;
+    function startApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        fetchSheetData();
     }
 
-    function renderSupervisorTable(list, nowMins) {
-        const area = document.getElementById('summaryArea');
-        area.style.display = 'block';
-        const live = list.filter(i => nowMins >= getMinutes(i.start) && nowMins <= getMinutes(i.end));
-        let html = `<div class="summary-area"><h4>📊 الحصص الجارية الآن:</h4><table class="data-table"><tr><th>الصف</th><th>المادة</th><th>المعلم</th><th>الحالة</th></tr>`;
-        live.forEach(l => {
-            html += `<tr><td>${l.grade}</td><td>${l.subject}</td><td>${l.teacher}</td><td><span style="color:var(--success); font-weight:bold;">● بث مباشر</span></td></tr>`;
-        });
-        area.innerHTML = (live.length ? html : '<p style="text-align:center; padding:10px;">لا يوجد حصص قيد البث حالياً.</p>') + `</table></div>`;
-    }
-
-    function startSystem() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; fetchSheetData(); setInterval(updateUI, 30000); }
     function logout() { sessionStorage.clear(); location.reload(); }
-    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')==='true') startSystem(); };
+    window.onload = () => { if(sessionStorage.getItem('isLogged')) startApp(); };
 </script>
 </body>
 </html>
