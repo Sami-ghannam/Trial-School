@@ -3,182 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="no-referrer">
-    <title>منصة التعلم عن بعد الشاملة</title>
+    <title>منصة جنوب الخليل الرقمية</title>
     <style>
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
+            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --purple: #8b5cf6;
+            --gold: #f59e0b;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 750px; margin: 0 auto; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
         
-        .auth-card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px; }
-        .filter-section { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        /* شاشة الترحيب */
+        .welcome-screen { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; text-align: center; background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white; padding: 20px;
+        }
+
+        /* حاوية الشعار الجديد */
+        .logo-container { 
+            max-width: 180px; width: 100%; margin-bottom: 25px; 
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+            animation: logoBounce 1.5s ease;
+        }
+        .logo-container img { width: 100%; height: auto; }
+        @keyframes logoBounce { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .welcome-screen h1 { margin: 10px 0; font-size: 2rem; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .welcome-screen h3 { margin: 5px 0; color: var(--gold); font-weight: normal; font-size: 1.1rem; }
+        .welcome-screen p { margin: 5px 0; opacity: 0.8; font-size: 0.85rem; }
+
+        /* منطقة الأزرار الأفقية */
+        .role-selector { display: flex; gap: 10px; margin-top: 35px; flex-wrap: wrap; justify-content: center; max-width: 600px; }
+        .role-btn { 
+            padding: 12px 25px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1); color: white; cursor: pointer; transition: 0.3s; font-weight: bold;
+        }
+        .role-btn:hover, .role-btn.active { background: var(--primary); border-color: var(--primary); transform: translateY(-3px); }
+
+        /* شاشة كلمة السر */
+        .auth-container { 
+            max-width: 400px; width: 90%; background: white; padding: 30px; border-radius: 20px; 
+            margin-top: 25px; display: none; box-shadow: 0 20px 40px rgba(0,0,0,0.4); color: var(--text);
+            animation: authIn 0.5s ease;
+        }
+        @keyframes authIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        input, select { 
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; 
+            margin: 8px 0; font-family: inherit; box-sizing: border-box; font-size: 1rem;
+        }
+        
+        /* واجهة التطبيق الرئيسي */
+        .main-app { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .filter-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .filter-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .full-width { grid-column: span 2; }
         
-        select, input[type="text"] { width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
-        
-        .lesson-card { background: var(--card); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; position: relative; transition: 0.3s; }
-        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; }
-        .supervisor-card { border-right: 5px solid var(--purple); }
-
-        .btn { display: block; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-align: center; margin-top: 10px; transition: 0.3s; }
-        .btn-purple { background: var(--purple); color: white; }
+        .lesson-card { 
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; 
+            border: 1px solid #e2e8f0; transition: 0.3s;
+        }
+        .active-lesson { border: 2px solid var(--success); background: #f0fdf4; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-purple { background: var(--purple); color: white; }
 
-        .time-badge { background: #f1f5f9; padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 5px; }
-        
-        .summary-area { margin-top: 40px; background: white; padding: 20px; border-radius: 15px; border-top: 4px solid var(--purple); }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-        .data-table th { background: #f8fafc; color: #64748b; padding: 10px; text-align: center; border-bottom: 2px solid #e2e8f0; }
-        .data-table td { padding: 10px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        .summary-area { background: white; padding: 20px; border-radius: 20px; margin-top: 30px; border-top: 5px solid var(--purple); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="loginScreen" class="auth-card">
-        <h2>👋 منصة جنوب الخليل</h2>
-        <input type="text" id="sysPassCode" placeholder="أدخل الرمز أو رقم الهوية">
-        <button class="btn btn-primary" onclick="handleLogin()">دخول</button>
+<div id="welcomeScreen" class="welcome-screen">
+    <div class="logo-container">
+        <img src="https://lh3.googleusercontent.com/pw/AIL4fc-0131-l91552554-0013000-0111115-0110111115" alt="شعار منصة جنوب الخليل الرقمية">
+    </div>
+    
+    <h1>منصة جنوب الخليل الرقمية</h1>
+    <h3>نظام إدارة الحصص الافتراضية</h3>
+    <p>تصميم وبرمجة: أ. سامي محمد جابر غنام</p>
+
+    <div class="role-selector">
+        <button class="role-btn" onclick="selectRole('student', this)">طالب</button>
+        <button class="role-btn" onclick="selectRole('teacher', this)">معلم</button>
+        <button class="role-btn" onclick="selectRole('supervisor', this)">مشرف تربوي</button>
+        <button class="role-btn" onclick="selectRole('admin', this)">إدارة</button>
     </div>
 
-    <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h3 style="margin:0;">بوابة التعلم والرقابة</h3>
-            <button onclick="logout()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">خروج</button>
-        </div>
-
-        <div class="filter-section">
-            <div id="filterGrid" class="filter-group"></div>
-        </div>
-
-        <div id="lessonsGrid"></div>
-        <div id="summaryArea" style="display:none;"></div>
+    <div id="authBox" class="auth-container">
+        <h4 id="authTitle" style="margin-top:0;">تسجيل الدخول</h4>
+        <input type="password" id="passCode" placeholder="أدخل رمز الدخول الخاص بك">
+        <button class="btn btn-primary" onclick="validateLogin()">دخول للمنصة</button>
     </div>
+</div>
+
+<div id="mainApp" class="main-app">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 id="userHello" style="margin:0; font-size: 1.2rem;">أهلاً بك</h2>
+        <button onclick="logout()" style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer;">تسجيل خروج</button>
+    </div>
+
+    <div class="filter-section">
+        <div id="filterGrid" class="filter-group"></div>
+    </div>
+
+    <div id="lessonsGrid"></div>
+    <div id="summaryArea" style="display:none;"></div>
 </div>
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQtOpsreNoUoEcco1MnGhOu4ml8F-hRvKC-2AeVAJgodZdBBJ-l9OeWG1Xu_2l_tUY-qebr1h-xEWSb/pub?gid=1011079660&single=true&output=csv';
-    const SUPERVISORS = ["123456789", "987654321"]; 
     let rawData = [];
+    let selectedRole = '';
 
-    function smartClean(t) { return t ? t.toString().trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/\s+/g, '') : ""; }
-    function getMinutes(timeStr) { if(!timeStr) return 0; const [h, m] = timeStr.split(':').map(Number); return h * 60 + m; }
+    // قائمة الرموز السرية للمشرفين
+    const SUPERVISOR_CODES = ["123456789", "987654321"]; 
 
-    async function fetchSheetData() {
-        const response = await fetch(sheetURL + '&nocache=' + new Date().getTime());
-        const data = await response.text();
-        const lines = data.split(/\r?\n/);
-        rawData = lines.slice(1).map(l => {
-            const c = l.split(',');
-            // جلب الشعبة من العمود الثامن (Index 7)، وإذا كانت فارغة نضع "أ"
-            let section = c[7] ? c[7].trim() : "أ";
-            return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6], section: section };
-        });
-        setupFilters();
-        updateUI();
-    }
-
-    function handleLogin() {
-        const code = smartClean(document.getElementById('sysPassCode').value);
-        let role = SUPERVISORS.includes(code) ? 'supervisor' : (code === "1234" ? 'student' : (code === "5678" ? 'teacher' : ''));
-        if (role) { sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('user_role', role); startSystem(); }
-        else alert("عذراً، الرمز غير صحيح");
-    }
-
-    function setupFilters() {
-        const role = sessionStorage.getItem('user_role');
-        const grid = document.getElementById('filterGrid');
-        const daySelect = `<div class="full-width"><label>📅 اليوم:</label><select id="daySelect" onchange="updateUI()"><option value="الأحد">الأحد</option><option value="الاثنين">الاثنين</option><option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option><option value="الخميس">الخميس</option></select></div>`;
+    function selectRole(role, btn) {
+        selectedRole = role;
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         
-        const grades = [1,2,3,4,5,6,7,8,9,10,11,12];
-        const gradeOptions = `<option value="">إختر الصف...</option>${grades.map(g => `<option value="${g}">${g}</option>`).join('')}`;
-        const sectionOptions = `<option value="أ">شعبة (أ)</option><option value="ب">شعبة (ب)</option><option value="ج">شعبة (ج)</option><option value="د">شعبة (د)</option>`;
+        const titles = { student: "دخول الطلاب", teacher: "بوابة المعلمين", supervisor: "منصة الإشراف", admin: "لوحة الإدارة" };
+        document.getElementById('authTitle').innerText = titles[role];
+        document.getElementById('authBox').style.display = 'block';
+        document.getElementById('passCode').focus();
+    }
 
-        if (role === 'supervisor') {
-            const teachers = [...new Set(rawData.map(i => i.teacher.trim()))];
-            grid.innerHTML = daySelect + `
-                <div><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions.replace('إختر الصف...', 'كل الصفوف')}</select></div>
-                <div><label>👥 الشعبة:</label><select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option>${sectionOptions}</select></div>
-                <div><label>📡 الحالة:</label><select id="activeOnly" onchange="updateUI()"><option value="all">كل الجدول</option><option value="live">الفاعلة الآن</option></select></div>
-                <div><label>👤 المعلم:</label><select id="teacherSelect" onchange="updateUI()"><option value="">كل المعلمين</option>${teachers.map(t => `<option value="${t}">${t}</option>`).join('')}</select></div>`;
+    function validateLogin() {
+        const code = document.getElementById('passCode').value;
+        let isValid = false;
+
+        // التحقق من الرموز بناءً على الدور المختار
+        if (selectedRole === 'supervisor' && SUPERVISOR_CODES.includes(code)) isValid = true;
+        else if (selectedRole === 'student' && code === "1234") isValid = true;
+        else if (selectedRole === 'teacher' && code === "5678") isValid = true;
+        else if (selectedRole === 'admin' && code === "0000") isValid = true;
+
+        if (isValid) {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('user_role', selectedRole);
+            startApp();
         } else {
-            grid.innerHTML = daySelect + `
-                <div><label>🎓 الصف:</label><select id="gradeSelect" onchange="updateUI()">${gradeOptions}</select></div>
-                <div><label>👥 الشعبة:</label><select id="sectionSelect" onchange="updateUI()">${sectionOptions}</select></div>`;
+            alert("رمز الدخول غير صحيح لهذا الدور! يرجى التأكد مرة أخرى.");
         }
     }
 
-    function updateUI() {
+    async function fetchData() {
+        try {
+            const res = await fetch(sheetURL + '&cache=' + Date.now());
+            const text = await res.text();
+            const rows = text.split('\n').slice(1);
+            rawData = rows.map(r => {
+                const c = r.split(',');
+                return { day: c[0], grade: c[1], subject: c[2], teacher: c[3], start: c[4], end: c[5], link: c[6], section: (c[7] || "أ").trim() };
+            });
+            renderFilters();
+            updateDashboard();
+        } catch(e) { console.error("خطأ في جلب البيانات من Google Sheets"); }
+    }
+
+    function renderFilters() {
         const role = sessionStorage.getItem('user_role');
-        const grid = document.getElementById('lessonsGrid');
-        const summaryArea = document.getElementById('summaryArea');
-        const dayVal = document.getElementById('daySelect').value;
-        const gradeVal = document.getElementById('gradeSelect')?.value;
-        const sectionVal = document.getElementById('sectionSelect')?.value;
+        const grid = document.getElementById('filterGrid');
+        const dayOptions = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"].map(d => `<option value="${d}">${d}</option>`).join('');
+        const gradeOptions = Array.from({length: 12}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('');
+
+        let html = `<div style="grid-column: span 2;"><label>اليوم الدراسي:</label><select id="fDay" onchange="updateDashboard()">${dayOptions}</select></div>`;
         
-        if (role !== 'supervisor' && (!gradeVal || gradeVal === "")) {
-            grid.innerHTML = '<p style="text-align:center; padding:30px; color:#94a3b8;">يرجى اختيار الصف لمتابعة الجدول.</p>';
-            summaryArea.style.display = 'none';
+        if (role === 'supervisor' || role === 'admin') {
+            const teachers = [...new Set(rawData.map(i => i.teacher))].map(t => `<option value="${t}">${t}</option>`).join('');
+            html += `<div><label>الصف:</label><select id="fGrade" onchange="updateDashboard()"><option value="">الكل</option>${gradeOptions}</select></div>
+                     <div><label>الشعبة:</label><select id="fSection" onchange="updateDashboard()"><option value="">الكل</option><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select></div>
+                     <div style="grid-column: span 2;"><label>المعلم:</label><select id="fTeacher" onchange="updateDashboard()"><option value="">كل المعلمين</option>${teachers}</select></div>`;
+        } else {
+            html += `<div><label>الصف:</label><select id="fGrade" onchange="updateDashboard()"><option value="">اختر الصف...</option>${gradeOptions}</select></div>
+                     <div><label>الشعبة:</label><select id="fSection" onchange="updateDashboard()"><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select></div>`;
+        }
+        grid.innerHTML = html;
+    }
+
+    function updateDashboard() {
+        const role = sessionStorage.getItem('user_role');
+        const day = document.getElementById('fDay').value;
+        const grade = document.getElementById('fGrade').value;
+        const section = document.getElementById('fSection').value;
+        
+        const grid = document.getElementById('lessonsGrid');
+        if (role === 'student' && !grade) {
+            grid.innerHTML = '<p style="text-align:center; padding:40px;">يرجى تحديد الصف لعرض الحصص الدراسية</p>';
             return;
         }
 
-        const now = new Date();
-        const nowMins = now.getHours() * 60 + now.getMinutes();
-        const sDay = smartClean(dayVal);
-        let filtered = rawData.filter(i => smartClean(i.day) === sDay);
-
-        // فلترة دقيقة بناءً على الأعمدة المستقلة
-        if (gradeVal) filtered = filtered.filter(i => smartClean(i.grade) === smartClean(gradeVal));
-        if (sectionVal) filtered = filtered.filter(i => smartClean(i.section) === smartClean(sectionVal));
-
+        let filtered = rawData.filter(d => d.day.trim() === day);
+        if (grade) filtered = filtered.filter(d => d.grade.trim() === grade);
+        if (section) filtered = filtered.filter(d => d.section.trim() === section);
+        
         if (role === 'supervisor') {
-            const activeOnly = document.getElementById('activeOnly').value;
-            const teacherVal = document.getElementById('teacherSelect').value;
-            if (activeOnly === 'live') filtered = filtered.filter(i => nowMins >= getMinutes(i.start) - 5 && nowMins <= getMinutes(i.end) + 10);
-            if (teacherVal) filtered = filtered.filter(i => i.teacher.trim() === teacherVal);
-            filtered.sort((a, b) => parseInt(a.grade) - parseInt(b.grade));
-            renderSupervisorTable(filtered, nowMins);
-        } else {
-            filtered.sort((a,b) => getMinutes(a.start) - getMinutes(b.start));
+            const teacher = document.getElementById('fTeacher').value;
+            if (teacher) filtered = filtered.filter(d => d.teacher.trim() === teacher);
+            filtered.sort((a,b) => parseInt(a.grade) - parseInt(b.grade));
         }
-        renderCards(filtered, nowMins, role);
+
+        renderCards(filtered);
     }
 
-    function renderCards(list, nowMins, role) {
+    function renderCards(list) {
         const grid = document.getElementById('lessonsGrid');
-        grid.innerHTML = list.length ? '' : '<p style="text-align:center; padding:20px; color:#94a3b8;">لا توجد دروس حالياً لهذه الشعبة.</p>';
-        
+        const now = new Date();
+        const nowMins = now.getHours() * 60 + now.getMinutes();
+
+        grid.innerHTML = list.length ? '' : '<p style="text-align:center;">لا توجد حصص مطابقة لهذا الاختيار</p>';
         list.forEach(l => {
-            const isLive = (nowMins >= getMinutes(l.start) - 5 && nowMins <= getMinutes(l.end) + 10);
-            grid.innerHTML += `<div class="lesson-card ${isLive ? 'active-lesson' : ''} ${role==='supervisor'?'supervisor-card':''}">
+            const startM = (parseInt(l.start.split(':')[0]) * 60) + parseInt(l.start.split(':')[1]);
+            const endM = (parseInt(l.end.split(':')[0]) * 60) + parseInt(l.end.split(':')[1]);
+            const isLive = nowMins >= startM && nowMins <= endM;
+
+            grid.innerHTML += `<div class="lesson-card ${isLive ? 'active-lesson' : ''}">
                 <h3 style="margin:0">${l.subject}</h3>
-                <p style="font-size:0.85rem; margin:5px 0;">الصف: <b>${l.grade}</b> | شعبة: <b>${l.section}</b></p>
-                <p style="font-size:0.85rem; color:#64748b;">المعلم: ${l.teacher}</p>
-                <div class="time-badge">⏰ ${l.start} - ${l.end}</div>
-                <button class="btn ${role==='supervisor' ? 'btn-purple' : 'btn-primary'}" onclick="window.open('${l.link}','_blank')">دخول الحصة</button>
+                <p>الصف: ${l.grade} (${l.section}) | المعلم: ${l.teacher}</p>
+                <div style="color:var(--primary); font-weight:bold;">⏰ ${l.start} - ${l.end}</div>
+                <button class="btn btn-primary" onclick="window.open('${l.link}')">دخول الحصة</button>
             </div>`;
         });
     }
 
-    function renderSupervisorTable(list, nowMins) {
-        const area = document.getElementById('summaryArea');
-        area.style.display = 'block';
-        const live = list.filter(i => nowMins >= getMinutes(i.start) && nowMins <= getMinutes(i.end));
-        let html = `<div class="summary-area"><h4>📊 جدول الحصص للمشرف:</h4><table class="data-table"><tr><th>الصف</th><th>شعبة</th><th>المادة</th><th>المعلم</th></tr>`;
-        list.forEach(l => {
-            html += `<tr><td>${l.grade}</td><td>${l.section}</td><td>${l.subject}</td><td>${l.teacher}</td></tr>`;
-        });
-        area.innerHTML = (list.length ? html : '<p style="text-align:center;">لا توجد بيانات.</p>') + `</table></div>`;
+    function startApp() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        fetchData();
     }
 
-    function startSystem() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; fetchSheetData(); }
     function logout() { sessionStorage.clear(); location.reload(); }
-    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')==='true') startSystem(); };
+    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) startApp(); };
 </script>
 </body>
 </html>
