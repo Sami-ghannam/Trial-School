@@ -7,190 +7,177 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2563eb; --success: #10b981; --danger: #ef4444;
-            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8;
+            --primary: #2563eb; --primary-dark: #1e40af; --success: #10b981; 
+            --danger: #ef4444; --bg: #f1f5f9; --card: #ffffff; --text: #1e293b;
         }
 
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background-color: var(--bg); color: var(--text); 
-            margin: 0; padding: 0; overflow-x: hidden; min-height: 100vh;
-            display: flex; flex-direction: column;
-        }
-        
-        /* --- تنسيقات الشاشة الترحيبية --- */
-        #loginScreen { flex-grow: 1; display: flex; flex-direction: column; }
-        
-        .welcome-page {
-            display: flex; justify-content: center; align-items: center;
-            flex-grow: 1; gap: 30px; padding: 20px;
-        }
-
-        .side-widget {
-            width: 200px; background: white; padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; border: 1px solid #e2e8f0;
-            display: none; transition: 0.3s;
-        }
-        @media (min-width: 1100px) { .side-widget { display: block; } }
-
-        .welcome-frame {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            padding: 12px; border-radius: 45px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            width: 100%; max-width: 550px;
-        }
-
-        .auth-card { 
-            background: var(--card); padding: 40px 30px 50px; border-radius: 35px; 
-            text-align: center; position: relative; overflow: hidden;
+            margin: 0; padding: 0; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        .auth-card::before {
-            content: ""; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
-            width: 350px; height: 350px; background-image: url('logo.png');
-            background-size: contain; background-repeat: no-repeat; opacity: 0.04; z-index: 0; pointer-events: none;
+        /* الإطار الأزرق الخارجي الموحد */
+        .master-frame {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            padding: 12px; border-radius: 45px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            width: 95%; max-width: 700px; margin: 20px auto; position: relative;
         }
 
-        .content-wrapper { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        /* الحاوية البيضاء الداخلية مع العلامة المائية */
+        .inner-content {
+            background: var(--card); padding: 30px; border-radius: 35px;
+            position: relative; overflow: hidden; min-height: 450px;
+        }
 
-        .curved-title-container { width: 100%; height: 130px; margin-bottom: -10px; display: flex; justify-content: center; align-items: center; }
+        /* العلامة المائية (الشعار خلفية) */
+        .inner-content::before {
+            content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; height: 80%; background-image: url('logo.png');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.05; z-index: 0; pointer-events: none;
+        }
+
+        .relative-box { position: relative; z-index: 1; width: 100%; }
+
+        /* تنسيق الساعة والتاريخ العلوي */
+        .top-info-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.9); padding: 10px 25px; border-radius: 50px;
+            margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box;
+        }
+
+        /* النص المنحني */
+        .curved-title-container { width: 100%; height: 100px; display: flex; justify-content: center; align-items: center; }
         .curved-svg { width: 100%; height: 100%; overflow: visible; }
-        .curved-path { fill: none; }
-        .curved-text { font-size: 38px; font-weight: 900; fill: var(--primary); filter: drop-shadow(0 3px 2px rgba(0,0,0,0.1)); }
+        .curved-text { font-size: 32px; font-weight: 900; fill: var(--primary); }
 
-        .designer-tag { font-size: 1rem; color: #64748b; margin-bottom: 30px; background: #f8fafc; padding: 6px 20px; border-radius: 50px; border: 1px solid #e2e8f0; }
+        /* الأزرار والأيقونات */
+        .icon-btn-group { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .icon-link { 
+            text-decoration: none; color: #64748b; font-size: 0.9rem; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.3s;
+        }
+        .icon-link:hover { color: var(--primary); }
+        .icon-link i { font-size: 1.5rem; }
 
-        .login-box { width: 100%; max-width: 300px; display: flex; flex-direction: column; align-items: center; }
-        .input-label { font-weight: 700; font-size: 0.95rem; color: #475569; margin-bottom: 10px; }
-
-        input[type="text"] { 
-            width: 100%; padding: 16px; border-radius: 18px; border: 2px solid #e2e8f0; 
-            margin-bottom: 15px; outline: none; text-align: center; font-size: 1.2rem;
-            background: #fcfdfe; box-shadow: inset 0 3px 6px rgba(0,0,0,0.05); box-sizing: border-box;
+        /* مدخلات البيانات */
+        input[type="text"], select {
+            width: 100%; padding: 14px; border-radius: 15px; border: 2px solid #e2e8f0;
+            margin-bottom: 15px; font-family: inherit; font-size: 1rem; text-align: center;
+            background: #f8fafc;
         }
 
-        .btn { 
-            width: 100%; padding: 15px; border-radius: 16px; border: none; font-weight: bold; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            gap: 10px; margin-bottom: 12px; font-size: 1.1rem; transition: 0.2s; 
+        .btn-main {
+            width: 100%; padding: 15px; border-radius: 15px; border: none;
+            background: var(--primary); color: white; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 0 #1d4ed8; transition: 0.2s; font-size: 1.1rem;
         }
-        .btn-primary { 
-            background: linear-gradient(to bottom, #3b82f6, #2563eb); color: white; 
-            box-shadow: 0 6px 0 #1d4ed8, 0 12px 20px rgba(37, 99, 235, 0.3);
+        .btn-main:active { transform: translateY(3px); box-shadow: 0 1px 0 #1d4ed8; }
+
+        /* بطاقات الحصص */
+        .lesson-card {
+            background: rgba(255,255,255,0.8); border: 2px solid #e2e8f0;
+            padding: 15px; border-radius: 20px; margin-bottom: 15px; transition: 0.3s;
         }
-        .btn-primary:active { transform: translateY(4px); box-shadow: 0 2px 0 #1d4ed8; }
+        .state-active { border-color: var(--success); background: #f0fdf4; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
 
-        /* --- تنسيقات المنصة الداخلية --- */
-        #mainApp { max-width: 850px; margin: 20px auto; padding: 20px; display: none; width: 95%; }
-        
-        .filter-section { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; margin: 10px 0; font-family: inherit; font-size: 1rem; }
-        
-        .lesson-card { border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 2px solid transparent; transition: 0.3s; }
-        .state-available { background: #f0fdf4; border-color: var(--success); color: #166534; }
-        .state-locked { background: #f1f5f9; border-color: #cbd5e1; color: #475569; }
-        .state-ended { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+        .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; color: white; font-weight: bold; }
 
-        .summary-area { background: white; padding: 20px; border-radius: 15px; border-top: 5px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 30px; }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-        .data-table th, .data-table td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
-        
-        .status-pill { padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; color: white; }
-        .footer-credits { text-align: center; padding: 15px; font-size: 0.65rem; color: #cbd5e1; width: 100%; }
+        .footer-tag { text-align: center; font-size: 0.7rem; color: #94a3b8; margin-top: 20px; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div id="loginScreen">
-    <div class="welcome-page">
-        <div class="side-widget">
-            <span style="font-size:0.8rem; color:var(--gray);">الوقت الآن</span>
-            <div id="clock" style="font-size:1.5rem; font-weight:bold; color:var(--primary);">00:00:00</div>
-            <hr style="border:0; border-top:1px solid #f1f5f9; margin:15px 0;">
-            <div id="date" style="font-size:0.9rem; font-weight:600; color:#64748b;">--/--/----</div>
+    <div style="width: 95%; max-width: 700px; margin-top: 20px;">
+        <div class="top-info-bar">
+            <div id="liveClock" style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">00:00:00</div>
+            <div id="liveDate" style="font-weight: 600; color: #64748b;">--/--/----</div>
         </div>
+    </div>
 
-        <div class="welcome-frame">
-            <div class="auth-card">
-                <div class="content-wrapper">
+    <div class="master-frame">
+        <div class="inner-content">
+            <div class="relative-box">
+                
+                <div id="loginSection">
                     <div class="curved-title-container">
-                        <svg viewBox="0 0 500 150" class="curved-svg">
-                            <path id="curvePath" d="M 50,120 A 200,100 0 0,1 450,120" class="curved-path" />
+                        <svg viewBox="0 0 500 100" class="curved-svg">
+                            <path id="curvePath" d="M 50,80 A 200,60 0 0,1 450,80" fill="none" />
                             <text class="curved-text"><textPath xlink:href="#curvePath" startOffset="50%" text-anchor="middle">منصة العنقود الرقمية</textPath></text>
                         </svg>
                     </div>
-                    <div class="designer-tag">تصميم وبرمجة: م. سامي غنام</div>
-                    <div class="login-box">
-                        <label class="input-label">رمز الدخول للمنصة</label>
-                        <input type="text" id="sysPass" placeholder="أدخل الرمز هنا">
-                        <button class="btn btn-primary" onclick="handleLogin()">
-                            <i class="fas fa-sign-in-alt"></i> دخول للمنصة
-                        </button>
+
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <span style="background: #f1f5f9; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: #475569;">بإشراف: م. سامي غنام</span>
+                    </div>
+
+                    <input type="text" id="passCode" placeholder="أدخل رمز الدخول للمنصة">
+                    <button class="btn-main" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> دخول للمنصة</button>
+
+                    <div class="icon-btn-group">
+                        <a href="https://wa.me/972568402800" target="_blank" class="icon-link">
+                            <i class="fas fa-user-tie"></i> <span>المطور</span>
+                        </a>
+                        <div class="icon-link" style="cursor:pointer;" onclick="alert('تعليمات الرموز:\n- للطلبة: 1\n- للمعلم: 1111\n- للمشرف: 1234')">
+                            <i class="fas fa-info-circle"></i> <span>التعليمات</span>
+                        </div>
+                        <div class="icon-link" style="cursor:pointer;" onclick="if(confirm('هل تريد الخروج؟')) window.location.href='about:blank';">
+                            <i class="fas fa-times-circle" style="color:var(--danger);"></i> <span>خروج</span>
+                        </div>
                     </div>
                 </div>
+
+                <div id="appSection" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i> بوابة التعلم الرقمي</h3>
+                        <button onclick="location.reload()" style="background: none; border: none; color: var(--danger); font-weight: bold; cursor: pointer;">
+                            <i class="fas fa-power-off"></i> خروج
+                        </button>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                        <label style="font-weight: bold; display: block; margin-bottom: 5px;">اختر اليوم:</label>
+                        <select id="daySelect" onchange="updateUI()">
+                            <option value="الأحد">الأحد</option>
+                            <option value="الاثنين">الاثنين</option>
+                            <option value="الثلاثاء">الثلاثاء</option>
+                            <option value="الأربعاء">الأربعاء</option>
+                            <option value="الخميس">الخميس</option>
+                        </select>
+                        <label style="font-weight: bold; display: block; margin-bottom: 5px;">اختر الصف:</label>
+                        <select id="gradeSelect" onchange="updateUI()">
+                            <option value="">إختر الصف لعرض الحصص...</option>
+                            <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
+                        </select>
+                    </div>
+
+                    <div id="lessonsGrid"></div>
+                </div>
+
             </div>
         </div>
-
-        <div class="side-widget">
-            <span style="font-size:0.8rem; color:var(--gray);">روابط سريعة</span>
-            <div style="text-align: right; margin-top: 10px;">
-                <a href="https://wa.me/972568402800" target="_blank" style="text-decoration:none; color:var(--text); display:block; padding:10px;">
-                    <i class="fab fa-whatsapp" style="color:#25D366;"></i> الدعم الفني
-                </a>
-                <a href="mailto:sami.ghannam@shebron.edu.ps" style="text-decoration:none; color:var(--text); display:block; padding:10px;">
-                    <i class="fas fa-envelope" style="color:var(--danger);"></i> راسلنا
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="footer-credits">جميع الحقوق محفوظة 2026 ©</div>
-</div>
-
-<div id="mainApp">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 style="margin:0; color:var(--primary);">بوابة التعلم والرقابة</h3>
-        <button onclick="location.reload()" style="color:var(--danger); border:none; background:none; font-weight:bold; cursor:pointer;"><i class="fas fa-power-off"></i> خروج</button>
     </div>
 
-    <div class="filter-section">
-        <label><b>اليوم:</b></label>
-        <select id="daySelect" onchange="updateUI()">
-            <option value="الأحد">الأحد</option>
-            <option value="الاثنين">الاثنين</option>
-            <option value="الثلاثاء">الثلاثاء</option>
-            <option value="الأربعاء">الأربعاء</option>
-            <option value="الخميس">الخميس</option>
-        </select>
-        <label><b>الصف:</b></label>
-        <select id="gradeSelect" onchange="updateUI()">
-            <option value="">إختر الصف...</option>
-            <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
-        </select>
-    </div>
-
-    <div id="lessonsGrid"></div>
-    <div id="summaryArea"></div>
-</div>
+    <div class="footer-tag">جميع الحقوق محفوظة 2026 © - مديرية تربية جنوب الخليل</div>
 
 <script>
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8Yk6Sq2bCZtlrH-mgqDZFYnRc54MYf8vAW6VIpW1WHIzKi5lkoBRTXjv5i8sXBkHMrbR_KHS-kMoV/pub?gid=0&single=true&output=csv';
     let rawData = [];
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // تحديث الساعة والتاريخ
-    function updateClock() {
+    // الساعة المستمرة
+    function runClock() {
         const now = new Date();
-        const clockEl = document.getElementById('clock');
-        const dateEl = document.getElementById('date');
-        if(clockEl) clockEl.innerText = now.toLocaleTimeString('ar-EG');
-        if(dateEl) dateEl.innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long', year:'numeric'});
+        document.getElementById('liveClock').innerText = now.toLocaleTimeString('ar-EG');
+        document.getElementById('liveDate').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long', year:'numeric'});
     }
-    setInterval(updateClock, 1000); updateClock();
+    setInterval(runClock, 1000); runClock();
 
     function getMins(t) { if(!t) return 0; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
-    // جلب البيانات من Google Sheets
-    async function fetchData() {
+    async function loadData() {
         try {
             const r = await fetch(sheetURL + '&t=' + Date.now());
             const t = await r.text();
@@ -202,82 +189,76 @@
         } catch (e) { console.error("Error fetching data"); }
     }
 
-    // التحقق من الدخول
+    // منطق الدخول الجديد
     function handleLogin() {
-        const code = document.getElementById('sysPass').value;
-        if (["1234", "5678", "123456789", "sami"].includes(code)) {
-            sessionStorage.setItem('role', code === "123456789" ? 'supervisor' : 'user');
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
+        const code = document.getElementById('passCode').value.trim();
+        
+        // الرموز المعتمدة: 1 (طالب)، 1111 (معلم)، 1234 (مشرف)
+        if (code === "1" || code === "1111" || code === "1234") {
+            // تخزين الصلاحية: 1234 هو المشرف فقط
+            sessionStorage.setItem('role', code === "1234" ? 'supervisor' : 'user');
             
-            const todayIndex = new Date().getDay();
-            if(todayIndex >= 0 && todayIndex <= 4) document.getElementById('daySelect').value = weekDaysArr[todayIndex];
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'block';
             
-            fetchData();
-            setInterval(updateUI, 30000); 
-        } else alert("الرمز غير صحيح");
+            // ضبط اليوم التلقائي
+            const today = new Date().getDay();
+            if(today >= 0 && today <= 4) document.getElementById('daySelect').value = weekDaysArr[today];
+            
+            loadData();
+            setInterval(updateUI, 30000); // تحديث الحالة كل 30 ثانية
+        } else {
+            alert("عذراً، الرمز الذي أدخلته غير صحيح!");
+        }
     }
 
-    function getLessonStatus(lessonDay, startTime, endTime) {
+    function checkStatus(day, s, e) {
         const now = new Date();
-        const currentDayStr = weekDaysArr[now.getDay()] || "الجمعة";
+        const currentDay = weekDaysArr[now.getDay()] || "الجمعة";
         const nowMins = now.getHours() * 60 + now.getMinutes();
-        const startMins = getMins(startTime);
-        const endMins = getMins(endTime);
-        const currentDayIndex = weekDaysArr.indexOf(currentDayStr);
-        const lessonDayIndex = weekDaysArr.indexOf(lessonDay);
+        const startMins = getMins(s);
+        const endMins = getMins(e);
 
-        if (currentDayStr === lessonDay && nowMins >= startMins && nowMins <= endMins) 
-            return { text: 'الحصة جارية الآن', class: 'state-available', canOpen: true, pill: '#10b981' };
-        if (lessonDayIndex > currentDayIndex || (lessonDayIndex === currentDayIndex && nowMins < startMins)) 
-            return { text: 'الحصة لاحقاً', class: 'state-locked', canOpen: false, pill: '#94a3b8' };
-        return { text: 'انتهت الحصة', class: 'state-ended', canOpen: false, pill: '#ef4444' };
+        if (currentDay === day && nowMins >= startMins && nowMins <= endMins) 
+            return { text: 'جارية الآن', class: 'state-active', canOpen: true, pill: '#10b981' };
+        
+        if (weekDaysArr.indexOf(day) > weekDaysArr.indexOf(currentDay) || (day === currentDay && nowMins < startMins))
+            return { text: 'قادمة لاحقاً', class: '', canOpen: false, pill: '#94a3b8' };
+            
+        return { text: 'منتهية', class: '', canOpen: false, pill: '#ef4444' };
     }
 
     function updateUI() {
         const role = sessionStorage.getItem('role');
-        const selectedDay = document.getElementById('daySelect').value;
+        const day = document.getElementById('daySelect').value;
         const grade = document.getElementById('gradeSelect').value;
         const grid = document.getElementById('lessonsGrid');
-        const summary = document.getElementById('summaryArea');
 
-        let list = rawData.filter(i => i.day === selectedDay);
-        let filteredList = grade ? list.filter(i => i.grade === grade) : (role === 'supervisor' ? list : []);
+        let list = rawData.filter(i => i.day === day);
+        // المشرف يرى كل الحصص، المستخدم يرى حسب الصف المختار
+        let filtered = grade ? list.filter(i => i.grade === grade) : (role === 'supervisor' ? list : []);
 
-        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<p align="center">يرجى اختيار الصف لعرض الجدول</p>' : '';
+        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<p style="text-align:center; color:#94a3b8; margin-top: 20px;">يرجى اختيار الصف لعرض الجدول الدراسي</p>' : '';
         
-        filteredList.forEach(l => {
-            const status = getLessonStatus(l.day, l.s, l.e);
+        filtered.forEach(l => {
+            const status = checkStatus(l.day, l.s, l.e);
             grid.innerHTML += `
                 <div class="lesson-card ${status.class}">
-                    <div style="display:flex; justify-content:space-between;">
-                        <h3 style="margin:0">${l.sub}</h3>
-                        <span class="status-pill" style="background:${status.pill}">${status.text}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h4 style="margin:0; color:var(--primary);">${l.sub}</h4>
+                        <span class="status-badge" style="background:${status.pill}">${status.text}</span>
                     </div>
-                    <p>المعلم: ${l.teacher} | الصف: ${l.grade}</p>
-                    <b>⏰ الوقت: ${l.s} - ${l.e}</b>
-                    ${status.canOpen ? `<button class="btn btn-primary" style="margin-top:10px;" onclick="window.open('${l.link}')">دخول الحصة</button>` : ''}
+                    <div style="font-size:0.9rem; margin:10px 0; color:#475569;">
+                        <span><i class="fas fa-user-circle"></i> المعلم: ${l.teacher}</span> | <span><i class="fas fa-users"></i> الصف: ${l.grade}</span><br>
+                        <strong><i class="fas fa-clock"></i> الوقت: ${l.s} - ${l.e}</strong>
+                    </div>
+                    ${status.canOpen ? `<button class="btn-main" style="padding:10px; font-size:0.9rem;" onclick="window.open('${l.link}')"><i class="fas fa-video"></i> دخول الحصة الآن</button>` : ''}
                 </div>`;
         });
-
-        if (filteredList.length > 0) {
-            summary.innerHTML = `
-            <div class="summary-area">
-                <h4>📊 ملخص حصص يوم ${selectedDay}:</h4>
-                <table class="data-table">
-                    <thead><tr><th>المادة</th><th>البداية</th><th>الحالة</th></tr></thead>
-                    <tbody>
-                        ${filteredList.map(l => {
-                            const status = getLessonStatus(l.day, l.s, l.e);
-                            return `<tr><td>${l.sub}</td><td>${l.s}</td><td><span class="status-pill" style="background:${status.pill}">${status.text}</span></td></tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>`;
-        } else summary.innerHTML = "";
     }
 
-    document.getElementById('sysPass').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+    // السماح بالدخول عند ضغط Enter
+    document.getElementById('passCode').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
 </html>
