@@ -17,6 +17,13 @@
             background-color: var(--bg); color: var(--text); 
             margin: 0; padding: 0; min-height: 100vh;
             display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        /* الطبقة المائية (Watermark) */
+        .watermark {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 350px; opacity: 0.07; z-index: -1; pointer-events: none;
         }
 
         .top-bar {
@@ -24,15 +31,12 @@
             align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
         }
         .top-bar div { font-weight: bold; color: var(--primary); font-size: 0.9rem; }
-        
-        /* وسم نوع الحساب في الهيدر */
         #userBadge { background: var(--primary); color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; margin-left: 10px; display: none; }
 
         .welcome-page { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; gap: 20px; padding-bottom: 100px; }
         .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 12px; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); width: 100%; max-width: 450px; }
         .auth-card, .inner-app-content { background: var(--card); padding: 30px 20px; border-radius: 32px; text-align: center; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
 
-        /* تعديل حاوية النص المنحني لضمان ظهور النقاط */
         .curved-title-container { width: 100%; height: 110px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
         .curved-svg { width: 100%; height: 100%; overflow: visible; }
         .curved-text { font-size: 34px; font-weight: 900; fill: var(--primary); font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -48,29 +52,28 @@
         .btn-locked { background: var(--gray); color: white; box-shadow: 0 5px 0 #64748b; cursor: not-allowed; }
         .btn-ended { background: var(--danger); color: white; box-shadow: 0 5px 0 var(--danger-dark); cursor: not-allowed; }
 
-        /* شريط الروابط السريعة الموحد في الأسفل */
         .quick-links-bar {
             background: white; padding: 12px; display: flex; justify-content: center; gap: 20px; 
             flex-wrap: wrap; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top: 1px solid #e2e8f0;
             position: fixed; bottom: 0; width: 100%; z-index: 2000;
         }
         .q-link { text-decoration: none; color: var(--text); font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
-        .q-link:hover { color: var(--primary); }
 
         #mainApp { display: none; padding: 20px; padding-bottom: 120px; flex: 1; }
-        .app-container { max-width: 900px; margin: 0 auto; width: 100%; }
-        .lesson-card { border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 2px solid #e2e8f0; text-align: right; width: 100%; box-sizing: border-box; background: white; transition: 0.3s; }
-        .highlight-card { border-color: var(--highlight) !important; background-color: #fff7ed !important; box-shadow: 0 0 15px rgba(249, 115, 22, 0.2); }
+        .app-container { max-width: 950px; margin: 0 auto; width: 100%; }
+        .lesson-card { border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 2px solid #e2e8f0; text-align: right; width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.9); transition: 0.3s; }
+        .highlight-card { border-color: var(--highlight) !important; background-color: #fff7ed !important; }
         
-        /* تنسيق جدول الإشراف */
         .supervisor-section { margin-top: 30px; background: white; border-radius: 20px; padding: 15px; overflow-x: auto; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .sup-table { width: 100%; border-collapse: collapse; min-width: 700px; font-size: 0.85rem; }
         .sup-table th { background: var(--primary); color: white; padding: 12px; text-align: center; border: 1px solid #ddd; }
         .sup-table td { padding: 10px; border: 1px solid #eee; text-align: center; }
-        .live-status { color: var(--success); font-weight: bold; }
+        .row-live { background: rgba(16, 185, 129, 0.1) !important; font-weight: bold; }
     </style>
 </head>
 <body>
+
+<img src="رابط_اللوجو_الخاص_بك_هنا" class="watermark" alt="Logo Watermark">
 
 <div class="top-bar">
     <div class="live-date">--/--/----</div>
@@ -111,14 +114,16 @@
                     <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">خروج <i class="fas fa-sign-out-alt"></i></button>
                 </div>
                 
-                <select id="daySelect" onchange="toggleTeacherSelect(); updateUI()"></select>
-                <select id="gradeSelect" onchange="toggleTeacherSelect(); updateUI()">
-                    <option value="">-- اختر الصف --</option>
-                    <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
-                </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+                    <select id="daySelect" onchange="updateUI()"></select>
+                    <select id="gradeSelect" onchange="updateUI()">
+                        <option value="">-- كل الصفوف --</option>
+                        <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
+                    </select>
+                </div>
 
-                <select id="teacherHighlight" onchange="updateUI()" style="display:none;" disabled>
-                    <option value="">--- تمييز حصص معلم معين (اختياري) ---</option>
+                <select id="teacherHighlight" onchange="updateUI()" style="display:none;">
+                    <option value="">--- كل المعلمين ---</option>
                 </select>
 
                 <div id="lessonsGrid" style="width: 100%; margin-top: 15px;"></div>
@@ -128,7 +133,7 @@
                     <table class="sup-table">
                         <thead>
                             <tr>
-                                <th>#</th> <th>الصف</th> <th>المادة</th> <th>المعلم</th> <th>الحالة</th> <th>رابط فاعل</th> <th>الوقت المتبقي</th>
+                                <th>#</th> <th>الصف</th> <th>المادة</th> <th>المعلم</th> <th>الحالة</th> <th>رابط فاعل</th> <th>الوقت</th>
                             </tr>
                         </thead>
                         <tbody id="supTableBody"></tbody>
@@ -159,13 +164,6 @@
 
     function timeToVal(t) { if(!t) return 0; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
-    function toggleTeacherSelect() {
-        const day = document.getElementById('daySelect').value;
-        const grade = document.getElementById('gradeSelect').value;
-        const tSelect = document.getElementById('teacherHighlight');
-        tSelect.disabled = !(day && grade);
-    }
-
     async function loadData() {
         try {
             const r = await fetch(sheetURL + '&t=' + Date.now());
@@ -176,7 +174,7 @@
             });
             const tSelect = document.getElementById('teacherHighlight');
             const teachers = [...new Set(rawData.map(item => item.teacher))].sort();
-            tSelect.innerHTML = '<option value="">--- تمييز حصص معلم معين (اختياري) ---</option>';
+            tSelect.innerHTML = '<option value="">--- كل المعلمين ---</option>';
             teachers.forEach(teacher => { tSelect.innerHTML += `<option value="${teacher}">${teacher}</option>`; });
             updateUI();
         } catch (e) { console.error("CSV Error"); }
@@ -201,16 +199,13 @@
 
     function showApp() {
         const role = localStorage.getItem('cluster_userRole');
-        const portalText = localStorage.getItem('cluster_portalText');
-        const badgeText = localStorage.getItem('cluster_badgeText');
-        
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('portalTitle').innerText = portalText;
-        document.getElementById('dynamicHeader').innerText = portalText;
+        document.getElementById('portalTitle').innerText = localStorage.getItem('cluster_portalText');
+        document.getElementById('dynamicHeader').innerText = localStorage.getItem('cluster_portalText');
         
         const badge = document.getElementById('userBadge');
-        badge.innerText = badgeText;
+        badge.innerText = localStorage.getItem('cluster_badgeText');
         badge.style.display = 'inline-block';
 
         document.getElementById('teacherHighlight').style.display = (role !== 'student') ? 'block' : 'none';
@@ -219,8 +214,10 @@
         const daySelect = document.getElementById('daySelect');
         daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
         weekDaysArr.forEach(d => { daySelect.innerHTML += `<option value="${d}">${d}</option>`; });
-        const today = new Date().getDay();
-        if(today >= 0 && today <= 4) daySelect.value = weekDaysArr[today];
+        const todayIdx = new Date().getDay();
+        if(todayIdx >= 0 && todayIdx <= 4) daySelect.value = weekDaysArr[todayIdx];
+        else daySelect.value = "الأحد";
+        
         loadData();
     }
 
@@ -234,30 +231,48 @@
         const grid = document.getElementById('lessonsGrid');
         const supTableBody = document.getElementById('supTableBody');
         const now = new Date();
-        const curDay = weekDaysArr[now.getDay()] || "الجمعة";
+        const curDayName = weekDaysArr[now.getDay()] || "الجمعة";
         const curMins = now.getHours() * 60 + now.getMinutes();
 
-        let filtered = rawData.filter(i => i.day === day && (grade ? i.grade === grade : (role === 'supervisor')));
-        grid.innerHTML = (!grade && role !== 'supervisor') ? '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف</p>' : '';
+        // فلترة البيانات بناءً على الرتبة والاختيارات
+        let filtered = rawData.filter(item => {
+            const isSameDay = item.day === day;
+            const matchesGrade = (grade === "" || item.grade === grade);
+            const matchesTeacher = (highlightName === "" || item.teacher === highlightName);
+            
+            if (role === 'supervisor') {
+                // للمشرف: نظهر الحصص الجارية والقادمة تلقائياً لليوم المختار
+                const endMins = timeToVal(item.e);
+                const isUpcomingOrLive = (curDayName === day) ? (curMins <= endMins) : true;
+                return isSameDay && matchesGrade && matchesTeacher && isUpcomingOrLive;
+            } else {
+                return isSameDay && matchesGrade && matchesTeacher;
+            }
+        });
+
+        // ترتيب الحصص زمنياً
+        filtered.sort((a, b) => timeToVal(a.s) - timeToVal(b.s));
+
+        grid.innerHTML = (grade === "" && role !== 'supervisor') ? '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف لعرض الجدول</p>' : '';
         if(role === 'supervisor') supTableBody.innerHTML = "";
 
         filtered.forEach((l, index) => {
             const start = timeToVal(l.s), end = timeToVal(l.e);
-            let btnHTML = "", status = "مجدولة", timeRem = "---", isLive = false;
-            let highlightClass = (highlightName && l.teacher === highlightName) ? 'highlight-card' : '';
+            let btnHTML = "", status = "مجدولة", isLive = false;
 
-            if (curDay === l.day && curMins >= start && curMins <= end) {
+            if (curDayName === l.day && curMins >= start && curMins <= end) {
                 isLive = true; status = "جارية الآن";
                 btnHTML = `<button class="btn btn-go" onclick="window.open('${l.link}')">دخول الآن</button>`;
-            } else if (curDay === l.day && curMins < start) {
-                status = "قادمة"; timeRem = (start - curMins) + " دقيقة";
+            } else if (curDayName === l.day && curMins < start) {
+                status = "قادمة";
                 btnHTML = `<button class="btn btn-locked" disabled>لم تبدأ</button>`;
             } else {
                 status = "منتهية"; btnHTML = `<button class="btn btn-ended" disabled>غير متاحة</button>`;
             }
 
+            // عرض الكروت
             grid.innerHTML += `
-                <div class="lesson-card ${highlightClass}">
+                <div class="lesson-card ${isLive ? 'highlight-card' : ''}">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <h4 style="margin:0; color:var(--primary);">${l.sub}</h4>
                         <span style="font-weight:bold;">${l.s} - ${l.e}</span>
@@ -266,16 +281,21 @@
                     ${btnHTML}
                 </div>`;
 
+            // عرض جدول الإشراف
             if(role === 'supervisor') {
                 supTableBody.innerHTML += `
-                    <tr style="${isLive ? 'background:#f0fdf4;' : ''}">
+                    <tr class="${isLive ? 'row-live' : ''}">
                         <td>${index + 1}</td> <td>${l.grade}</td> <td>${l.sub}</td> <td>${l.teacher}</td>
-                        <td class="${isLive ? 'live-status' : ''}">${status}</td>
+                        <td style="${isLive ? 'color:var(--success);' : ''}">${status}</td>
                         <td>${isLive ? `<a href="${l.link}" target="_blank" style="color:var(--success); font-weight:bold;">متابعة الحصة</a>` : '---'}</td>
-                        <td>${timeRem}</td>
+                        <td>${l.s} - ${l.e}</td>
                     </tr>`;
             }
         });
+        
+        if (role === 'supervisor' && filtered.length === 0) {
+            supTableBody.innerHTML = "<tr><td colspan='7' style='padding:20px; color:var(--gray);'>لا توجد حصص جارية أو قادمة حالياً</td></tr>";
+        }
     }
 </script>
 </body>
