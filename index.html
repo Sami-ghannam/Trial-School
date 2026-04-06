@@ -9,6 +9,7 @@
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444; --danger-dark: #b91c1c;
             --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8;
+            --highlight: #f97316; /* اللون البرتقالي للتمييز */
         }
 
         body { 
@@ -18,7 +19,6 @@
             display: flex; flex-direction: column;
         }
 
-        /* الشريط العلوي */
         .top-bar {
             background: white; padding: 10px 20px; display: flex; justify-content: space-between;
             align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
@@ -40,24 +40,20 @@
 
         .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; font-size: 1.1rem; transition: 0.1s; position: relative; z-index: 1; }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 0 #1d4ed8; }
-        .btn-primary:active { transform: translateY(4px); box-shadow: 0 2px 0 #1d4ed8; }
-        
         .btn-exit { background: var(--danger); color: white; box-shadow: 0 6px 0 var(--danger-dark); }
-        .btn-exit:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--danger-dark); }
 
-        /* ألوان أزرار الحصص التفاعلية */
         .btn-go { background: var(--success); color: white; box-shadow: 0 5px 0 #059669; }
         .btn-locked { background: var(--gray); color: white; box-shadow: 0 5px 0 #64748b; cursor: not-allowed; opacity: 0.8; }
         .btn-ended { background: var(--danger); color: white; box-shadow: 0 5px 0 var(--danger-dark); cursor: not-allowed; opacity: 0.8; }
         .btn-supervisor { background: var(--primary); color: white; box-shadow: 0 5px 0 #1d4ed8; }
 
-        .bottom-bar { background: white; padding: 12px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top: 1px solid #e2e8f0; }
-        .bottom-link { text-decoration: none; color: var(--text); font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-
         #mainApp { display: none; padding: 20px; flex: 1; }
         .app-container { max-width: 800px; margin: 0 auto; width: 100%; }
-        .inner-app-content { width: 100%; box-sizing: border-box; overflow-y: auto; max-height: 75vh; }
-        .lesson-card { border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 2px solid #e2e8f0; text-align: right; width: 100%; box-sizing: border-box; background: white; position: relative; z-index: 1; }
+        .lesson-card { border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 2px solid #e2e8f0; text-align: right; width: 100%; box-sizing: border-box; background: white; transition: 0.3s; }
+        
+        /* كلاس التمييز باللون البرتقالي */
+        .highlight-card { border-color: var(--highlight) !important; background-color: #fff7ed !important; box-shadow: 0 0 15px rgba(249, 115, 22, 0.2); }
+        .highlight-card h4 { color: var(--highlight) !important; }
     </style>
 </head>
 <body>
@@ -86,11 +82,6 @@
             </div>
         </div>
     </div>
-    <div class="bottom-bar">
-        <div class="bottom-link" onclick="alert('المشرف التربوي: سامي غنام')"><i class="fas fa-user-tie"></i> المطور</div>
-        <div class="bottom-link" onclick="alert('الرموز: طالب 1، معلم 1111، مشرف 1234')"><i class="fas fa-info-circle"></i> التعليمات</div>
-        <a href="https://wa.me/972568402800" class="bottom-link"><i class="fab fa-whatsapp"></i> راسلنا</a>
-    </div>
 </div>
 
 <div id="mainApp">
@@ -98,18 +89,18 @@
         <div class="welcome-frame">
             <div class="inner-app-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; width: 100%;">
-                    <h4 style="margin:0; color:var(--primary);">بوابة الحصص التفاعلية</h4>
-                    <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">خروج للشاشة الرئيسية <i class="fas fa-sign-out-alt"></i></button>
+                    <h4 id="portalTitle" style="margin:0; color:var(--primary);">بوابة الحصص التفاعلية</h4>
+                    <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">خروج <i class="fas fa-sign-out-alt"></i></button>
                 </div>
                 
                 <select id="daySelect" onchange="toggleTeacherSelect(); updateUI()"></select>
                 <select id="gradeSelect" onchange="toggleTeacherSelect(); updateUI()">
-                    <option value="">-- اختر الصف لعرض حصصه --</option>
+                    <option value="">-- اختر الصف --</option>
                     <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">${i}</option>`)</script>
                 </select>
 
-                <select id="teacherFilter" onchange="updateUI()" style="display:none;" disabled>
-                    <option value="">--- اختر اسم المعلم (اختياري) ---</option>
+                <select id="teacherHighlight" onchange="updateUI()" style="display:none;" disabled>
+                    <option value="">--- تمييز حصص معلم معين (اختياري) ---</option>
                 </select>
 
                 <div id="lessonsGrid" style="width: 100%; margin-top: 15px;"></div>
@@ -123,10 +114,6 @@
     let rawData = [];
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // منع زر الرجوع في المتصفح
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = function() { window.history.go(1); };
-
     function updateTime() {
         const now = new Date();
         document.querySelectorAll('.live-clock').forEach(el => el.innerText = now.toLocaleTimeString('ar-EG'));
@@ -136,14 +123,11 @@
 
     function timeToVal(t) { if(!t) return 0; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
-    // دالة للتحكم في تفعيل قائمة المعلمين
     function toggleTeacherSelect() {
         const day = document.getElementById('daySelect').value;
         const grade = document.getElementById('gradeSelect').value;
-        const tFilter = document.getElementById('teacherFilter');
-        
-        // تفعل فقط إذا تم اختيار اليوم والصف معاً
-        tFilter.disabled = !(day && grade);
+        const tSelect = document.getElementById('teacherHighlight');
+        tSelect.disabled = !(day && grade);
     }
 
     async function loadData() {
@@ -155,12 +139,11 @@
                 return { day: c[0].trim(), grade: c[1].trim(), sub: c[2].trim(), teacher: c[3].trim(), s: c[4].trim(), e: c[5].trim(), link: c[6].trim() };
             });
 
-            // تعبئة قائمة المعلمين بأسماء فريدة
-            const tFilter = document.getElementById('teacherFilter');
+            const tSelect = document.getElementById('teacherHighlight');
             const teachers = [...new Set(rawData.map(item => item.teacher))].sort();
-            tFilter.innerHTML = '<option value="">--- اختر اسم المعلم (اختياري) ---</option>';
+            tSelect.innerHTML = '<option value="">--- تمييز حصص معلم معين (اختياري) ---</option>';
             teachers.forEach(teacher => {
-                tFilter.innerHTML += `<option value="${teacher}">${teacher}</option>`;
+                tSelect.innerHTML += `<option value="${teacher}">${teacher}</option>`;
             });
 
             updateUI();
@@ -171,31 +154,24 @@
         const pass = document.getElementById('sysPass').value.trim();
         if (["1", "1111", "1234"].includes(pass)) {
             localStorage.setItem('cluster_isLoggedIn', 'true');
-            // تحديد الصلاحية: مشرف، معلم، أو طالب
             let role = 'user';
             if(pass === "1234") role = 'supervisor';
             if(pass === "1111") role = 'teacher';
-            
             localStorage.setItem('cluster_userRole', role);
             showApp();
         } else alert("الرمز غير صحيح!");
     }
 
     function handleLogout() {
-        if(confirm("هل تريد تسجيل الخروج والعودة للشاشة الترحيبية؟")) {
-            localStorage.removeItem('cluster_isLoggedIn');
-            location.reload();
-        }
+        if(confirm("خروج؟")) { localStorage.removeItem('cluster_isLoggedIn'); location.reload(); }
     }
 
     function showApp() {
         const role = localStorage.getItem('cluster_userRole');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('teacherHighlight').style.display = (role === 'teacher' || role === 'supervisor') ? 'block' : 'none';
         
-        // إظهار قائمة فلترة المعلم فقط إذا كان الحساب "1111" أو "1234"
-        document.getElementById('teacherFilter').style.display = (role === 'teacher' || role === 'supervisor') ? 'block' : 'none';
-
         const daySelect = document.getElementById('daySelect');
         daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
         weekDaysArr.forEach(d => { daySelect.innerHTML += `<option value="${d}">${d}</option>`; });
@@ -213,32 +189,22 @@
         const role = localStorage.getItem('cluster_userRole');
         const day = document.getElementById('daySelect').value;
         const grade = document.getElementById('gradeSelect').value;
-        const teacherFilter = document.getElementById('teacherFilter').value;
+        const highlightName = document.getElementById('teacherHighlight').value;
         const grid = document.getElementById('lessonsGrid');
-        
         const now = new Date();
         const curDay = weekDaysArr[now.getDay()] || "الجمعة";
         const curMins = now.getHours() * 60 + now.getMinutes();
 
-        // منطق الفلترة المحدث
-        let filtered = rawData.filter(i => {
-            let match = i.day === day;
-            if (grade) match = match && i.grade === grade;
-            if (teacherFilter) match = match && i.teacher === teacherFilter;
-            return match;
-        });
+        // الفلترة تعتمد على اليوم والصف فقط (تراجعنا عن فلترة المعلم)
+        let filtered = rawData.filter(i => i.day === day && (grade ? i.grade === grade : (role === 'supervisor')));
 
-        // إذا لم يكن مشرفاً ولم يختر الصف، نظهر رسالة تنبيه
-        if (role !== 'supervisor' && !grade) {
-            grid.innerHTML = '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف</p>';
-            return;
-        }
-        
-        grid.innerHTML = "";
+        grid.innerHTML = (!grade && role !== 'supervisor') ? '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف</p>' : '';
         
         filtered.forEach(l => {
             const start = timeToVal(l.s), end = timeToVal(l.e);
             let btnHTML = ""; 
+            // التحقق من تمييز المعلم
+            let highlightClass = (highlightName && l.teacher === highlightName) ? 'highlight-card' : '';
 
             if (role === 'supervisor') {
                 btnHTML = `<button class="btn btn-supervisor" onclick="window.open('${l.link}')"><i class="fas fa-eye"></i> متابعة الحصة</button>`;
@@ -246,14 +212,12 @@
                 btnHTML = `<button class="btn btn-go" onclick="window.open('${l.link}')"><i class="fas fa-video"></i> دخول الحصة الآن</button>`;
             } else if (curDay === l.day && curMins < start) {
                 btnHTML = `<button class="btn btn-locked" disabled><i class="fas fa-lock"></i> لم تبدأ بعد</button>`;
-            } else if (curDay === l.day && curMins > end) {
-                btnHTML = `<button class="btn btn-ended" disabled><i class="fas fa-history"></i> انتهت الحصة</button>`;
             } else {
-                btnHTML = `<button class="btn btn-locked" disabled>موعدها يوم ${l.day}</button>`;
+                btnHTML = `<button class="btn btn-ended" disabled>غير متاحة الآن</button>`;
             }
 
             grid.innerHTML += `
-                <div class="lesson-card">
+                <div class="lesson-card ${highlightClass}">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <h4 style="margin:0; color:var(--primary);">${l.sub}</h4>
                         <span style="font-size:0.85rem; font-weight:bold;">${l.s} - ${l.e}</span>
@@ -263,7 +227,6 @@
                 </div>`;
         });
     }
-    setInterval(updateUI, 30000);
 </script>
 </body>
 </html>
