@@ -61,7 +61,6 @@
             margin-bottom: 12px; outline: none; text-align: center; font-size: 1rem; position: relative; z-index: 1; box-sizing: border-box;
         }
 
-        /* الأزرار ثلاثية الأبعاد */
         .btn { 
             width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
@@ -110,7 +109,7 @@
                 <div style="width: 100%; max-width: 320px;">
                     <input type="text" id="sysPass" placeholder="أدخل رمز الدخول">
                     <button class="btn btn-primary" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> دخول للمنصة</button>
-                    <button class="btn btn-exit" onclick="if(confirm('هل تريد الخروج؟')) window.close();"><i class="fas fa-power-off"></i> خروج نهائي</button>
+                    <button class="btn btn-exit" onclick="if(confirm('هل تريد إغلاق المتصفح؟')) window.close();"><i class="fas fa-power-off"></i> خروج نهائي</button>
                 </div>
             </div>
         </div>
@@ -130,7 +129,7 @@
             <div class="inner-app-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; width: 100%;">
                     <h4 style="margin:0; color:var(--primary);">بوابة التعلم والرقابة</h4>
-                    <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">خروج <i class="fas fa-sign-out-alt"></i></button>
+                    <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">تسجيل خروج <i class="fas fa-sign-out-alt"></i></button>
                 </div>
                 <div style="width: 100%;">
                     <select id="daySelect" onchange="updateUI()"></select>
@@ -150,7 +149,7 @@
     let rawData = [];
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // منع زر الرجوع في المتصفح للحفاظ على الجلسة
+    // منع زر الرجوع
     window.history.pushState(null, null, window.location.href);
     window.onpopstate = function() { window.history.go(1); };
 
@@ -178,7 +177,85 @@
     function handleLogin() {
         const pass = document.getElementById('sysPass').value.trim();
         if (["1", "1111", "1234"].includes(pass)) {
-            const role = pass === "1234" ? 'supervisor' : 'user';
-            // حفظ الجلسة بشكل دائم في المتصفح
             localStorage.setItem('cluster_isLoggedIn', 'true');
-            localStorage.setItem('cluster_userRole', role);
+            localStorage.setItem('cluster_userRole', pass === "1234" ? 'supervisor' : 'user');
+            showApp();
+        } else alert("الرمز غير صحيح!");
+    }
+
+    // وظيفة الخروج: تمسح البيانات وتعيد عرض شاشة الدخول
+    function handleLogout() {
+        if(confirm("سيتم تسجيل خروجك والعودة للشاشة الترحيبية، هل أنت متأكد؟")) {
+            localStorage.removeItem('cluster_isLoggedIn');
+            localStorage.removeItem('cluster_userRole');
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('sysPass').value = ""; // تنظيف حقل السر
+        }
+    }
+
+    function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        const daySelect = document.getElementById('daySelect');
+        daySelect.innerHTML = "";
+        weekDaysArr.forEach(d => { daySelect.innerHTML += `<option value="${d}">${d}</option>`; });
+        const today = new Date().getDay();
+        if(today >= 0 && today <= 4) daySelect.value = weekDaysArr[today];
+        loadData();
+        setInterval(updateUI, 20000);
+    }
+
+    window.onload = function() {
+        if (localStorage.getItem('cluster_isLoggedIn') === 'true') {
+            showApp();
+        } else {
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+    };
+
+    function updateUI() {
+        const role = localStorage.getItem('cluster_userRole');
+        const day = document.getElementById('daySelect').value;
+        const grade = document.getElementById('gradeSelect').value;
+        const grid = document.getElementById('lessonsGrid');
+        const now = new Date();
+        const curDay = weekDaysArr[now.getDay()] || "الجمعة";
+        const curMins = now.getHours() * 60 + now.getMinutes();
+
+        let filtered = grade ? rawData.filter(i => i.day === day && i.grade === grade) : (role === 'supervisor' ? rawData.filter(i => i.day === day) : []);
+        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف لعرض الحصص</p>' : '';
+        
+        filtered.forEach(l => {
+            const start = timeToVal(l.s), end = timeToVal(l.e);
+            let action = ""; let cardClass = "";
+
+            if (role === 'supervisor') {
+                action = `<button class="btn btn-go" onclick="window.open('${l.link}')"><i class="fas fa-eye"></i> متابعة (مشرف)</button>`;
+            } else if (curDay === l.day && curMins >= start && curMins <= end) {
+                action = `<button class="btn btn-go" onclick="window.open('${l.link}')"><i class="fas fa-video"></i> دخول الحصة الآن</button>`;
+                cardClass = "active-lesson";
+            } else if (curDay === l.day && curMins < start) {
+                action = `<div style="color:var(--gray); margin-top:10px;"><i class="fas fa-lock"></i> الحصة لم تبدأ</div>`;
+            } else if (curDay === l.day && curMins > end) {
+                action = `<div style="color:var(--danger); margin-top:10px;"><i class="fas fa-history"></i> انتهت الحصة</div>`;
+            } else {
+                action = `<div style="color:var(--gray); margin-top:10px;">يوم ${l.day}</div>`;
+            }
+
+            grid.innerHTML += `
+                <div class="lesson-card ${cardClass}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h4 style="margin:0; color:var(--primary); font-size:1.05rem;">${l.sub}</h4>
+                        <span style="font-size:0.8rem; font-weight:bold;">${l.s} - ${l.e}</span>
+                    </div>
+                    <p style="margin:5px 0; font-size:0.85rem;">المعلم: ${l.teacher} | الصف: ${l.grade}</p>
+                    ${action}
+                </div>`;
+        });
+    }
+
+    document.getElementById('sysPass').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+</script>
+</body>
+</html>
