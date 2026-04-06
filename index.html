@@ -9,6 +9,7 @@
         :root {
             --primary: #2563eb; --success: #10b981; --danger: #ef4444;
             --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8;
+            --primary-dark: #1d4ed8;
         }
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
@@ -32,12 +33,14 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             text-align: center;
             border: 1px solid #e2e8f0;
-            display: none; /* تختفي في الشاشات الصغيرة */
+            display: none;
+            transition: transform 0.3s ease;
         }
+        .side-widget:hover { transform: translateY(-5px); }
 
         @media (min-width: 1100px) { .side-widget { display: block; } }
 
-        /* إطار الشاشة الترحيبية المركزي */
+        /* إطار الشاشة الترحيبية المركزي 3D */
         .welcome-frame {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             padding: 12px;
@@ -69,29 +72,85 @@
 
         .content-wrapper { position: relative; z-index: 1; }
 
-        .app-name { font-size: 2.6rem; color: var(--primary); margin: 0; font-weight: 900; }
+        /* نصوص ثلاثية الأبعاد */
+        .app-name { 
+            font-size: 2.8rem; 
+            color: var(--primary); 
+            margin: 0; 
+            font-weight: 900; 
+            text-shadow: 0 1px 0 #cbd5e1, 0 2px 0 #cbd5e1, 0 3px 0 #cbd5e1, 0 8px 10px rgba(0,0,0,0.1);
+        }
+
         .designer-name { 
-            font-size: 0.95rem; color: #64748b; margin-bottom: 35px; 
-            background: #f8fafc; display: inline-block; padding: 5px 15px; border-radius: 50px;
+            font-size: 0.95rem; color: #475569; margin-top: 15px; margin-bottom: 35px; 
+            background: #f8fafc; display: inline-block; padding: 8px 20px; border-radius: 50px;
+            font-weight: 600; border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
+        /* حقل إدخال كلمة المرور محفور */
         input[type="password"] { 
-            width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #cbd5e1; 
-            margin: 10px 0; outline: none; text-align: center; font-size: 1.2rem;
+            width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #cbd5e1; 
+            margin: 10px 0; outline: none; text-align: center; font-size: 1.3rem;
+            background: #f8fafc; box-shadow: inset 0 3px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        input[type="password"]:focus { 
+            border-color: var(--primary); 
+            background: white; 
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-        .btn-available { background: var(--primary); color: white; }
-        .btn-available:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37,99,235,0.3); }
-        .btn-exit { background: transparent; color: #94a3b8; border: 1px solid #e2e8f0; }
+        /* تصميم الأزرار المطور ثلاثي الأبعاد */
+        .btn { 
+            width: 100%; padding: 16px; border-radius: 18px; border: none; 
+            font-weight: bold; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; gap: 10px; 
+            margin-top: 15px; font-size: 1.1rem;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        /* زر الدخول - تفاعل أزرق */
+        .btn-available { 
+            background: linear-gradient(to bottom, #3b82f6, #2563eb); 
+            color: white; 
+            box-shadow: 0 6px 0 #1d4ed8, 0 12px 20px rgba(37, 99, 235, 0.3);
+        }
+        .btn-available:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 9px 0 #1d4ed8, 0 15px 25px rgba(37, 99, 235, 0.4);
+        }
+        .btn-available:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 2px 0 #1d4ed8, 0 5px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        /* زر الخروج - تفاعل أحمر عند المرور */
+        .btn-exit { 
+            background: linear-gradient(to bottom, #f8fafc, #f1f5f9); 
+            color: #64748b; 
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 0 #cbd5e1, 0 10px 15px rgba(0,0,0,0.05);
+        }
+        .btn-exit:hover { 
+            background: linear-gradient(to bottom, #fee2e2, #fecaca);
+            color: #dc2626;
+            border-color: #fca5a5;
+            box-shadow: 0 8px 0 #f87171, 0 12px 20px rgba(220, 38, 38, 0.1);
+        }
+        .btn-exit:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #f87171, 0 4px 8px rgba(0,0,0,0.1);
+        }
 
         /* تنسيق الساعة والروابط */
         .widget-title { font-size: 0.8rem; color: var(--gray); margin-bottom: 10px; font-weight: bold; display: block;}
-        .digital-clock { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
-        .quick-link { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; padding: 10px; font-size: 0.9rem; border-radius: 10px; transition: 0.2s; }
-        .quick-link:hover { background: #f1f5f9; color: var(--primary); }
+        .digital-clock { font-size: 1.5rem; font-weight: bold; color: var(--primary); text-shadow: 1px 1px 0px white; }
+        .quick-link { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; padding: 12px; font-size: 0.95rem; border-radius: 12px; transition: 0.3s; }
+        .quick-link:hover { background: #eff6ff; color: var(--primary); transform: translateX(-5px); }
 
-        /* تنسيقات التطبيق الداخلي (مخفية للآن) */
         #mainApp { max-width: 900px; margin: 20px auto; padding: 20px; }
     </style>
 </head>
@@ -104,7 +163,7 @@
             <div id="clock" class="digital-clock">00:00:00</div>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
             <span class="widget-title"><i class="far fa-calendar-alt"></i> التاريخ</span>
-            <div id="date" style="font-size: 0.9rem; font-weight: 600;">--/--/----</div>
+            <div id="date" style="font-size: 0.95rem; font-weight: 600; color: #475569;">--/--/----</div>
         </div>
 
         <div class="welcome-frame">
@@ -113,15 +172,15 @@
                     <h1 class="app-name">منصة العنقود الرقمية</h1>
                     <div class="designer-name">تصميم وبرمجة: م. سامي غنام</div>
 
-                    <div style="max-width: 300px; margin: 0 auto;">
-                        <label style="font-weight: bold; font-size: 0.9rem; color: #475569;">كلمة المرور</label>
+                    <div style="max-width: 320px; margin: 0 auto;">
+                        <label style="font-weight: bold; font-size: 1rem; color: #1e293b; display: block; margin-bottom: 5px;">كلمة المرور</label>
                         <input type="password" id="sysPass" placeholder="••••••••">
                         
                         <button class="btn btn-available" onclick="handleLogin()">
                             <i class="fas fa-sign-in-alt"></i> دخول للمنصة
                         </button>
                         
-                        <button class="btn btn-exit" onclick="alert('شكراً لك')">
+                        <button class="btn btn-exit" onclick="alert('شكراً لزيارتك!')">
                             <i class="fas fa-power-off"></i> خروج
                         </button>
                     </div>
@@ -131,17 +190,23 @@
 
         <div class="side-widget">
             <span class="widget-title"><i class="fas fa-link"></i> وصول سريع</span>
-            <a href="#" class="quick-link"><i class="fab fa-whatsapp"></i> الدعم الفني</a>
-            <a href="#" class="quick-link"><i class="fas fa-book"></i> تعليمات</a>
-            <a href="#" class="quick-link" onclick="alert('المصمم: م. سامي غنام\nالإصدار: 2.3')"><i class="fas fa-code"></i> المطور</a>
+            <a href="#" class="quick-link"><i class="fab fa-whatsapp" style="color:#25D366;"></i> الدعم الفني</a>
+            <a href="#" class="quick-link"><i class="fas fa-book" style="color:#3b82f6;"></i> تعليمات</a>
+            <a href="#" class="quick-link" onclick="alert('المصمم: م. سامي غنام\nالإصدار: 2.4\nتحديث الأنماط ثلاثية الأبعاد')">
+                <i class="fas fa-code" style="color:#64748b;"></i> المطور
+            </a>
         </div>
     </div>
 </div>
 
 <div id="mainApp" style="display:none;">
-    <div style="background: white; padding: 20px; border-radius: 20px; text-align: center;">
+    <div style="background: white; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05);">
+        <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success); margin-bottom: 20px;"></i>
         <h2>مرحباً بك في لوحة التحكم</h2>
-        <button onclick="location.reload()" class="btn btn-exit" style="width: auto; display: inline-flex;">تسجيل خروج</button>
+        <p style="color: var(--gray);">تم تسجيل الدخول بنجاح إلى النظام</p>
+        <button onclick="location.reload()" class="btn btn-exit" style="width: auto; display: inline-flex; padding: 12px 40px; margin-top: 20px;">
+            تسجيل خروج آمن
+        </button>
     </div>
 </div>
 
@@ -163,11 +228,18 @@
     function handleLogin() {
         const code = document.getElementById('sysPass').value;
         if (["1", "1111", "1234"].includes(code)) {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            // هنا يمكنك استدعاء باقي وظائف الجلب والبيانات
+            // تأثير خفيف عند الدخول
+            const screen = document.getElementById('loginScreen');
+            screen.style.transition = "opacity 0.5s ease";
+            screen.style.opacity = "0";
+            setTimeout(() => {
+                screen.style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+            }, 500);
         } else {
-            alert("خطأ في كلمة المرور");
+            alert("⚠️ كلمة المرور غير صحيحة، حاول مرة أخرى.");
+            document.getElementById('sysPass').value = "";
+            document.getElementById('sysPass').focus();
         }
     }
 </script>
