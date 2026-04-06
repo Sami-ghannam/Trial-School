@@ -17,6 +17,7 @@
             margin: 0; padding: 0; overflow-x: hidden; min-height: 100vh;
         }
         
+        /* --- الشاشة الترحيبية --- */
         .welcome-page {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             min-height: 100vh; gap: 20px; padding: 15px;
@@ -33,7 +34,7 @@
         .welcome-frame {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             padding: 10px; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            width: 100%; max-width: 500px;
+            width: 100%; max-width: 500px; margin: 0 auto;
         }
 
         .auth-card, .inner-app-content { 
@@ -42,14 +43,14 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* تحسين العلامة المائية - أغمق قليلاً وعلى كامل المساحة */
+        /* العلامة المائية - أغمق وأوضح على كامل الخلفية */
         .auth-card::before, .inner-app-content::before {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('logo.png'); background-size: 70%; background-repeat: no-repeat;
+            background-image: url('logo.png'); background-size: 75%; background-repeat: no-repeat;
             background-position: center; opacity: 0.08; z-index: 0; pointer-events: none;
         }
 
-        .curved-title-container { width: 100%; height: 100px; margin-bottom: 5px; display: flex; justify-content: center; }
+        .curved-title-container { width: 100%; height: 100px; display: flex; justify-content: center; }
         .curved-svg { width: 100%; height: 100%; }
         .curved-text { font-size: 34px; font-weight: 900; fill: var(--primary); }
 
@@ -60,7 +61,7 @@
             margin-bottom: 12px; outline: none; text-align: center; font-size: 1rem; position: relative; z-index: 1; box-sizing: border-box;
         }
 
-        /* تنسيق الأزرار ثلاثية الأبعاد */
+        /* الأزرار ثلاثية الأبعاد */
         .btn { 
             width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
@@ -73,13 +74,16 @@
         .btn-exit { background: var(--danger); color: white; box-shadow: 0 6px 0 var(--danger-dark); }
         .btn-exit:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--danger-dark); }
 
+        /* زر الدخول للحصة (أخضر ثلاثي الأبعاد) */
+        .btn-go { background: var(--success); color: white; box-shadow: 0 5px 0 #059669; padding: 10px; font-size: 1rem; margin-top: 10px; width: 100%; }
+        .btn-go:active { transform: translateY(3px); box-shadow: 0 2px 0 #059669; }
+
         /* صفحة الحصص */
         #mainApp { display: none; padding: 15px; width: 100%; box-sizing: border-box; }
-        .inner-app-content { background: white; padding: 25px; border-radius: 35px; min-height: 450px; }
+        .inner-app-content { background: white; padding: 25px; border-radius: 35px; min-height: 450px; width: 100%; max-width: 800px; }
 
-        .lesson-card { border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 2px solid transparent; position: relative; z-index: 1; text-align: right; width: 100%; box-sizing: border-box;}
-        .state-available { background: rgba(240, 253, 244, 0.9); border-color: var(--success); }
-        .state-locked { background: rgba(241, 245, 249, 0.9); border-color: #cbd5e1; }
+        .lesson-card { border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 2px solid #e2e8f0; position: relative; z-index: 1; text-align: right; width: 100%; box-sizing: border-box; transition: 0.3s; }
+        .active-lesson { border-color: var(--success); background: rgba(240, 253, 244, 0.7); }
         
         .quick-link { text-decoration: none; color: var(--text); padding: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; cursor: pointer; }
     </style>
@@ -106,14 +110,8 @@
                 
                 <div style="width: 100%; max-width: 320px;">
                     <input type="text" id="sysPass" placeholder="أدخل رمز الدخول">
-                    
-                    <button class="btn btn-primary" onclick="handleLogin()">
-                        <i class="fas fa-sign-in-alt"></i> دخول للمنصة
-                    </button>
-
-                    <button class="btn btn-exit" onclick="if(confirm('هل تريد الخروج من المنصة؟')) window.close();">
-                        <i class="fas fa-power-off"></i> خروج نهائي
-                    </button>
+                    <button class="btn btn-primary" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> دخول للمنصة</button>
+                    <button class="btn btn-exit" onclick="if(confirm('هل تريد الخروج نهائياً؟')) window.close();"><i class="fas fa-power-off"></i> خروج نهائي</button>
                 </div>
             </div>
         </div>
@@ -124,31 +122,27 @@
                 <div class="quick-link" onclick="alert('الرموز المعتمدة:\n- للطلبة: 1\n- للمعلم: 1111\n- للمشرف: 1234')">
                     <i class="fas fa-info-circle" style="color:var(--primary);"></i> التعليمات
                 </div>
-                <a href="https://wa.me/972568402800" class="quick-link">
-                    <i class="fab fa-whatsapp" style="color:#25D366;"></i> المطور
-                </a>
-                <a href="mailto:sami.ghannam@shebron.edu.ps" class="quick-link">
-                    <i class="fas fa-envelope" style="color:var(--danger);"></i> الدعم الفني
-                </a>
+                <a href="https://wa.me/972568402800" class="quick-link"><i class="fab fa-whatsapp" style="color:#25D366;"></i> المطور</a>
+                <a href="mailto:sami.ghannam@shebron.edu.ps" class="quick-link"><i class="fas fa-envelope" style="color:var(--danger);"></i> الدعم الفني</a>
             </div>
         </div>
     </div>
 </div>
 
 <div id="mainApp">
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0;">
         <div class="live-clock" style="background:white; padding:8px 15px; border-radius:50px; font-size:0.9rem; font-weight:bold; color:var(--primary); box-shadow:0 4px 10px rgba(0,0,0,0.05);"></div>
         <div class="live-date" style="background:white; padding:8px 15px; border-radius:50px; font-size:0.9rem; font-weight:bold; color:#64748b; box-shadow:0 4px 10px rgba(0,0,0,0.05);"></div>
     </div>
 
-    <div class="welcome-frame" style="max-width: 800px; margin: 0 auto;">
+    <div class="welcome-frame" style="max-width: 800px;">
         <div class="inner-app-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; position:relative; z-index:1; width: 100%;">
-                <h4 style="margin:0; color:var(--primary);">بوابة الرقابة والتعلم</h4>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; width: 100%;">
+                <h4 style="margin:0; color:var(--primary);">بوابة الرقابة والتعلم التفاعلية</h4>
                 <button onclick="location.reload()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">خروج <i class="fas fa-sign-out-alt"></i></button>
             </div>
 
-            <div style="position:relative; z-index:1; width: 100%;">
+            <div style="width: 100%; position: relative; z-index: 1;">
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="gradeSelect" onchange="updateUI()">
                     <option value="">إختر الصف...</option>
@@ -156,8 +150,7 @@
                 </select>
             </div>
 
-            <div id="lessonsGrid" style="width: 100%; position: relative; z-index: 1;"></div>
-            <div id="summaryArea" style="width: 100%; position: relative; z-index: 1;"></div>
+            <div id="lessonsGrid" style="width: 100%; margin-top: 15px; position: relative; z-index: 1;"></div>
         </div>
     </div>
 </div>
@@ -167,7 +160,6 @@
     let rawData = [];
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // تعبئة قائمة الأيام
     const daySelect = document.getElementById('daySelect');
     weekDaysArr.forEach(d => { daySelect.innerHTML += `<option value="${d}">${d}</option>`; });
 
@@ -177,6 +169,8 @@
         document.querySelectorAll('.live-date').forEach(el => el.innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long', year:'numeric'}));
     }
     setInterval(updateTime, 1000); updateTime();
+
+    function timeToVal(t) { if(!t) return 0; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
     async function loadData() {
         try {
@@ -199,34 +193,55 @@
             const today = new Date().getDay();
             if(today >= 0 && today <= 4) document.getElementById('daySelect').value = weekDaysArr[today];
             loadData();
+            setInterval(updateUI, 30000); // تحديث المنطق الزمني كل 30 ثانية
         } else alert("الرمز غير صحيح!");
     }
 
     function updateUI() {
         const role = sessionStorage.getItem('role');
-        const day = document.getElementById('daySelect').value;
-        const grade = document.getElementById('gradeSelect').value;
+        const selectedDay = document.getElementById('daySelect').value;
+        const selectedGrade = document.getElementById('gradeSelect').value;
         const grid = document.getElementById('lessonsGrid');
 
-        let list = rawData.filter(i => i.day === day);
-        let filtered = grade ? list.filter(i => i.grade === grade) : (role === 'supervisor' ? list : []);
+        const now = new Date();
+        const currentDay = weekDaysArr[now.getDay()] || "الجمعة";
+        const currentMins = now.getHours() * 60 + now.getMinutes();
 
-        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف لعرض الحصص</p>' : '';
+        let filtered = selectedGrade ? rawData.filter(i => i.day === selectedDay && i.grade === selectedGrade) : (role === 'supervisor' ? rawData.filter(i => i.day === selectedDay) : []);
+
+        grid.innerHTML = (role !== 'supervisor' && !selectedGrade) ? '<p style="color:var(--gray); margin-top:20px;">يرجى اختيار الصف لعرض الحصص</p>' : '';
         
         filtered.forEach(l => {
+            const start = timeToVal(l.s);
+            const end = timeToVal(l.e);
+            let actionHTML = "";
+            let cardClass = "";
+
+            if (role === 'supervisor') {
+                actionHTML = `<button class="btn btn-go" onclick="window.open('${l.link}')"><i class="fas fa-eye"></i> دخول للمتابعة (مشرف)</button>`;
+            } else if (currentDay === l.day && currentMins >= start && currentMins <= end) {
+                actionHTML = `<button class="btn btn-go" onclick="window.open('${l.link}')"><i class="fas fa-video"></i> دخول الحصة الآن</button>`;
+                cardClass = "active-lesson";
+            } else if (currentDay === l.day && currentMins < start) {
+                actionHTML = `<div style="color:var(--gray); margin-top:10px; font-weight:bold;"><i class="fas fa-lock"></i> الحصة لم تبدأ بعد</div>`;
+            } else if (currentDay === l.day && currentMins > end) {
+                actionHTML = `<div style="color:var(--danger); margin-top:10px; font-weight:bold;"><i class="fas fa-history"></i> انتهت هذه الحصة</div>`;
+            } else {
+                actionHTML = `<div style="color:var(--gray); margin-top:10px;">موعدها يوم ${l.day}</div>`;
+            }
+
             grid.innerHTML += `
-                <div class="lesson-card state-available">
+                <div class="lesson-card ${cardClass}">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h4 style="margin:0">${l.sub}</h4>
-                        <span style="font-size:0.75rem; background:var(--success); color:white; padding:3px 8px; border-radius:5px;">جدول ${l.day}</span>
+                        <h4 style="margin:0; font-size:1.1rem; color:var(--primary);">${l.sub}</h4>
+                        <span style="font-size:0.85rem; font-weight:bold; color:var(--text);">${l.s} - ${l.e}</span>
                     </div>
-                    <p style="margin:8px 0; font-size:0.85rem;"><b>المعلم:</b> ${l.teacher} | <b>الصف:</b> ${l.grade}</p>
-                    <p style="margin:0; font-size:0.85rem;"><b>⏰ الوقت:</b> ${l.s} - ${l.e}</p>
-                    <button class="btn btn-primary" style="margin-top:10px; padding:10px; font-size:0.9rem;" onclick="window.open('${l.link}')">دخول الحصة</button>
+                    <p style="margin:8px 0; font-size:0.9rem;"><b>المعلم:</b> ${l.teacher} | <b>الصف:</b> ${l.grade}</p>
+                    ${actionHTML}
                 </div>`;
         });
     }
-    
+
     document.getElementById('sysPass').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
