@@ -11,17 +11,40 @@
             --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; overflow-x: hidden; }
-        .container { max-width: 850px; margin: 0 auto; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
         
-        /* إطار خارجي فخم للصفحة الترحيبية */
+        /* نظام توزيع الشاشة الترحيبية */
+        .welcome-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        /* البطاقات الجانبية */
+        .side-widget {
+            width: 200px;
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            display: none; /* تختفي في الشاشات الصغيرة */
+        }
+
+        @media (min-width: 1100px) { .side-widget { display: block; } }
+
+        /* إطار الشاشة الترحيبية المركزي */
         .welcome-frame {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             padding: 12px;
             border-radius: 40px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            margin-top: 50px;
-            position: relative;
+            width: 100%;
+            max-width: 600px;
         }
 
         .auth-card { 
@@ -30,244 +53,124 @@
             border-radius: 32px; 
             text-align: center; 
             position: relative;
-            overflow: hidden; /* لضمان عدم خروج العلامة المائية عن الحدود */
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
         }
 
-        /* الشعار كعلامة مائية خلفية */
+        /* العلامة المائية */
         .auth-card::before {
             content: "";
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px; /* حجم الشعار في الخلفية */
-            height: 350px;
-            background-image: url('logo.png'); /* مسار الشعار الخاص بك */
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.08; /* درجة الشفافية (علامة مائية) */
-            z-index: 0;
-            pointer-events: none; /* لضمان عدم إعاقة النقر على الأزرار */
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 380px; height: 380px;
+            background-image: url('logo.png');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            opacity: 0.07; z-index: 0; pointer-events: none;
         }
 
-        /* روابط الزاوية العليا */
-        .top-links { position: absolute; top: 25px; right: 25px; display: flex; gap: 15px; z-index: 2; }
-        .top-links a { color: var(--gray); text-decoration: none; font-size: 0.9rem; transition: 0.3s; display: flex; align-items: center; gap: 5px; }
-        .top-links a:hover { color: var(--primary); }
+        .content-wrapper { position: relative; z-index: 1; }
 
-        .content-wrapper { position: relative; z-index: 1; } /* لرفع المحتوى فوق العلامة المائية */
-
-        .app-name { font-size: 2.8rem; color: var(--primary); margin: 0 0 10px 0; font-weight: 900; letter-spacing: -1px; }
+        .app-name { font-size: 2.6rem; color: var(--primary); margin: 0; font-weight: 900; }
         .designer-name { 
-            font-size: 1rem; color: #475569; margin-bottom: 40px; 
-            background: #f1f5f9; display: inline-block; padding: 6px 20px; border-radius: 50px;
-            font-weight: 500; border: 1px solid #e2e8f0;
+            font-size: 0.95rem; color: #64748b; margin-bottom: 35px; 
+            background: #f8fafc; display: inline-block; padding: 5px 15px; border-radius: 50px;
         }
 
-        .login-form { max-width: 320px; margin: 0 auto; }
-        .pass-label { display: block; margin-bottom: 12px; font-weight: 700; color: #1e293b; font-size: 1rem; }
-        
         input[type="password"] { 
             width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #cbd5e1; 
-            font-family: inherit; margin: 10px 0; outline: none; transition: 0.3s; text-align: center; font-size: 1.2rem; background: rgba(255,255,255,0.9);
+            margin: 10px 0; outline: none; text-align: center; font-size: 1.2rem;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; font-size: 1.05rem; transition: 0.3s; margin-top: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-available { background: var(--primary); color: white; box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.5); }
-        .btn-available:hover { transform: translateY(-3px); box-shadow: 0 12px 25px -6px rgba(37, 99, 235, 0.6); }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+        .btn-available { background: var(--primary); color: white; }
+        .btn-available:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37,99,235,0.3); }
         .btn-exit { background: transparent; color: #94a3b8; border: 1px solid #e2e8f0; }
-        .btn-exit:hover { background: #fff1f2; color: var(--danger); border-color: #fecaca; }
 
-        /* تنسيقات التطبيق الداخلي (بدون تغيير) */
-        .filter-section { background: var(--card); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #cbd5e1; font-family: inherit; margin: 8px 0; outline: none; }
-        .lesson-card { border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 2px solid transparent; transition: 0.4s; position: relative; }
-        .state-available { background: #f0fdf4; border-color: var(--success); color: #166534; }
-        .state-locked { background: #ffffff; border-color: #e2e8f0; color: #64748b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .state-ended { background: #fef2f2; border-color: #fecaca; color: #991b1b; opacity: 0.8; }
-        .summary-area { margin-top: 30px; background: white; padding: 25px; border-radius: 20px; border-top: 6px solid var(--primary); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th { background: #f8fafc; padding: 15px; border-bottom: 2px solid #e2e8f0; }
-        .data-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: center; }
-        .status-pill { padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; color: white; }
+        /* تنسيق الساعة والروابط */
+        .widget-title { font-size: 0.8rem; color: var(--gray); margin-bottom: 10px; font-weight: bold; display: block;}
+        .digital-clock { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
+        .quick-link { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; padding: 10px; font-size: 0.9rem; border-radius: 10px; transition: 0.2s; }
+        .quick-link:hover { background: #f1f5f9; color: var(--primary); }
+
+        /* تنسيقات التطبيق الداخلي (مخفية للآن) */
+        #mainApp { max-width: 900px; margin: 20px auto; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="loginScreen" class="welcome-frame">
-        <div class="auth-card">
-            <div class="top-links">
-                <a href="mailto:admin@example.com"><i class="fas fa-envelope"></i> راسلنا</a>
-                <a href="#" onclick="alert('منصة العنقود الرقمية v2.2 \nبإشراف م. سامي غنام')"><i class="fas fa-info-circle"></i> حول</a>
-            </div>
+<div id="loginScreen">
+    <div class="welcome-page">
+        <div class="side-widget">
+            <span class="widget-title"><i class="far fa-clock"></i> الوقت الحالي</span>
+            <div id="clock" class="digital-clock">00:00:00</div>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <span class="widget-title"><i class="far fa-calendar-alt"></i> التاريخ</span>
+            <div id="date" style="font-size: 0.9rem; font-weight: 600;">--/--/----</div>
+        </div>
 
-            <div class="content-wrapper">
-                <h1 class="app-name">منصة العنقود الرقمية</h1>
-                <div class="designer-name">تصميم وبرمجة: م. سامي غنام</div>
+        <div class="welcome-frame">
+            <div class="auth-card">
+                <div class="content-wrapper">
+                    <h1 class="app-name">منصة العنقود الرقمية</h1>
+                    <div class="designer-name">تصميم وبرمجة: م. سامي غنام</div>
 
-                <div class="login-form">
-                    <label class="pass-label">أدخل كلمة المرور</label>
-                    <input type="password" id="sysPass" placeholder="••••••••" autocomplete="off">
-                    
-                    <button class="btn btn-available" onclick="handleLogin()">
-                        <i class="fas fa-rocket"></i> دخول للبرنامج
-                    </button>
-                    
-                    <button class="btn btn-exit" onclick="alert('يرجى إغلاق المتصفح لإنهاء الجلسة.')">
-                        <i class="fas fa-power-off"></i> خروج
-                    </button>
+                    <div style="max-width: 300px; margin: 0 auto;">
+                        <label style="font-weight: bold; font-size: 0.9rem; color: #475569;">كلمة المرور</label>
+                        <input type="password" id="sysPass" placeholder="••••••••">
+                        
+                        <button class="btn btn-available" onclick="handleLogin()">
+                            <i class="fas fa-sign-in-alt"></i> دخول للمنصة
+                        </button>
+                        
+                        <button class="btn btn-exit" onclick="alert('شكراً لك')">
+                            <i class="fas fa-power-off"></i> خروج
+                        </button>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <div class="side-widget">
+            <span class="widget-title"><i class="fas fa-link"></i> وصول سريع</span>
+            <a href="#" class="quick-link"><i class="fab fa-whatsapp"></i> الدعم الفني</a>
+            <a href="#" class="quick-link"><i class="fas fa-book"></i> تعليمات</a>
+            <a href="#" class="quick-link" onclick="alert('المصمم: م. سامي غنام\nالإصدار: 2.3')"><i class="fas fa-code"></i> المطور</a>
         </div>
     </div>
+</div>
 
-    <div id="mainApp" style="display:none;">
-        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-            <h3 style="margin:0; color:var(--primary); font-size: 1.4rem;"><i class="fas fa-user-shield"></i> بوابة التعلم والرقابة</h3>
-            <button onclick="location.reload()" style="color:var(--danger); border:2px solid var(--danger); padding: 8px 20px; border-radius: 12px; background:none; font-weight:bold; cursor:pointer;">خروج آمن</button>
-        </div>
-
-        <div class="filter-section">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
-                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">اليوم الدراسي:</label>
-                    <select id="daySelect" onchange="updateUI()">
-                        <option value="الأحد">الأحد</option>
-                        <option value="الاثنين">الاثنين</option>
-                        <option value="الثلاثاء">الثلاثاء</option>
-                        <option value="الأربعاء">الأربعاء</option>
-                        <option value="الخميس">الخميس</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">المرحلة الدراسية:</label>
-                    <select id="gradeSelect" onchange="updateUI()">
-                        <option value="">كل الصفوف الدراسية</option>
-                        <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">الصف ${i}</option>`)</script>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div id="lessonsGrid"></div>
-        <div id="summaryArea"></div>
+<div id="mainApp" style="display:none;">
+    <div style="background: white; padding: 20px; border-radius: 20px; text-align: center;">
+        <h2>مرحباً بك في لوحة التحكم</h2>
+        <button onclick="location.reload()" class="btn btn-exit" style="width: auto; display: inline-flex;">تسجيل خروج</button>
     </div>
 </div>
 
 <script>
-    // تفعيل زر Enter للدخول
-    document.getElementById('sysPass').addEventListener('keypress', function (e) {
+    // تحديث الساعة الرقمية
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString('ar-EG');
+        document.getElementById('date').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long', year:'numeric'});
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // تفعيل Enter
+    document.getElementById('sysPass').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleLogin();
     });
-
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8Yk6Sq2bCZtlrH-mgqDZFYnRc54MYf8vAW6VIpW1WHIzKi5lkoBRTXjv5i8sXBkHMrbR_KHS-kMoV/pub?gid=0&single=true&output=csv';
-    let rawData = [];
-    const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-
-    function getMins(t) { if(!t) return 0; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
-
-    async function fetchData() {
-        try {
-            const r = await fetch(sheetURL + '&t=' + Date.now());
-            const t = await r.text();
-            rawData = t.split('\n').slice(1).filter(row => row.trim() !== "").map(row => {
-                const c = row.split(',');
-                return { day: c[0].trim(), grade: c[1].trim(), sub: c[2].trim(), teacher: c[3].trim(), s: c[4].trim(), e: c[5].trim(), link: c[6].trim() };
-            });
-            updateUI();
-            setInterval(updateUI, 30000);
-        } catch (e) { console.error("Error fetching data"); }
-    }
 
     function handleLogin() {
         const code = document.getElementById('sysPass').value;
         if (["1", "1111", "1234"].includes(code)) {
-            const role = code === "1234" ? 'supervisor' : 'user';
-            sessionStorage.setItem('role', role);
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            
-            const todayIndex = new Date().getDay();
-            if(todayIndex >= 0 && todayIndex <= 4) {
-                document.getElementById('daySelect').value = weekDaysArr[todayIndex];
-            }
-            fetchData();
+            // هنا يمكنك استدعاء باقي وظائف الجلب والبيانات
         } else {
-            alert("⚠️ كلمة المرور خاطئة.");
+            alert("خطأ في كلمة المرور");
         }
-    }
-
-    function getLessonStatus(lessonDay, startTime, endTime) {
-        const now = new Date();
-        const currentDayStr = weekDaysArr[now.getDay()] || "الجمعة";
-        const nowMins = now.getHours() * 60 + now.getMinutes();
-        const startMins = getMins(startTime);
-        const endMins = getMins(endTime);
-        const currentDayIndex = weekDaysArr.indexOf(currentDayStr);
-        const lessonDayIndex = weekDaysArr.indexOf(lessonDay);
-
-        if (currentDayStr === lessonDay && nowMins >= startMins && nowMins <= endMins) {
-            return { text: 'الحصة جارية الآن', class: 'state-available', btn: 'btn-available', canOpen: true, pill: '#10b981' };
-        }
-        if (lessonDayIndex > currentDayIndex || (lessonDayIndex === currentDayIndex && nowMins < startMins)) {
-            return { text: 'الحصة لاحقاً', class: 'state-locked', btn: 'btn-locked', canOpen: false, pill: '#94a3b8' };
-        }
-        return { text: 'انتهت الحصة سابقاً', class: 'state-ended', btn: 'btn-ended', canOpen: false, pill: '#ef4444' };
-    }
-
-    function updateUI() {
-        const role = sessionStorage.getItem('role');
-        const selectedDay = document.getElementById('daySelect').value;
-        const grade = document.getElementById('gradeSelect').value;
-        const grid = document.getElementById('lessonsGrid');
-        const summary = document.getElementById('summaryArea');
-
-        let list = rawData.filter(i => i.day === selectedDay);
-        let filteredList = grade ? list.filter(i => i.grade === grade) : (role === 'supervisor' ? list : []);
-
-        grid.innerHTML = (role !== 'supervisor' && !grade) ? '<div style="text-align:center; padding:40px; background:white; border-radius:20px; color:#64748b; border:1px dashed #cbd5e1;"><p>يرجى اختيار الصف لعرض الجدول الدراسي</p></div>' : '';
-        
-        filteredList.forEach(l => {
-            const status = getLessonStatus(l.day, l.s, l.e);
-            grid.innerHTML += `
-                <div class="lesson-card ${status.class}">
-                    <div style="display:flex; justify-content:space-between; align-items:start;">
-                        <div>
-                            <h3 style="margin:0; font-size:1.3rem;">${l.sub}</h3>
-                            <p style="margin:8px 0; font-weight:500;">الصف: ${l.grade} | المعلم: ${l.teacher}</p>
-                        </div>
-                        <i class="fas ${status.canOpen ? 'fa-broadcast-tower' : 'fa-clock'}" style="font-size:1.5rem; opacity:0.3;"></i>
-                    </div>
-                    <b style="display:block; margin:10px 0;">⏰ موعد الحصة: ${l.s} - ${l.e}</b>
-                    <button class="btn ${status.btn}" ${status.canOpen ? `onclick="window.open('${l.link}')"` : 'disabled'}>
-                        ${status.text}
-                    </button>
-                </div>`;
-        });
-
-        if (filteredList.length > 0) {
-            summary.innerHTML = `
-            <div class="summary-area">
-                <h4 style="margin:0 0 15px 0; color:var(--primary);"><i class="fas fa-table"></i> ملخص جدول يوم ${selectedDay}:</h4>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>الصف</th><th>المادة</th><th>البداية</th><th>النهاية</th><th>الحالة</th></tr>
-                    </thead>
-                    <tbody>
-                        ${filteredList.map(l => {
-                            const s = getLessonStatus(l.day, l.s, l.e);
-                            return `<tr><td><b>${l.grade}</b></td><td>${l.sub}</td><td>${l.s}</td><td>${l.e}</td>
-                                    <td><span class="status-pill" style="background:${s.pill}">${s.text}</span></td></tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>`;
-        } else { summary.innerHTML = ""; }
     }
 </script>
+
 </body>
 </html>
