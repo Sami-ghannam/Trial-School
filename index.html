@@ -60,7 +60,7 @@
             opacity: 0.05; z-index: 0; pointer-events: none;
         }
 
-        .content-wrapper { position: relative; z-index: 1; width: 100%; }
+        .content-wrapper { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; }
 
         /* --- النص المنحني SVG --- */
         .curved-title-container {
@@ -80,14 +80,30 @@
             font-weight: 600; border: 1px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
         }
 
-        /* ترتيب نموذج الدخول */
-        .login-box { width: 100%; max-width: 300px; margin: 0 auto; text-align: right; }
-        .input-label { font-weight: 700; font-size: 0.95rem; color: #475569; margin-bottom: 8px; display: block; padding-right: 5px; }
+        /* ترتيب نموذج الدخول - تم التعديل للتمركز */
+        .login-box { 
+            width: 100%; 
+            max-width: 320px; 
+            margin: 0 auto; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* توسيط العناصر داخلياً */
+            text-align: center; 
+        }
+        
+        .input-label { 
+            font-weight: 700; 
+            font-size: 0.95rem; 
+            color: #475569; 
+            margin-bottom: 10px; 
+            display: block; 
+        }
 
         input[type="password"] { 
             width: 100%; padding: 16px; border-radius: 18px; border: 2px solid #e2e8f0; 
             margin-bottom: 15px; outline: none; text-align: center; font-size: 1.3rem;
             background: #fcfdfe; box-shadow: inset 0 3px 6px rgba(0,0,0,0.05); transition: 0.3s;
+            box-sizing: border-box; /* لضمان عدم خروج الحواف */
         }
         input[type="password"]:focus { border-color: var(--primary); transform: scale(1.02); background: white; }
 
@@ -96,6 +112,7 @@
             width: 100%; padding: 15px; border-radius: 16px; border: none; font-weight: bold; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
             gap: 10px; margin-bottom: 12px; font-size: 1.1rem; transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
         }
         .btn-available { 
             background: linear-gradient(to bottom, #3b82f6, #2563eb); color: white; 
@@ -129,7 +146,7 @@
         }
         @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .modal-header { color: var(--primary); font-size: 1.4rem; font-weight: 800; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
-        .modal-body { line-height: 1.7; color: #475569; }
+        .modal-body { line-height: 1.7; color: #475569; text-align: right; }
         .close-btn { background: var(--bg); border: none; padding: 8px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px; float: left; transition: 0.2s; }
         .close-btn:hover { background: #e2e8f0; }
 
@@ -191,7 +208,7 @@
                     <div class="designer-tag">تصميم وبرمجة: م. سامي غنام</div>
 
                     <div class="login-box">
-                        <label class="input-label">كلمة المرور</label>
+                        <label class="input-label">أدخل كلمة المرور</label>
                         <input type="password" id="sysPass" placeholder="••••••••">
                         
                         <button class="btn btn-available" onclick="handleLogin()">
@@ -210,6 +227,9 @@
             <span class="widget-title"><i class="fas fa-bolt"></i> روابط سريعة</span>
             <a href="https://wa.me/972568402800?text=السلام%20عليكم%20م.%20سامي%20أحتاج%20للمساعدة%20بخصوص%20منصة%20العنقود%20الرقمية" target="_blank" class="quick-link">
                 <i class="fab fa-whatsapp" style="color:#25D366;"></i> الدعم الفني
+            </a>
+            <a href="mailto:sami.ghannam@shebron.edu.ps?subject=استفسار بخصوص منصة العنقود الرقمية" class="quick-link">
+                <i class="fas fa-envelope" style="color:#ef4444;"></i> راسلنا
             </a>
             <div class="quick-link" onclick="openModal('helpModal')"><i class="fas fa-question-circle" style="color:#3b82f6;"></i> التعليمات</div>
             <div class="quick-link" onclick="openModal('devModal')"><i class="fas fa-terminal" style="color:#64748b;"></i> المطور</div>
@@ -248,7 +268,6 @@
         }
     }
 
-    // تفعيل Enter للدخول
     document.getElementById('sysPass').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') handleLogin();
     });
