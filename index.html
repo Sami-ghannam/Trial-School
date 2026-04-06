@@ -48,7 +48,7 @@
 <div class="container">
     <div id="loginScreen" class="auth-card">
         <div class="logo-box"><img src="شعار نهائي.png" onerror="this.src='https://via.placeholder.com/120?text=LOGO'"></div>
-        <h2>منصة جنوب الخليل الرقمية</h2>
+        <h2>منصة مدارس العنقود الرقمية</h2>
         <input type="text" id="sysPass" placeholder="أدخل رمز الدخول">
         <button class="btn btn-available" onclick="handleLogin()">دخول</button>
     </div>
@@ -104,8 +104,8 @@
 
     function handleLogin() {
         const code = document.getElementById('sysPass').value;
-        if (["1234", "5678", "123456789"].includes(code)) {
-            const role = code === "123456789" ? 'supervisor' : 'user';
+        if (["1", "1111", "1234"].includes(code)) {
+            const role = code === "1234" ? 'supervisor' : 'user';
             sessionStorage.setItem('role', role);
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
@@ -142,7 +142,7 @@
         }
         
         // الحالة 3: الحصة انتهت (يوم سابق أو نفس اليوم بساعة مضت)
-        return { state: 'past', text: 'انتهت الحصة سابقاً', class: 'state-ended', btn: 'btn-ended', canOpen: false, pill: '#ef4444' };
+        return { state: 'past', text: 'الحصة تمت', class: 'state-ended', btn: 'btn-ended', canOpen: false, pill: '#ef4444' };
     }
 
     function updateUI() {
