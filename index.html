@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v2.9.1</title>
+    <title>منصة العنقود الرقمية v2.9.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -29,38 +29,58 @@
         .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
         body { top: 0px !important; }
 
-        .top-bar { background: var(--card); padding: 12px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .nav-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: auto; }
+        /* تنسيق الشريط العلوي المدمج (3 أقسام) */
+        .top-bar { background: var(--card); padding: 8px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; width: 100%; max-width: 1200px; margin: auto; }
+
+        /* شريط الإعلانات في المنتصف */
+        .header-ticker { 
+            overflow: hidden; 
+            white-space: nowrap; 
+            background: rgba(37, 99, 235, 0.05); 
+            border-radius: 20px; 
+            padding: 4px 10px; 
+            border: 1px inset var(--border);
+        }
+        .header-ticker p { 
+            display: inline-block; 
+            padding-right: 100%; 
+            animation: ticker 25s linear infinite; 
+            margin: 0; 
+            color: var(--primary); 
+            font-weight: 800; 
+            font-size: 0.8rem; 
+        }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(100%, 0, 0); } }
 
         .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 10px; border-radius: 30px; box-shadow: 0 15px 35px rgba(30, 64, 175, 0.2); margin-top: 10px; }
         .auth-card { background: var(--card); padding: 25px; border-radius: 25px; text-align: center; }
         
-        .filter-grid-expanded { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        select { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--border); background: var(--card); color: var(--text); font-weight: bold; cursor: pointer; outline: none; }
+        .filter-grid-expanded { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--card); color: var(--text); font-weight: bold; outline: none; font-size: 0.9rem; }
 
         .admin-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         @media (min-width: 768px) { .admin-stats-grid { grid-template-columns: repeat(4, 1fr); } }
         .stat-card { background: var(--card); padding: 12px; border-radius: 15px; border: 1px solid var(--border); }
         .stat-num { display: block; font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+        
         .progress-container { background: #e2e8f0; height: 10px; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
+        
         .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         .admin-table th, .admin-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
 
-        .report-btn { background: var(--purple); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
-        .report-btn:hover { background: #7c3aed; }
+        .report-btn { background: var(--purple); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
 
-        /* تنسيق بسيط جداً للأوسمة يظهر للمعلم فقط */
-        .teacher-achievements { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .badge-mini { background: var(--bg); padding: 8px 12px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--border); }
-        .gold-badge { border-color: var(--gold); color: #856404; background: #fffdf0; box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+        .teacher-achievements { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .badge-mini { background: var(--bg); padding: 6px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; border: 1px solid var(--border); }
 
         .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; min-width: 60px; }
-        .nav-item i { font-size: 1.2rem; }
-        .nav-item span { font-size: 0.65rem; font-weight: 800; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; min-width: 50px; }
+        .nav-item i { font-size: 1rem; }
+        .nav-item span { font-size: 0.6rem; font-weight: 800; }
 
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; }
         #google_translate_element { display: none; }
     </style>
 </head>
@@ -70,25 +90,28 @@
 
 <div id="topBar" class="top-bar">
     <div class="nav-header">
-        <div id="dateDisplay" class="notranslate" style="font-weight: 800; color: var(--primary); font-size: 0.8rem;"></div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-moon fa-lg" onclick="toggleDarkMode()" style="cursor: pointer; color: var(--primary);"></i>
-            <div id="clockDisplay" class="notranslate" style="font-weight: 900; font-size: 0.9rem;"></div>
+        <div id="dateDisplay" class="notranslate" style="font-weight: 800; color: var(--text); font-size: 0.7rem;"></div>
+        
+        <div class="header-ticker">
+            <p>مرحباً بكم في منصة العنقود الرقمية .. م. سامي غنام يحييكم ويحثكم على الالتزام بمواعيد الحصص .. نظام الأوسمة الرقمي مفعل لتحفيز المتميزين .. عام دراسي مبدع للجميع.</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div id="clockDisplay" class="notranslate" style="font-weight: 900; font-size: 0.8rem; color: var(--primary);"></div>
+            <i class="fas fa-circle-half-stroke fa-lg" onclick="toggleDarkMode()" style="cursor: pointer; color: var(--gray);"></i>
         </div>
     </div>
 </div>
 
 <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 15px;">
-    <div class="welcome-frame" style="width: 100%; max-width: 420px;">
+    <div class="welcome-frame" style="width: 100%; max-width: 380px;">
         <div class="auth-card">
-            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 80px;">
-            <h2 style="color: var(--primary); margin: 10px 0;">منصة العنقود الرقمية</h2>
-            <p style="font-size: 0.75rem; color: var(--gray);">بإشراف م. سامي غنام</p>
-            <div style="margin: 25px auto 15px; width: 100%; max-width: 350px;">
-                <input type="password" id="sysPass" style="width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1.1rem;" placeholder="رمز الدخول">
-            </div>
-            <button style="width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; margin-bottom: 12px;" onclick="handleLogin()">دخول المنصة</button>
-            <button style="width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; background: linear-gradient(to bottom, #ef4444, #b91c1c); color: white;" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق نهائي</button>
+            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 60px;">
+            <h3 style="color: var(--primary); margin: 10px 0;">تسجيل الدخول للمنصة</h3>
+            <p style="font-size: 0.65rem; color: var(--gray); margin-bottom: 20px;">الإصدار المعتمد v2.9.4</p>
+            <input type="password" id="sysPass" style="width: 90%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1rem; margin-bottom: 15px;" placeholder="أدخل الرمز">
+            <button style="width: 90%; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; margin-bottom: 10px;" onclick="handleLogin()">دخول</button>
+            <button style="width: 90%; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; background: #fee2e2; color: var(--danger);" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق</button>
         </div>
     </div>
 </div>
@@ -102,19 +125,19 @@
             <div class="stat-card"><span class="stat-num" id="percentDone">0%</span><span>إنجاز</span></div>
         </div>
         <div class="progress-container"><div id="progBar" class="progress-bar"></div></div>
-        <button class="report-btn" onclick="generateDailyReport()"><i class="fas fa-file-excel"></i> استخراج تقرير اليوم</button>
+        <button class="report-btn" onclick="generateDailyReport()"><i class="fas fa-file-export"></i> استخراج تقرير الحضور (Excel)</button>
     </div>
 
     <div class="welcome-frame">
-        <div class="auth-card">
+        <div class="auth-card" style="padding: 15px;">
             <div id="teacherGamification" style="display:none;" class="teacher-achievements">
                 <div class="badge-mini"><i class="fas fa-stopwatch" style="color:var(--primary)"></i> حصص دقيقة: <span id="onTimeCount">0</span></div>
-                <div id="fullCommitment" class="badge-mini" style="display:none;"><i class="fas fa-medal" style="color:var(--gold)"></i> وسام الالتزام الكامل</div>
+                <div id="fullCommitment" class="badge-mini" style="display:none; border-color: var(--gold); color: #856404; background: #fffdf0;"><i class="fas fa-crown" style="color:var(--gold)"></i> وسام الالتزام</div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 6px 18px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;"></span>
-                <button style="background: #fee2e2; color: var(--danger); border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="handleLogout()">خروج</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span id="userBadge" style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;"></span>
+                <button style="color: var(--danger); border: none; background: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;" onclick="handleLogout()">خروج</button>
             </div>
             
             <div class="filter-grid-expanded">
@@ -129,10 +152,10 @@
 </div>
 
 <div id="bottomNav" class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt" style="color:var(--success)"></i><span>تحديث</span></div>
+    <div class="nav-item" onclick="location.reload()"><i class="fas fa-redo-alt" style="color:var(--success)"></i><span>تحديث</span></div>
     <div class="nav-item" onclick="toggleLanguage()"><i class="fas fa-language" style="color:var(--purple)"></i><span id="langText">English</span></div>
-    <div class="nav-item" onclick="showAbout()"><i class="fas fa-id-card" style="color:var(--info)"></i><span>عنّا</span></div>
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope" style="color:#f59e0b"></i><span>راسلنا</span></div>
+    <div class="nav-item" onclick="showAbout()"><i class="fas fa-code" style="color:var(--info)"></i><span>v2.9.4</span></div>
+    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-headset" style="color:#f59e0b"></i><span>الدعم</span></div>
 </div>
 
 <script>
@@ -157,19 +180,16 @@
                 };
             });
             setupFilters(); updateUI();
-        } catch(e) { console.error("Data Error"); }
+        } catch(e) { console.error("Data Sync Error"); }
     }
 
     function setupFilters() {
         const role = sessionStorage.getItem('userRole');
         if(role === 'إدارة وإشراف') document.getElementById('teacherSelect').style.display = 'block';
-        
-        // تفعيل قسم التحفيز للمعلم
         if(role === 'معلم') {
             document.getElementById('teacherGamification').style.display = 'flex';
             updateTeacherStatsUI();
         }
-
         const ts = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
         document.getElementById('teacherSelect').innerHTML = '<option value="">المعلم</option>' + ts.map(t => `<option value="${t}">${t}</option>`).join('');
         const gs = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort();
@@ -182,48 +202,36 @@
     function handleLogin() {
         const p = document.getElementById('sysPass').value.trim();
         let role = (p === "1") ? 'طالب' : (p === "1111") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
-        if(!role) { Swal.fire('خطأ', 'الرمز غير صحيح', 'error'); return; }
+        if(!role) { Swal.fire('تنبيه', 'الرمز غير صحيح', 'error'); return; }
         sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('userRole', role);
         showApp();
     }
 
     function showApp() {
         document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('topBar').style.display = 'none';
-        document.getElementById('bottomNav').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
         const role = sessionStorage.getItem('userRole');
-        document.getElementById('userBadge').innerText = "بوابة: " + role;
+        document.getElementById('userBadge').innerText = "البوابة: " + role;
         if(role === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
         loadData();
     }
 
-    // منطق التحفيز: تحديث واجهة الأوسمة والعدادات
     function updateTeacherStatsUI() {
         const count = parseInt(localStorage.getItem('onTimeLessons') || '0');
         document.getElementById('onTimeCount').innerText = count;
-        if(count >= 5) {
-            const badge = document.getElementById('fullCommitment');
-            badge.style.display = 'block';
-            badge.classList.add('gold-badge');
-        }
+        if(count >= 5) document.getElementById('fullCommitment').style.display = 'block';
     }
 
-    // منطق التحفيز: تسجيل الحصة في الموعد عند الضغط على الرابط
     function checkAndRecordOnTime(startStr) {
         if(sessionStorage.getItem('userRole') !== 'معلم') return;
-        
         const now = new Date();
         const curMins = now.getHours() * 60 + now.getMinutes();
-        const startParts = startStr.split(':');
-        const startMins = (parseInt(startParts[0]) * 60) + parseInt(startParts[1]);
-        
-        // التحقق: إذا دخل ضمن أول 5 دقائق من بداية الحصة
+        const startMins = (parseInt(startStr.split(':')[0]) * 60) + parseInt(startStr.split(':')[1]);
         if(curMins >= startMins - 2 && curMins <= startMins + 5) {
             let count = parseInt(localStorage.getItem('onTimeLessons') || '0');
             localStorage.setItem('onTimeLessons', count + 1);
             updateTeacherStatsUI();
-            Swal.fire({ title: 'أحسنت!', text: 'تم تسجيل حصة في موعدها بدقة ✅', icon: 'success', timer: 1500, showConfirmButton: false });
+            Swal.fire({ title: 'رائع!', text: 'تم تسجيل حصة دقيقة في سجلاتك ✅', icon: 'success', timer: 1500, showConfirmButton: false });
         }
     }
 
@@ -243,37 +251,30 @@
                 let sCol = (curMins >= sm && curMins <= em) ? 'var(--success)' : (curMins > em) ? 'var(--gray)' : 'var(--danger)';
                 let sTxt = (curMins >= sm && curMins <= em) ? 'نشطة' : (curMins > em) ? 'منتهية' : 'انتظار';
                 if(curMins>=sm && curMins<=em) act++; else if(curMins>em) done++; else wait++;
-                const waLink = `https://wa.me/${l.phone}?text=${encodeURIComponent('أ. '+l.teacher+'، يرجى بدء الحصة لصف '+l.grade+'-'+l.section+' ('+l.sub+')')}`;
-                html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%">${sTxt}</button></td><td><button onclick="window.open('${waLink}')" style="background:var(--whatsapp); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;"><i class="fab fa-whatsapp"></i></button></td></tr>`;
+                const waLink = `https://wa.me/${l.phone}?text=${encodeURIComponent('يرجى بدء الحصة لصف '+l.grade+'-'+l.section)}`;
+                html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; font-weight:bold; width:100%">${sTxt}</button></td><td><button onclick="window.open('${waLink}')" style="background:var(--whatsapp); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;"><i class="fab fa-whatsapp"></i></button></td></tr>`;
             });
             area.innerHTML = html + "</tbody></table>";
             document.getElementById('countActive').innerText = act; document.getElementById('countWait').innerText = wait; document.getElementById('countDone').innerText = done;
             const p = filtered.length > 0 ? Math.round(((done + act) / filtered.length) * 100) : 0;
             document.getElementById('percentDone').innerText = p + "%"; document.getElementById('progBar').style.width = p + "%";
         } else {
-            area.innerHTML = `<div style="display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>`;
+            area.innerHTML = `<div style="display:grid; gap:10px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>`;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
                 const isOpen = (curMins >= sm - 5 && curMins <= em + 5);
-                area.firstChild.innerHTML += `<div class="auth-card" style="border-right:6px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right;"><b>${l.sub}</b> | ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small><br><button style="width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top:10px; background:${isOpen?'var(--primary)':'gray'}; color:white" ${isOpen?'':'disabled'} onclick="checkAndRecordOnTime('${l.s}'); window.open('${l.link}')">${isOpen?'دخول الآن':'مغلق'}</button></div>`;
+                area.firstChild.innerHTML += `<div class="auth-card" style="border-right:5px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right; margin-bottom:5px;"><b>${l.sub}</b> | ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small><br><button style="width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-top:8px; background:${isOpen?'var(--primary)':'gray'}; color:white" ${isOpen?'':'disabled'} onclick="checkAndRecordOnTime('${l.s}'); window.open('${l.link}')">${isOpen?'دخول الآن':'الحصة مغلقة'}</button></div>`;
             });
         }
     }
 
     function generateDailyReport() {
         const day = document.getElementById('daySelect').value;
-        const now = new Date();
-        const curMins = now.getHours() * 60 + now.getMinutes();
-        let reportData = rawData.filter(i => i.day === day).map(l => {
-            const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
-            const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-            let status = (curMins >= sm && curMins <= em) ? 'نشطة حالياً' : (curMins > em) ? 'مكتملة' : 'انتظار';
-            return { 'اليوم': l.day, 'الصف': l.grade, 'المعلم': l.teacher, 'المادة': l.sub, 'الوقت': l.s + '-' + l.e, 'الحالة': status };
-        });
+        let reportData = rawData.filter(i => i.day === day).map(l => ({ 'اليوم': l.day, 'الصف': l.grade, 'المعلم': l.teacher, 'المادة': l.sub, 'الوقت': l.s + '-' + l.e }));
         const ws = XLSX.utils.json_to_sheet(reportData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "تقرير");
+        XLSX.utils.book_append_sheet(wb, ws, "التقرير");
         XLSX.writeFile(wb, `تقرير_العنقود_${day}.xlsx`);
     }
 
@@ -283,19 +284,19 @@
         if (currentLang === 'ar') { combo.value = 'en'; currentLang = 'en'; document.getElementById('langText').innerText = 'العربية'; document.documentElement.setAttribute('dir', 'ltr'); }
         else { combo.value = 'ar'; currentLang = 'ar'; document.getElementById('langText').innerText = 'English'; document.documentElement.setAttribute('dir', 'rtl'); }
         combo.dispatchEvent(new Event('change'));
-        setTimeout(updateUI, 300);
+        setTimeout(updateUI, 400);
     }
 
     function handleLogout() { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); }
-    function confirmFinalExit() { Swal.fire({ title: 'خروج؟', text: "سيتم مسح البيانات", icon: 'warning', showCancelButton: true }).then((r) => { if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.com"); } }); }
+    function confirmFinalExit() { Swal.fire({ title: 'خروج نهائي؟', text: "سيتم مسح الجلسة الحالية", icon: 'warning', showCancelButton: true }).then((r) => { if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.com"); } }); }
 
     function updateClock() {
         const now = new Date();
         if(document.getElementById('clockDisplay')) document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
-        if(document.getElementById('dateDisplay')) document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'long'});
+        if(document.getElementById('dateDisplay')) document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'short', day:'numeric', month:'short'});
         if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) updateUI();
     }
-    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.9.1\nنظام التقارير والتحفيز الرقمي', 'info'); }
+    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.9.4\nنظام الإعلانات المدمج والتحفيز الذكي', 'info'); }
 
     setInterval(updateClock, 1000);
     window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
