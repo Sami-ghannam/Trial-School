@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v1.2</title>
+    <title>منصة العنقود الرقمية v1.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -11,46 +11,39 @@
         :root {
             --primary: #2563eb; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
             --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8; --border: #e2e8f0;
-            --dark-gray: #475569;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; }
-        .top-bar { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
-        .live-date, .live-clock { font-weight: bold; color: var(--primary); font-size: 0.85rem; }
-        #userBadge { background: var(--primary); color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.7rem; display: none; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; }
+        .top-bar { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; height: 50px; }
         
-        .welcome-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; padding: 20px; }
-        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 10px; border-radius: 40px; width: 100%; max-width: 550px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .auth-card { background: var(--card); padding: 30px 20px; border-radius: 32px; text-align: center; }
-        .main-logo { width: 90px; height: auto; margin-bottom: 10px; }
-        .version-label { font-size: 0.75rem; color: var(--primary); font-weight: bold; background: rgba(37, 99, 235, 0.1); padding: 2px 10px; border-radius: 10px; }
+        /* Login & Password Wrapper */
+        .login-container { display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; }
+        .pass-wrapper { position: relative; width: 85%; margin: 0 auto 15px; }
+        .toggle-password { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); z-index: 10; }
 
-        /* لوحة الإحصائيات للإشراف */
+        /* Dashboard Stats */
         .admin-dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .stat-box { background: var(--card); padding: 12px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-val { display: block; font-size: 1.3rem; font-weight: 900; color: var(--primary); }
+        .stat-val { display: block; font-size: 1.4rem; font-weight: 900; color: var(--primary); }
         .stat-label { font-size: 0.65rem; color: var(--gray); font-weight: bold; }
 
-        /* جدول البيانات */
-        .admin-table-container { width: 100%; overflow-x: auto; background: var(--card); border-radius: 20px; border: 1px solid var(--border); margin-top: 15px; }
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 650px; }
-        .admin-table th { background: #f8fafc; padding: 15px; border-bottom: 2px solid var(--border); }
-        .admin-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: center; }
-        .status-badge { padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.7rem; color: white; }
+        /* Table Styles */
+        .admin-table-container { width: 100%; overflow-x: auto; background: var(--card); border-radius: 20px; border: 1px solid var(--border); }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 750px; }
+        .admin-table th { background: #f8fafc; padding: 12px; border-bottom: 2px solid var(--border); }
+        .admin-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: center; }
+        
+        /* Frame & Cards */
+        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 8px; border-radius: 30px; }
+        .auth-card { background: var(--card); padding: 20px; border-radius: 25px; text-align: center; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
+        .btn:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+        
+        input[type="password"], input[type="text"], select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #f8fafc; text-align: center; font-weight: bold; box-sizing: border-box; }
 
-        .card-view { background: var(--card); padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; font-size: 1rem; margin-bottom: 10px; }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 0 #1d4ed8; }
-        .btn-danger { background: var(--danger); color: white; box-shadow: 0 6px 0 #b91c1c; }
-        
-        input[type="password"], select { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--border); outline: none; text-align: center; background: var(--card); box-sizing: border-box; font-weight: bold; }
-        
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 35px; display: flex; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 2000; }
+        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 35px; display: flex; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: var(--primary); min-width: 50px; }
-        .nav-item span { font-size: 0.55rem; font-weight: bold; margin-top: 3px; }
-        
-        /* تنسيق مخفي لعناصر الترجمة */
-        #google_translate_element, .goog-te-banner-frame { display: none !important; }
-        body { top: 0px !important; }
+        .nav-item span { font-size: 0.6rem; font-weight: bold; margin-top: 2px; }
+        #google_translate_element { display: none; }
     </style>
 </head>
 <body>
@@ -58,50 +51,41 @@
 <div id="google_translate_element"></div>
 
 <div class="top-bar">
-    <div class="live-date" id="dateDisplay">--/--/----</div>
-    <div class="nav-controls"><span id="userBadge"></span><div class="live-clock" id="clockDisplay">00:00:00</div></div>
+    <div id="dateDisplay" style="font-size: 0.8rem; font-weight: bold; color: var(--primary);"></div>
+    <div id="clockDisplay" style="font-size: 0.8rem; font-weight: bold; color: var(--text);"></div>
 </div>
 
-<div id="loginScreen" class="welcome-page">
-    <div class="welcome-frame">
+<div id="loginScreen" class="login-container">
+    <div class="welcome-frame" style="max-width: 400px; width: 100%;">
         <div class="auth-card">
-            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" class="main-logo">
-            <h2 style="color:var(--primary); margin:10px 0;">منصة العنقود الرقمية</h2>
-            <div style="margin-bottom:15px;"><span class="version-label">v1.2</span></div>
-            <div style="color:var(--gray); font-size:0.8rem; margin-bottom:20px;">تصميم: م. سامي غنام</div>
-            <input type="password" id="sysPass" placeholder="أدخل رمز الدخول" style="margin-bottom:15px;">
-            <button class="btn btn-primary" onclick="handleLogin()">دخول للمنصة</button>
-            <button class="btn btn-danger" onclick="hardExit()">خروج نهائي</button>
+            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 80px; margin-bottom: 10px;">
+            <h3 style="color: var(--primary); margin: 5px 0;">منصة العنقود الرقمية</h3>
+            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 20px;">تصميم وإشراف: م. سامي غنام</p>
+            <div class="pass-wrapper">
+                <input type="password" id="sysPass" placeholder="رمز الدخول">
+                <i class="fas fa-eye toggle-password" id="eyeIcon" onclick="togglePassword()"></i>
+            </div>
+            <button class="btn" style="background: var(--primary); color: white;" onclick="handleLogin()">دخول</button>
         </div>
     </div>
 </div>
 
-<div id="mainApp" style="display:none; padding:20px; padding-bottom:110px;">
+<div id="mainApp" style="display:none; padding: 15px;">
     <div id="adminStatsArea"></div>
-    <div class="welcome-frame" style="max-width: 100%; border-radius: 25px;">
-        <div class="auth-card" style="padding: 15px; border-radius: 20px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 id="portalTitle" style="margin:0; color:var(--primary); font-size:1.1rem;">البوابة</h3>
-                <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+    <div class="welcome-frame">
+        <div class="auth-card">
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span id="userBadge" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;"></span>
+                <button onclick="handleLogout()" style="border: none; background: none; color: var(--danger); font-weight: bold;"><i class="fas fa-sign-out-alt"></i> خروج</button>
             </div>
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
                 <select id="daySelect" onchange="updateUI()"></select>
-                <select id="teacherSelect" onchange="updateUI()" style="display:none; border-color: var(--primary);">
-                    <option value="">كل المعلمين</option>
-                </select>
+                <select id="teacherSelect" onchange="updateUI()" style="display:none; border: 1.5px solid var(--primary);"></select>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:15px;">
-                <select id="gradeSelect" onchange="updateUI()">
-                    <option value="">كل الصفوف</option>
-                    <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
-                </select>
-                <select id="sectionSelect" onchange="updateUI()">
-                    <option value="">كل الشعب</option>
-                    <option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option>
-                </select>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                <select id="gradeSelect" onchange="updateUI()"><option value="">كل الصفوف</option></select>
+                <select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select>
             </div>
-
             <div id="displayArea"></div>
         </div>
     </div>
@@ -111,7 +95,7 @@
     <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt"></i><span>تحديث</span></div>
     <div class="nav-item" onclick="triggerTranslate()"><i class="fas fa-language"></i><span>الترجمة</span></div>
     <div class="nav-item" onclick="showAbout()"><i class="fas fa-info-circle"></i><span>عنا</span></div>
-    <div class="nav-item" onclick="showContact()"><i class="fas fa-envelope"></i><span>راسلنا</span></div>
+    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope"></i><span>راسلنا</span></div>
 </div>
 
 <script>
@@ -119,60 +103,59 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
     const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
+    function togglePassword() {
+        const passInput = document.getElementById('sysPass');
+        const eyeIcon = document.getElementById('eyeIcon');
+        if (passInput.type === "password") { passInput.type = "text"; eyeIcon.classList.replace('fa-eye', 'fa-eye-slash'); }
+        else { passInput.type = "password"; eyeIcon.classList.replace('fa-eye-slash', 'fa-eye'); }
+    }
+
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'en,ar'}, 'google_translate_element');
     }
 
     function triggerTranslate() {
         const combo = document.querySelector('.goog-te-combo');
-        if (combo) {
-            combo.value = combo.value === 'en' ? 'ar' : 'en';
-            combo.dispatchEvent(new Event('change'));
-        } else {
-            Swal.fire('تنبيه', 'محرك الترجمة قيد التحميل.. استمر بالضغط', 'info');
-        }
+        if (combo) { combo.value = (combo.value === 'en') ? 'ar' : 'en'; combo.dispatchEvent(new Event('change')); }
     }
 
     async function loadData() {
         try {
             const r = await fetch(sheetURL + '&t=' + Date.now());
             const t = await r.text();
-            const lines = t.split('\n').filter(row => row.trim() !== "");
+            const lines = t.split('\n').filter(l => l.trim() !== "");
             rawData = lines.slice(1).map(row => {
                 const c = row.split(',');
-                return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim() || "أ", sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
+                return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
             });
             
-            if(sessionStorage.getItem('userRole') === 'إدارة وإشراف') {
-                const teachers = [...new Set(rawData.map(i => i.teacher))].filter(t => t).sort();
+            const role = sessionStorage.getItem('userRole');
+            if(role === 'إدارة وإشراف') {
                 const ts = document.getElementById('teacherSelect');
                 ts.style.display = 'block';
-                ts.innerHTML = '<option value="">كل المعلمين</option>';
-                teachers.forEach(t => ts.innerHTML += `<option value="${t}">${t}</option>`);
+                const teachers = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
+                ts.innerHTML = '<option value="">كل المعلمين</option>' + teachers.map(t => `<option value="${t}">${t}</option>`).join('');
             }
+            const gs = document.getElementById('gradeSelect');
+            const grades = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort((a,b) => a-b);
+            gs.innerHTML = '<option value="">كل الصفوف</option>' + grades.map(g => `<option value="${g}">${g}</option>`).join('');
             updateUI();
-        } catch(e) { console.error("Load Error"); }
+        } catch(e) { console.error("Error"); }
     }
 
     function handleLogin() {
-        let p = document.getElementById('sysPass').value.trim();
+        const p = document.getElementById('sysPass').value.trim();
         let role = (p === "1") ? 'طالب' : (p === "1111") ? 'معلم' : (p === "1234") ? 'إدارة وإشراف' : '';
         if(!role) { Swal.fire('خطأ', 'الرمز غير صحيح', 'error'); return; }
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('userRole', role);
-        showApp();
+        sessionStorage.setItem('isLoggedIn', 'true'); sessionStorage.setItem('userRole', role); showApp();
     }
 
     function showApp() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        const role = sessionStorage.getItem('userRole');
-        document.getElementById('userBadge').innerText = role;
-        document.getElementById('userBadge').style.display = 'inline-block';
-        document.getElementById('portalTitle').innerText = "بوابة " + role;
+        document.getElementById('userBadge').innerText = "بوابة: " + sessionStorage.getItem('userRole');
         const ds = document.getElementById('daySelect');
-        ds.innerHTML = "";
-        weekDays.forEach(d => ds.innerHTML += `<option value="${d}">${d}</option>`);
+        ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
         ds.value = weekDays[new Date().getDay()] || "الأحد";
         loadData();
     }
@@ -185,10 +168,12 @@
             day: document.getElementById('daySelect').value,
             grade: document.getElementById('gradeSelect').value,
             sec: document.getElementById('sectionSelect').value,
-            teacher: document.getElementById('teacherSelect').value
+            teacher: document.getElementById('teacherSelect')?.value || ""
         };
         
-        const currentMins = new Date().getHours() * 60 + new Date().getMinutes();
+        const now = new Date();
+        const currentMins = now.getHours() * 60 + now.getMinutes();
+
         let filtered = rawData.filter(i => 
             i.day === filters.day && 
             (filters.grade === "" || i.grade === filters.grade) && 
@@ -197,35 +182,57 @@
         );
 
         area.innerHTML = ""; statsArea.innerHTML = "";
-        if (filtered.length === 0) { area.innerHTML = "لا توجد بيانات"; return; }
+        if (filtered.length === 0) { area.innerHTML = "<div style='padding:20px; color:var(--gray);'>لا توجد حصص مجدولة</div>"; return; }
 
-        let act = 0, done = 0;
-        filtered.forEach(l => {
-            const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
-            const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-            if (currentMins >= sm && currentMins <= em) act++; else if (currentMins > em) done++;
-        });
-
+        let act = 0, done = 0, wait = 0;
+        
         if (role === 'إدارة وإشراف') {
-            statsArea.innerHTML = `
-                <div class="admin-dashboard">
-                    <div class="stat-box"><span class="stat-val">${act}</span><span class="stat-label">جارية</span></div>
-                    <div class="stat-box"><span class="stat-val">${done}</span><span class="stat-label">منتهية</span></div>
-                </div>`;
-            let table = `<div class="admin-table-container"><table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الوقت</th><th>الحالة</th><th>Link</th></tr></thead><tbody>`;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                let st = (currentMins >= sm && currentMins <= em) ? {t:'نشطة', c:'var(--success)'} : (currentMins > em) ? {t:'انتهت', c:'var(--gray)'} : {t:'انتظار', c:'var(--danger)'};
-                table += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td>${l.s}</td><td><span class="status-badge" style="background:${st.c}">${st.t}</span></td><td><a href="${l.link}" target="_blank"><i class="fas fa-external-link-alt"></i></a></td></tr>`;
+                // منطق الإدارة يظل دقيقاً دون "فترة السماح" في الإحصائيات لضمان الشفافية
+                if (currentMins >= sm && currentMins <= em) act++; else if (currentMins > em) done++; else wait++;
+            });
+            statsArea.innerHTML = `<div class="admin-dashboard">
+                <div class="stat-box"><span class="stat-val">${act}</span><span class="stat-label">نشطة</span></div>
+                <div class="stat-box"><span class="stat-val">%${Math.round((done/filtered.length)*100) || 0}</span><span class="stat-label">الإنجاز</span></div>
+                <div class="stat-box"><span class="stat-val">${done}</span><span class="stat-label">منتهية</span></div>
+                <div class="stat-box"><span class="stat-val">${wait}</span><span class="stat-label">قادمة</span></div>
+            </div>`;
+            
+            let table = `<div class="admin-table-container"><table class="admin-table"><thead><tr><th>الصف</th><th>المادة</th><th>المعلم</th><th>الوقت</th><th>الحالة</th><th>رابط</th></tr></thead><tbody>`;
+            filtered.forEach(l => {
+                const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
+                const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
+                let status = (currentMins >= sm && currentMins <= em) ? {t:'نشطة', c:'var(--success)'} : (currentMins > em) ? {t:'منتهية', c:'var(--gray)'} : {t:'انتظار', c:'var(--danger)'};
+                table += `<tr><td>${l.grade}-${l.section}</td><td><b>${l.sub}</b></td><td>${l.teacher}</td><td>${l.s}-${l.e}</td><td><span class="status-badge" style="background:${status.c}">${status.t}</span></td><td><a href="${l.link}" target="_blank" style="color:var(--primary)"><i class="fas fa-external-link-alt"></i></a></td></tr>`;
             });
             area.innerHTML = table + "</tbody></table></div>";
         } else {
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                let color = (currentMins >= sm && currentMins <= em) ? "var(--success)" : "var(--danger)";
-                area.innerHTML += `<div class="card-view"><b>${l.sub}</b><br><small>${l.teacher} | ${l.grade}-${l.section}</small><button class="btn" style="background:${color}; color:white; margin-top:10px;" onclick="window.open('${l.link}')">دخول</button></div>`;
+                
+                // تطبيق منطق 5 دقائق قبل وبعد
+                const openTime = sm - 5;
+                const closeTime = em + 5;
+                
+                const isOpen = (currentMins >= openTime && currentMins <= closeTime);
+                const isEarly = (currentMins >= openTime && currentMins < sm);
+                const isPast = (currentMins > closeTime);
+                
+                let btnText = isOpen ? (isEarly ? "دخول مبكر للحصة" : "دخول الحصة الآن") : isPast ? "انتهى الوقت" : "انتظار الموعد";
+                let btnColor = isOpen ? "var(--success)" : isPast ? "var(--gray)" : "var(--danger)";
+
+                area.innerHTML += `
+                    <div class="card-view" style="background:white; border-radius:15px; margin-bottom:12px; padding:15px; border-right: 6px solid ${btnColor}; text-align:right;">
+                        <b style="font-size: 1.1rem; color: var(--primary);">${l.sub}</b><br>
+                        <span style="font-size: 0.9rem;">${l.teacher} | الصف ${l.grade}-${l.section}</span><br>
+                        <small style="color: var(--gray);"><i class="far fa-clock"></i> من ${l.s} إلى ${l.e}</small>
+                        <button class="btn" style="background:${btnColor}; color:white; margin-top:12px;" 
+                                ${isOpen ? '' : 'disabled'} 
+                                onclick="window.open('${l.link}')">${btnText}</button>
+                    </div>`;
             });
         }
     }
@@ -234,11 +241,10 @@
         const now = new Date();
         document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
         document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long', year:'numeric'});
+        if (now.getSeconds() === 0) updateUI();
     }
     function handleLogout() { sessionStorage.clear(); window.location.reload(); }
-    function hardExit() { window.location.href = "https://www.google.com"; }
-    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود الرقمية v1.2 - 2026', 'info'); }
-    function showContact() { window.location.href = "mailto:sami.ghannam@shebron.edu.ps"; }
+    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود الرقمية v1.5\nنظام الدخول المجدول المطور 2026', 'info'); }
     setInterval(updateClock, 1000);
     window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
 </script>
