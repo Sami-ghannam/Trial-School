@@ -14,13 +14,11 @@
         body.dark-mode { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --gray: #94a3b8; --border: #334155; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; transition: 0.3s; }
 
-        /* شريط علوي */
         .top-bar { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
         .live-date, .live-clock { font-weight: bold; color: var(--primary); font-size: 0.85rem; }
         #userBadge { background: var(--primary); color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.7rem; margin-left: 8px; display: none; }
         .theme-toggle { cursor: pointer; font-size: 1.2rem; color: var(--gray); }
 
-        /* شاشة الدخول */
         .welcome-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 85vh; padding: 20px; }
         .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 12px; border-radius: 40px; width: 100%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .auth-card { background: var(--card); padding: 30px 20px; border-radius: 32px; text-align: center; }
@@ -34,14 +32,11 @@
         input[type="text"], select { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--border); margin-bottom: 12px; outline: none; text-align: center; font-size: 1rem; background: var(--card); color: var(--text); box-sizing: border-box; }
         .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; font-size: 1.1rem; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 0 #1d4ed8; }
-        .btn-primary:active { transform: translateY(4px); box-shadow: 0 2px 0 #1d4ed8; }
+        .btn-danger { background: var(--danger); color: white; box-shadow: 0 6px 0 #b91c1c; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
         
-        /* التطبيق الرئيسي */
         #mainApp { display: none; padding: 20px; padding-bottom: 80px; }
-        .display-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: right; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        
-        .quick-links { display: flex; justify-content: center; gap: 20px; margin-top: 20px; color: var(--gray); font-size: 0.9rem; }
-        .q-link { cursor: pointer; font-weight: bold; text-decoration: none; color: inherit; }
+        .display-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: right; }
     </style>
 </head>
 <body>
@@ -68,6 +63,7 @@
             <div class="designer-tag">تصميم: م. سامي غنام</div>
             <input type="text" id="sysPass" placeholder="أدخل رمز الدخول">
             <button class="btn btn-primary" onclick="handleLogin()">دخول للمنصة</button>
+            <button id="exitBtn" class="btn btn-danger" onclick="hardExit()">خروج نهائي</button>
         </div>
     </div>
 </div>
@@ -76,8 +72,8 @@
     <div class="welcome-frame">
         <div class="auth-card" style="padding: 15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:10px;">
-                <h4 id="portalTitle" style="margin:0; color:var(--primary);">البوابة الإلكترونية</h4>
-                <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+                <h4 id="portalTitle" style="margin:0; color:var(--primary);">البوابة</h4>
+                <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">تسجيل خروج</button>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
                 <select id="daySelect" onchange="updateUI()"></select>
@@ -86,24 +82,19 @@
                     <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                 </select>
                 <select id="sectionSelect" onchange="updateUI()">
-                    <option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option><option value="د">د</option>
+                    <option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option>
                 </select>
             </div>
             <div id="displayArea" style="margin-top: 15px; width: 100%;"></div>
         </div>
     </div>
-    <div class="quick-links">
-        <div class="q-link" onclick="loadData()"><i class="fas fa-sync"></i> تحديث الجدول</div>
-    </div>
 </div>
 
 <script>
     let rawData = [];
-    // رابط جدول البيانات الخاص بك
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // دالة تحويل الأرقام العربية إلى إنجليزية
     function convertNumbers(str) {
         const arabic = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
         if (typeof str === 'string') {
@@ -126,19 +117,10 @@
             const lines = t.split('\n').filter(row => row.trim() !== "");
             rawData = lines.slice(1).map(row => {
                 const c = row.split(',');
-                return { 
-                    day: c[0]?.trim(), 
-                    grade: c[1]?.trim(), 
-                    section: c[2]?.trim() || "أ", 
-                    sub: c[3]?.trim(), 
-                    teacher: c[4]?.trim(), 
-                    s: c[5]?.trim(), 
-                    e: c[6]?.trim(), 
-                    link: c[7]?.trim() 
-                };
+                return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim() || "أ", sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
             });
             updateUI();
-        } catch(e) { console.error("Error loading data"); }
+        } catch(e) { console.error("Load error"); }
     }
 
     function handleLogin() {
@@ -147,7 +129,7 @@
         if(pass === "1") role = 'طالب';
         else if(pass === "1111") role = 'معلم';
         else if(pass === "1234") role = 'إشراف';
-        else { alert("الرمز غير صحيح"); return; }
+        else { alert("الرمز خطأ"); return; }
         
         sessionStorage.setItem('isLoggedIn', 'true');
         sessionStorage.setItem('userRole', role);
@@ -160,7 +142,6 @@
         const role = sessionStorage.getItem('userRole');
         document.getElementById('userBadge').innerText = role;
         document.getElementById('userBadge').style.display = 'inline-block';
-        document.getElementById('portalTitle').innerText = 'بوابة ' + role;
         
         const ds = document.getElementById('daySelect');
         ds.innerHTML = '';
@@ -176,16 +157,13 @@
         const section = document.getElementById('sectionSelect').value;
         
         let filtered = rawData.filter(i => i.day === day && (grade === "" || i.grade === grade) && (section === "" || i.section === section));
-
-        area.innerHTML = filtered.length === 0 ? "<div style='color:var(--gray); padding:20px;'>لا توجد حصص مجدولة لهذا الاختيار</div>" : "";
+        area.innerHTML = filtered.length === 0 ? "لا يوجد حصص" : "";
         filtered.forEach(l => {
             area.innerHTML += `
                 <div class="display-card">
-                    <b style="color:var(--primary); font-size:1.1rem;">${l.sub}</b><br>
+                    <b>${l.sub}</b><br>
                     <small>${l.teacher} | ${l.s} - ${l.e}</small><br>
-                    <button class="btn btn-primary" style="margin-top:10px; padding:10px; font-size:0.9rem;" onclick="window.open('${l.link}')">
-                        <i class="fas fa-external-link-alt"></i> دخول الحصة
-                    </button>
+                    <button class="btn btn-primary" style="margin-top:10px; padding:8px; font-size:0.9rem;" onclick="window.open('${l.link}')">دخول</button>
                 </div>`;
         });
     }
@@ -195,8 +173,18 @@
         document.getElementById('themeIcon').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun theme-toggle' : 'fas fa-moon theme-toggle';
     }
 
-    function handleLogout() { sessionStorage.clear(); location.reload(); }
-    
+    // تعديل دالة الخروج لضمان إعادة تنشيط الشاشة الأصلية
+    function handleLogout() {
+        sessionStorage.clear();
+        window.location.reload(); // إعادة تحميل الصفحة تضمن ظهور شاشة الدخول بأزرارها كاملة
+    }
+
+    function hardExit() {
+        if(confirm("هل تريد الخروج تماماً من المنصة؟")) {
+            window.location.href = "https://www.google.com";
+        }
+    }
+
     window.onload = () => { 
         if(sessionStorage.getItem('isLoggedIn')) showApp(); 
         else updateClock(); 
