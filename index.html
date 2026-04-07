@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v2.5</title>
+    <title>منصة العنقود الرقمية v2.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -17,7 +17,6 @@
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.3s; padding-bottom: 0; }
         
-        /* ضبط المسافات عند ظهور الشريط السفلي */
         body.has-nav { padding-bottom: 110px; }
 
         /* الأشرطة */
@@ -32,6 +31,11 @@
         .pass-container { margin: 25px auto 15px; width: 100%; max-width: 350px; position: relative; }
         .pass-container input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--border); box-sizing: border-box; text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1.1rem; }
         .eye-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); }
+
+        /* توسيع القوائم المنسدلة */
+        .filter-grid-expanded { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        select { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--border); background: var(--card); color: var(--text); font-weight: bold; cursor: pointer; font-size: 0.95rem; outline: none; transition: 0.2s; }
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
         /* الأزرار */
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; margin-bottom: 12px; }
@@ -50,22 +54,18 @@
         .admin-table th, .admin-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
 
         /* الشريط السفلي */
-        .bottom-nav { 
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
-            background: var(--nav-bg); backdrop-filter: blur(12px); 
-            padding: 10px; border-radius: 40px; display: flex; gap: 5px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; 
-            border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around;
-        }
+        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
         .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; min-width: 60px; }
         .nav-item i { font-size: 1.2rem; }
         .nav-item span { font-size: 0.65rem; font-weight: 800; }
 
         .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         #google_translate_element { display: none; }
+        .goog-te-banner-frame.skiptranslate { display: none !important; } 
+        body { top: 0px !important; }
     </style>
 </head>
-<body>
+<body class="has-nav">
 
 <div id="google_translate_element"></div>
 
@@ -108,26 +108,26 @@
 
     <div class="welcome-frame">
         <div class="auth-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;"></span>
-                <button style="background: #fee2e2; color: var(--danger); border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="handleLogout()">رجوع للترحيب</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span id="userBadge" style="background: var(--primary); color: white; padding: 6px 18px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;"></span>
+                <button style="background: #fee2e2; color: var(--danger); border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="handleLogout()">خروج</button>
             </div>
             
-            <div id="filtersArea" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; margin-bottom:15px;">
+            <div class="filter-grid-expanded">
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="teacherSelect" onchange="updateUI()" style="display:none;"></select>
                 <select id="gradeSelect" onchange="updateUI()"><option value="">كل الصفوف</option></select>
-                <select id="sectionSelect" onchange="updateUI()"><option value="">الشعبة</option><option value="أ">أ</option><option value="ب">ب</option></select>
+                <select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option><option value="أ">أ</option><option value="ب">ب</option></select>
             </div>
             
-            <div id="displayArea">جاري التحميل...</div>
+            <div id="displayArea">جاري المزامنة...</div>
         </div>
     </div>
 </div>
 
 <div id="bottomNav" class="bottom-nav">
     <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt" style="color:var(--success)"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="triggerTranslate()"><i class="fas fa-language" style="color:var(--purple)"></i><span>ترجمة</span></div>
+    <div class="nav-item" onclick="toggleLanguage()"><i class="fas fa-language" style="color:var(--purple)"></i><span id="langText">English</span></div>
     <div class="nav-item" onclick="showAbout()"><i class="fas fa-id-card" style="color:var(--info)"></i><span>عنّا</span></div>
     <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope" style="color:#f59e0b"></i><span>راسلنا</span></div>
 </div>
@@ -136,6 +136,7 @@
     let rawData = [];
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
     const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+    let currentLang = 'ar';
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
     function togglePassword() {
@@ -180,11 +181,9 @@
         document.getElementById('bottomNav').style.display = 'none';
         document.body.classList.remove('has-nav');
         document.getElementById('mainApp').style.display = 'block';
-        
         const role = sessionStorage.getItem('userRole');
         document.getElementById('userBadge').innerText = "بوابة: " + role;
         if(role === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
-        
         const ds = document.getElementById('daySelect');
         ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
         ds.value = weekDays[new Date().getDay()] || "الأحد";
@@ -196,7 +195,6 @@
         const role = sessionStorage.getItem('userRole');
         const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
         const now = new Date(); const curMins = now.getHours() * 60 + now.getMinutes();
-
         let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
         
         if(role === 'إدارة وإشراف') {
@@ -208,17 +206,13 @@
                 let sCol = (curMins >= sm && curMins <= em) ? 'var(--success)' : (curMins > em) ? 'var(--gray)' : 'var(--danger)';
                 let sTxt = (curMins >= sm && curMins <= em) ? 'نشطة 🟢' : (curMins > em) ? 'منتهية ⚪' : 'انتظار 🔴';
                 if(curMins>=sm && curMins<=em) act++; else if(curMins>em) done++; else wait++;
-
                 html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td>${l.sub}</td>
                 <td><button onclick="window.open('${l.link}')" style="background:none; border:1px solid ${sCol}; color:${sCol}; padding:5px; border-radius:8px; cursor:pointer; font-size:0.7rem; width:100%; font-weight:bold;">${sTxt} | دخول</button></td></tr>`;
             });
             area.innerHTML = html + "</tbody></table>";
-            document.getElementById('countActive').innerText = act;
-            document.getElementById('countWait').innerText = wait;
-            document.getElementById('countDone').innerText = done;
+            document.getElementById('countActive').innerText = act; document.getElementById('countWait').innerText = wait; document.getElementById('countDone').innerText = done;
             const p = filtered.length > 0 ? Math.round(((done + act) / filtered.length) * 100) : 0;
-            document.getElementById('percentDone').innerText = p + "%";
-            document.getElementById('progBar').style.width = p + "%";
+            document.getElementById('percentDone').innerText = p + "%"; document.getElementById('progBar').style.width = p + "%";
         } else {
             area.innerHTML = `<div style="display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>`;
             filtered.forEach(l => {
@@ -235,9 +229,20 @@
 
     function handleLogout() { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); }
     function confirmFinalExit() {
-        Swal.fire({ title: 'إغلاق نهائي؟', text: "سيتم مسح البيانات والتوجه لجوجل", icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم' }).then((r) => {
+        Swal.fire({ title: 'خروج نهائي؟', text: "سيتم مسح الذاكرة والتوجه لجوجل", icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم' }).then((r) => {
             if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.com"); }
         });
+    }
+
+    function toggleLanguage() {
+        const combo = document.querySelector('.goog-te-combo');
+        if(!combo) { Swal.fire('عذراً', 'جاري تحميل محرك الترجمة...', 'info'); return; }
+        if(currentLang === 'ar') {
+            combo.value = 'en'; currentLang = 'en'; document.getElementById('langText').innerText = 'العربية';
+        } else {
+            combo.value = 'ar'; currentLang = 'ar'; document.getElementById('langText').innerText = 'English';
+        }
+        combo.dispatchEvent(new Event('change'));
     }
 
     function updateClock() {
@@ -246,23 +251,13 @@
         if(document.getElementById('dateDisplay')) document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'long'});
         if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) updateUI();
     }
-
-    function triggerTranslate() { 
-        const c = document.querySelector('.goog-te-combo'); 
-        if(c) { c.value = (c.value==='en')?'ar':'en'; c.dispatchEvent(new Event('change')); } 
-        else { Swal.fire('تنبيه', 'أداة الترجمة ', 'info'); }
-    }
-    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.5\nالواجهة الذكية المحدثة', 'info'); }
-    function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'ar'}, 'google_translate_element'); }
+    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.6\nالقوائم الموسعة والترجمة الثنائية', 'info'); }
+    function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'ar,en'}, 'google_translate_element'); }
 
     setInterval(updateClock, 1000);
     window.onload = () => { 
-        if(sessionStorage.getItem('isLoggedIn')) {
-            showApp();
-        } else {
-            document.body.classList.add('has-nav');
-            updateClock();
-        }
+        if(sessionStorage.getItem('isLoggedIn')) showApp(); 
+        else { document.body.classList.add('has-nav'); updateClock(); }
     };
 </script>
 </body>
