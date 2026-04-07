@@ -36,14 +36,16 @@
         .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         
         #mainApp { display: none; padding: 20px; padding-bottom: 80px; }
+        
+        /* البطاقة تعود للشكل الكلاسيكي دون شريط جانبي ملون */
         .display-card { 
             background: var(--card); 
-            padding: 15px; 
+            padding: 18px; 
             border-radius: 20px; 
-            margin-bottom: 12px; 
+            margin-bottom: 15px; 
             text-align: right; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02); 
-            border-right: 8px solid var(--gray); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            border: 1px solid var(--border);
             transition: 0.3s;
         }
     </style>
@@ -105,7 +107,6 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // تحويل الوقت لنظام الدقائق لسهولة المقارنة البرمجية
     function timeToMinutes(tStr) {
         if (!tStr) return 0;
         let parts = tStr.split(':').map(Number);
@@ -114,10 +115,8 @@
 
     function updateClock() {
         const now = new Date();
-        // عرض الساعة بنظام 24 ساعة (مثلاً 14:30 بدلاً من 02:30 م)
         document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
         document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long'});
-        
         if (now.getSeconds() === 0) updateUI();
     }
     setInterval(updateClock, 1000);
@@ -132,7 +131,7 @@
                 return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim() || "أ", sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
             });
             updateUI();
-        } catch(e) { console.error("Data error"); }
+        } catch(e) { console.error("Data fetch error"); }
     }
 
     function handleLogin() {
@@ -165,7 +164,6 @@
         const section = document.getElementById('sectionSelect').value;
         
         const now = new Date();
-        // الحصول على الدقيقة الحالية بنظام 24 ساعة
         const currentMins = now.getHours() * 60 + now.getMinutes();
 
         let filtered = rawData.filter(i => i.day === day && (grade === "" || i.grade === grade) && (section === "" || i.section === section));
@@ -175,31 +173,36 @@
             const startMins = timeToMinutes(l.s);
             const endMins = timeToMinutes(l.e);
             
-            let statusColor, statusText, btnDisabled = "";
+            let btnColor, btnText, btnIcon, btnDisabled = "";
 
-            // المقارنة الزمنية المباشرة (نظام 24 ساعة)
+            // النظام اللوني للزر حسب حالة الوقت (24 ساعة)
             if (currentMins >= startMins && currentMins <= endMins) {
-                statusColor = "var(--success)"; // أخضر: الحصة جارية
-                statusText = "جارية الآن";
+                btnColor = "var(--success)"; // أخضر للحصة الجارية
+                btnText = "دخول الحصة الآن";
+                btnIcon = "fa-video";
             } else if (currentMins > endMins) {
-                statusColor = "var(--danger)"; // أحمر: الحصة انتهت
-                statusText = "منتهية";
-                btnDisabled = "disabled style='opacity:0.4; cursor:not-allowed;'";
+                btnColor = "var(--danger)"; // أحمر للحصة المنتهية
+                btnText = "انتهت الحصة";
+                btnIcon = "fa-clock-rotate-left";
+                btnDisabled = "disabled style='opacity:0.5; cursor:not-allowed;'";
             } else {
-                statusColor = "var(--gray)"; // رمادي: قادمة
-                statusText = "قادمة";
-                btnDisabled = "disabled style='opacity:0.6; cursor:not-allowed;'";
+                btnColor = "var(--gray)"; // رمادي للحصة القادمة
+                btnText = "لم يحن وقتها";
+                btnIcon = "fa-hourglass-start";
+                btnDisabled = "disabled style='opacity:0.7; cursor:not-allowed;'";
             }
 
             area.innerHTML += `
-                <div class="display-card" style="border-right-color: ${statusColor}">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b style="color:${statusColor};">${l.sub}</b>
-                        <span style="font-size:0.7rem; color:${statusColor}; font-weight:bold; background:${statusColor}22; padding:2px 8px; border-radius:10px;">${statusText}</span>
+                <div class="display-card">
+                    <b style="color:var(--text); font-size:1.1rem; display:block; margin-bottom:5px;">${l.sub}</b>
+                    <div style="font-size:0.85rem; color:var(--gray); margin-bottom:12px;">
+                        <i class="fas fa-chalkboard-teacher"></i> ${l.teacher} | 
+                        <i class="fas fa-clock"></i> ${l.s} - ${l.e}
                     </div>
-                    <small style="color:var(--gray);">${l.teacher} | ${l.s} - ${l.e}</small><br>
-                    <button class="btn btn-primary" ${btnDisabled} style="margin-top:10px; padding:10px; font-size:0.9rem; background: ${statusColor}; box-shadow: 0 4px 0 ${statusColor}99; border:none;" onclick="window.open('${l.link}')">
-                        <i class="fas fa-video"></i> دخول الحصة
+                    <button class="btn" ${btnDisabled} 
+                        style="background: ${btnColor}; color:white; box-shadow: 0 5px 0 ${btnColor}99; margin-bottom:0;" 
+                        onclick="window.open('${l.link}')">
+                        <i class="fas ${btnIcon}"></i> ${btnText}
                     </button>
                 </div>`;
         });
