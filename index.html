@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية</title>
+    <title>منصة العنقود الرقمية v1.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -31,6 +31,7 @@
         .curved-svg { width: 100%; height: 100%; overflow: visible; }
         .curved-text { font-size: 34px; font-weight: 900; fill: var(--primary); }
         .main-logo { width: 90px; height: auto; margin-top: -30px; margin-bottom: 10px; }
+        .version-label { font-size: 0.75rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; background: rgba(37, 99, 235, 0.1); padding: 2px 10px; border-radius: 10px; display: inline-block; }
         .designer-tag { font-size: 0.8rem; color: var(--gray); margin-bottom: 20px; }
         
         .pass-wrapper { position: relative; width: 100%; margin-bottom: 12px; }
@@ -48,12 +49,10 @@
         .card-info { font-size: 0.9rem; color: var(--gray); line-height: 1.6; }
         .card-info b { color: var(--text); font-size: 1.1rem; }
 
-        /* الشريط السفلي المطور */
         .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); padding: 10px 20px; border-radius: 30px; display: flex; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); z-index: 2000; width: fit-content; }
         .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: var(--primary); transition: 0.3s; min-width: 60px; }
         .nav-item i { font-size: 1.1rem; margin-bottom: 4px; }
         .nav-item span { font-size: 0.6rem; font-weight: bold; }
-        .nav-item:hover { transform: translateY(-3px); color: var(--warning); }
 
         [lang="en"] { direction: ltr; text-align: left; }
         [lang="en"] .card-header { flex-direction: row-reverse; }
@@ -81,6 +80,7 @@
                 </svg>
             </div>
             <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" alt="Logo" class="main-logo">
+            <div><span class="version-label">v1.1</span></div>
             <div class="designer-tag" id="designerText">تصميم: م. سامي غنام</div>
             <div class="pass-wrapper">
                 <input type="password" id="sysPass" placeholder="أدخل رمز الدخول">
@@ -106,7 +106,7 @@
                     <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                 </select>
                 <select id="sectionSelect" onchange="updateUI()">
-                    <option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option>
+                    <option value="أ" id="secA">أ</option><option value="ب" id="secB">ب</option><option value="ج" id="secC">ج</option>
                 </select>
             </div>
             <div id="displayArea" style="margin-top: 15px; width: 100%;"></div>
@@ -130,21 +130,24 @@
             contact: "راسلنا", about: "عن البرنامج", refresh: "تحديث", noLessons: "لا توجد حصص مجدولة",
             enterBtn: "دخول الحصة الآن", endedBtn: "انتهت الحصة", closedBtn: "الحصة مغلقة",
             swalLogout: "هل تود تسجيل الخروج؟", swalExit: "هل أنت متأكد؟", yes: "نعم", no: "إلغاء", teacher: "المعلم",
-            roleStudent: "طالب", roleTeacher: "معلم", roleSupervisor: "إشراف", errorLogin: "رمز الدخول غير صحيح", langName: "English"
+            roleStudent: "طالب", roleTeacher: "معلم", roleSupervisor: "إشراف", errorLogin: "رمز الدخول غير صحيح", 
+            langName: "English", secA: "أ", secB: "ب", secC: "ج", aboutMsg: "منصة العنقود الرقمية v1.1 - تطوير م. سامي غنام 2026"
         },
         en: {
             title: "Cluster Digital Platform", designer: "Designed by: Eng. Sami Ghannam", passPlaceholder: "Enter Access Code",
             login: "Login to Platform", exit: "Final Exit", portal: "Portal", logout: "Logout", grade: "Grade",
-            contact: "Contact Us", about: "About", refresh: "Refresh", noLessons: "No scheduled lessons",
+            contact: "Contact Us", about: "About Platform", refresh: "Refresh", noLessons: "No scheduled lessons",
             enterBtn: "Join Lesson Now", endedBtn: "Lesson Ended", closedBtn: "Lesson Closed",
             swalLogout: "Do you want to logout?", swalExit: "Are you sure?", yes: "Yes", no: "Cancel", teacher: "Teacher",
-            roleStudent: "Student", roleTeacher: "Teacher", roleSupervisor: "Supervisor", errorLogin: "Invalid Access Code", langName: "العربية"
+            roleStudent: "Student", roleTeacher: "Teacher", roleSupervisor: "Supervisor", errorLogin: "Invalid Access Code", 
+            langName: "العربية", secA: "A", secB: "B", secC: "C", aboutMsg: "Cluster Platform v1.1 - Developed by Eng. Sami Ghannam 2026"
         }
     };
 
     let rawData = [];
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
     const weekDaysAR = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+    const weekDaysEN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
 
     function toggleLanguage() {
         currentLang = (currentLang === 'ar') ? 'en' : 'ar';
@@ -163,6 +166,9 @@
         document.getElementById('exitBtn').textContent = t.exit;
         document.getElementById('logoutText').innerHTML = `<i class="fas fa-sign-out-alt"></i> ${t.logout}`;
         document.getElementById('gradeDefault').textContent = t.grade;
+        document.getElementById('secA').textContent = t.secA;
+        document.getElementById('secB').textContent = t.secB;
+        document.getElementById('secC').textContent = t.secC;
         document.getElementById('navContact').textContent = t.contact;
         document.getElementById('navAbout').textContent = t.about;
         document.getElementById('navRefresh').textContent = t.refresh;
@@ -171,9 +177,10 @@
         const ds = document.getElementById('daySelect');
         const currentVal = ds.value;
         ds.innerHTML = '';
-        weekDaysAR.forEach((d) => {
+        const days = (currentLang === 'ar') ? weekDaysAR : weekDaysEN;
+        days.forEach((d, i) => {
             const opt = document.createElement('option');
-            opt.value = d; opt.textContent = d;
+            opt.value = weekDaysAR[i]; opt.textContent = d;
             ds.appendChild(opt);
         });
         ds.value = currentVal || weekDaysAR[new Date().getDay()] || "الأحد";
@@ -279,18 +286,18 @@
 
     function handleLogout() {
         const t = translations[currentLang];
-        Swal.fire({ title: t.logout, text: t.swalLogout, icon: 'warning', showCancelButton: true, confirmButtonText: t.yes, cancelButtonText: t.no })
+        Swal.fire({ title: t.logout, text: t.swalLogout, icon: 'warning', showCancelButton: true, confirmButtonText: t.yes, cancelButtonText: t.no, confirmButtonColor: '#2563eb' })
         .then((r) => { if (r.isConfirmed) { sessionStorage.clear(); window.location.reload(); } });
     }
 
     function hardExit() {
         const t = translations[currentLang];
-        Swal.fire({ title: t.exit, text: t.swalExit, icon: 'error', showCancelButton: true, confirmButtonText: t.yes, cancelButtonText: t.no })
+        Swal.fire({ title: t.exit, text: t.swalExit, icon: 'error', showCancelButton: true, confirmButtonText: t.yes, cancelButtonText: t.no, confirmButtonColor: '#ef4444' })
         .then((r) => { if (r.isConfirmed) window.location.href = "https://www.google.com"; });
     }
 
-    function showContact() { Swal.fire({ title: translations[currentLang].contact, text: 'admin@school.ps', icon: 'info' }); }
-    function showAbout() { Swal.fire({ title: translations[currentLang].about, text: 'Cluster Digital Platform v2.0 - 2026', icon: 'question' }); }
+    function showContact() { window.location.href = "mailto:sami.ghannam@shebron.edu.ps"; }
+    function showAbout() { Swal.fire({ title: translations[currentLang].about, text: translations[currentLang].aboutMsg, icon: 'question', confirmButtonColor: '#2563eb' }); }
 
     window.onload = () => { applyTranslations(); if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
 </script>
