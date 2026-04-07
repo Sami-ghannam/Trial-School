@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v2.1</title>
+    <title>منصة العنقود الرقمية v2.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -21,46 +21,42 @@
         .top-bar { background: var(--card); padding: 12px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: auto; }
 
-        /* Frames & Cards */
+        /* Welcome Frame */
         .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 10px; border-radius: 30px; box-shadow: 0 15px 35px rgba(30, 64, 175, 0.2); margin-top: 10px; }
         .auth-card { background: var(--card); padding: 25px; border-radius: 25px; text-align: center; }
         
-        /* Inputs */
+        /* Dashboard Stats Area */
+        .admin-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        @media (min-width: 768px) { .admin-stats-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stat-card { background: var(--bg); padding: 12px; border-radius: 15px; border: 1px solid var(--border); }
+        .stat-num { display: block; font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; color: var(--gray); font-weight: bold; }
+
+        /* Progress Bar */
+        .progress-container { background: var(--bg); height: 10px; border-radius: 10px; margin: 10px 0 20px 0; overflow: hidden; border: 1px solid var(--border); }
+        .progress-bar { height: 100%; background: linear-gradient(to left, var(--success), var(--primary)); transition: 0.5s; width: 0%; }
+
+        /* Inputs & Buttons */
         .pass-container { margin: 25px auto 15px; width: 100%; max-width: 350px; position: relative; }
         .pass-container input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--border); box-sizing: border-box; text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1.1rem; }
-        .eye-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); font-size: 1.2rem; }
+        .eye-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); }
 
-        .filter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 20px 0; }
+        .filter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
         @media (min-width: 768px) { .filter-grid { grid-template-columns: repeat(4, 1fr); } }
-        select { padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--card); color: var(--text); font-weight: bold; cursor: pointer; }
+        select { padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-weight: bold; font-size: 0.85rem; }
 
-        /* Buttons */
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; margin-bottom: 12px; }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .btn-exit { background: linear-gradient(to bottom, #ef4444, #b91c1c); color: white; border-bottom: 4px solid #7f1d1d; }
-        .btn-exit:active { border-bottom: 0; transform: translateY(2px); }
 
-        /* Bottom Nav */
-        .bottom-nav { 
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
-            background: var(--nav-bg); backdrop-filter: blur(12px); 
-            padding: 12px 20px; border-radius: 40px; display: flex; gap: 10px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border);
-            width: 90%; max-width: 500px; justify-content: space-around;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 5px; min-width: 60px; }
-        .nav-item i { font-size: 1.3rem; }
-        .nav-item span { font-size: 0.7rem; font-weight: 800; }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; }
+        .admin-table th { background: var(--bg); padding: 10px; border: 1px solid var(--border); color: var(--primary); }
+        .admin-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
 
-        .ic-refresh { color: var(--success); }
-        .ic-translate { color: var(--purple); }
-        .ic-info { color: var(--info); }
-        .ic-mail { color: #f59e0b; }
-
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-        .admin-table th { background: var(--bg); padding: 10px; border: 1px solid var(--border); }
-        .admin-table td { padding: 8px; border: 1px solid var(--border); }
-
+        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; gap: 3px; min-width: 60px; }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item span { font-size: 0.65rem; font-weight: 800; }
         .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         #google_translate_element { display: none; }
     </style>
@@ -72,7 +68,7 @@
 <div class="top-bar">
     <div class="nav-header">
         <div id="dateDisplay" style="font-weight: 800; color: var(--primary); font-size: 0.8rem;"></div>
-        <div style="display: flex; align-items: center; gap: 15px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
             <i class="fas fa-moon fa-lg" onclick="toggleDarkMode()" style="cursor: pointer; color: var(--primary);"></i>
             <div id="clockDisplay" style="font-weight: 900; font-size: 0.9rem;"></div>
         </div>
@@ -82,46 +78,52 @@
 <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 15px;">
     <div class="welcome-frame" style="width: 100%; max-width: 420px;">
         <div class="auth-card">
-            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 85px; margin-bottom: 5px;">
-            <h2 style="color: var(--primary); margin: 0;">منصة العنقود الرقمية</h2>
-            <p style="font-size: 0.8rem; color: var(--gray); margin-top: 5px;">م. سامي غنام</p>
-            
+            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 80px;">
+            <h2 style="color: var(--primary); margin: 10px 0 0 0;">منصة العنقود الرقمية</h2>
+            <p style="font-size: 0.75rem; color: var(--gray);">تصميم وإشراف: م. سامي غنام</p>
             <div class="pass-container">
                 <input type="password" id="sysPass" placeholder="رمز الدخول">
                 <i class="fas fa-eye eye-btn" id="eyeIcon" onclick="togglePassword()"></i>
             </div>
-            
             <button class="btn btn-primary" onclick="handleLogin()">دخول المنصة</button>
-            <button class="btn btn-exit" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق البرنامج نهائياً</button>
+            <button class="btn btn-exit" onclick="confirmFinalExit()"><i class="fas fa-power-off"></i> إغلاق نهائي</button>
         </div>
     </div>
 </div>
 
 <div id="mainApp" style="display:none;" class="container">
+    <div id="adminDashboard" style="display:none; margin-bottom: 20px;">
+        <div class="admin-stats-grid">
+            <div class="stat-card"><span class="stat-num" id="countActive">0</span><span class="stat-label">نشطة الآن</span></div>
+            <div class="stat-card"><span class="stat-num" id="countWait">0</span><span class="stat-label">بانتظار البدء</span></div>
+            <div class="stat-card"><span class="stat-num" id="countDone">0</span><span class="stat-label">حصص مكتملة</span></div>
+            <div class="stat-card"><span class="stat-num" id="percentDone">0%</span><span class="stat-label">نسبة الإنجاز</span></div>
+        </div>
+        <div class="progress-container"><div id="progBar" class="progress-bar"></div></div>
+    </div>
+
     <div class="welcome-frame">
         <div class="auth-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 6px 15px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;"></span>
-                <button style="background: #fee2e2; color: var(--danger); border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="handleLogout()">رجوع</button>
+                <span id="userBadge" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;"></span>
+                <button style="background: #fee2e2; color: var(--danger); border: none; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.8rem;" onclick="handleLogout()">رجوع</button>
             </div>
-
             <div class="filter-grid">
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="teacherSelect" onchange="updateUI()" style="display:none;"></select>
                 <select id="gradeSelect" onchange="updateUI()"><option value="">كل الصفوف</option></select>
-                <select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option><option value="أ">أ</option><option value="ب">ب</option></select>
+                <select id="sectionSelect" onchange="updateUI()"><option value="">الشعبة</option><option value="أ">أ</option><option value="ب">ب</option></select>
             </div>
-            
-            <div id="displayArea">جاري جلب البيانات...</div>
+            <div id="displayArea">جاري المزامنة...</div>
         </div>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt ic-refresh"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="triggerTranslate()"><i class="fas fa-language ic-translate"></i><span>ترجمة</span></div>
-    <div class="nav-item" onclick="showAbout()"><i class="fas fa-id-card ic-info"></i><span>عنّا</span></div>
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope ic-mail"></i><span>راسلنا</span></div>
+    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt" style="color:var(--success)"></i><span>تحديث</span></div>
+    <div class="nav-item" onclick="triggerTranslate()"><i class="fas fa-language" style="color:var(--purple)"></i><span>ترجمة</span></div>
+    <div class="nav-item" onclick="showAbout()"><i class="fas fa-id-card" style="color:var(--info)"></i><span>عنّا</span></div>
+    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope" style="color:#f59e0b"></i><span>راسلنا</span></div>
 </div>
 
 <script>
@@ -145,9 +147,8 @@
                 const c = row.split(',');
                 return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
             });
-            setupFilters();
-            updateUI();
-        } catch(e) { document.getElementById('displayArea').innerText = "خطأ في جلب البيانات"; }
+            setupFilters(); updateUI();
+        } catch(e) { document.getElementById('displayArea').innerText = "فشل الاتصال بجوجل شيت"; }
     }
 
     function setupFilters() {
@@ -169,7 +170,9 @@
     function showApp() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('userBadge').innerText = "بوابة: " + sessionStorage.getItem('userRole');
+        const role = sessionStorage.getItem('userRole');
+        document.getElementById('userBadge').innerText = "بوابة: " + role;
+        if(role === 'إدارة وإشراف') document.getElementById('adminDashboard').style.display = 'block';
         const ds = document.getElementById('daySelect');
         ds.innerHTML = weekDays.map(d => `<option value="${d}">${d}</option>`).join('');
         ds.value = weekDays[new Date().getDay()] || "الأحد";
@@ -185,29 +188,41 @@
         let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
         
         if(role === 'إدارة وإشراف') {
+            let act = 0, wait = 0, done = 0;
             let html = `<table class="admin-table"><thead><tr><th>الصف</th><th>المعلم</th><th>الحالة</th></tr></thead><tbody>`;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                let status = (curMins >= sm && curMins <= em) ? '🟢' : (curMins > em) ? '⚪' : '🔴';
+                let status = "";
+                if (curMins >= sm && curMins <= em) { status = '<span style="color:var(--success); font-weight:900;">نشطة 🟢</span>'; act++; }
+                else if (curMins > em) { status = '<span style="color:var(--gray)">منتهية</span>'; done++; }
+                else { status = '<span style="color:var(--danger)">انتظار</span>'; wait++; }
                 html += `<tr><td>${l.grade}-${l.section}</td><td>${l.teacher}</td><td>${status}</td></tr>`;
             });
             area.innerHTML = html + "</tbody></table>";
+            // تحديث العدادات
+            document.getElementById('countActive').innerText = act;
+            document.getElementById('countWait').innerText = wait;
+            document.getElementById('countDone').innerText = done;
+            const perc = filtered.length > 0 ? Math.round(((done + act) / filtered.length) * 100) : 0;
+            document.getElementById('percentDone').innerText = perc + "%";
+            document.getElementById('progBar').style.width = perc + "%";
         } else {
-            area.innerHTML = `<div style="display:grid; gap:10px;"></div>`;
+            area.innerHTML = `<div style="display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>`;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
                 const isOpen = (curMins >= sm - 5 && curMins <= em + 5);
-                area.firstChild.innerHTML += `<div class="auth-card" style="border-right:5px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right;">
-                    <b>${l.sub}</b> | ${l.s}-${l.e}<br><button class="btn btn-primary" style="margin-top:10px; background:${isOpen?'':'gray'}" ${isOpen?'':'disabled'} onclick="window.open('${l.link}')">دخول</button>
+                area.firstChild.innerHTML += `<div class="auth-card" style="border-right:6px solid ${isOpen?'var(--success)':'var(--danger)'}; text-align:right; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                    <b style="color:var(--primary)">${l.sub}</b> | المعلم: ${l.teacher}<br><small>${l.grade}-${l.section} | ${l.s} - ${l.e}</small><br>
+                    <button class="btn btn-primary" style="margin-top:10px; background:${isOpen?'':'gray'}" ${isOpen?'':'disabled'} onclick="window.open('${l.link}')">${isOpen?'دخول الآن':'مغلق'}</button>
                 </div>`;
             });
         }
     }
 
     function confirmFinalExit() {
-        Swal.fire({ title: 'خروج نهائي؟', text: "هل أنت متأكد؟", icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم' }).then((r) => {
+        Swal.fire({ title: 'خروج نهائي؟', text: "هل انت متأكد!!", icon: 'warning', showCancelButton: true, confirmButtonText: 'خروج', cancelButtonText: 'إلغاء' }).then((r) => {
             if(r.isConfirmed) { sessionStorage.clear(); window.location.replace("https://www.google.com"); }
         });
     }
@@ -220,7 +235,7 @@
         if(now.getSeconds() === 0) updateUI();
     }
     function triggerTranslate() { const c = document.querySelector('.goog-te-combo'); if(c) { c.value = (c.value==='en')?'ar':'en'; c.dispatchEvent(new Event('change')); } }
-    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.1', 'info'); }
+    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.3\nلوحة تحكم المشرف الذكية', 'info'); }
     function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'ar'}, 'google_translate_element'); }
 
     setInterval(updateClock, 1000);
