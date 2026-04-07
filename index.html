@@ -33,10 +33,10 @@
         .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; font-size: 1.1rem; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 0 #1d4ed8; }
         .btn-danger { background: var(--danger); color: white; box-shadow: 0 6px 0 #b91c1c; }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         
         #mainApp { display: none; padding: 20px; padding-bottom: 80px; }
-        .display-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: right; }
+        .display-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: right; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
     </style>
 </head>
 <body>
@@ -63,7 +63,7 @@
             <div class="designer-tag">تصميم: م. سامي غنام</div>
             <input type="text" id="sysPass" placeholder="أدخل رمز الدخول">
             <button class="btn btn-primary" onclick="handleLogin()">دخول للمنصة</button>
-            <button id="exitBtn" class="btn btn-danger" onclick="hardExit()">خروج نهائي</button>
+            <button class="btn btn-danger" onclick="hardExit()">خروج نهائي</button>
         </div>
     </div>
 </div>
@@ -73,7 +73,7 @@
         <div class="auth-card" style="padding: 15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:10px;">
                 <h4 id="portalTitle" style="margin:0; color:var(--primary);">البوابة</h4>
-                <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;">تسجيل خروج</button>
+                <button onclick="handleLogout()" style="border:none; background:none; color:var(--danger); font-weight:bold; cursor:pointer;"><i class="fas fa-sign-out-alt"></i> خروج</button>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
                 <select id="daySelect" onchange="updateUI()"></select>
@@ -82,7 +82,9 @@
                     <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                 </select>
                 <select id="sectionSelect" onchange="updateUI()">
-                    <option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option>
+                    <option value="أ">أ</option><option value="ب">ب</option>
+                    <option value="ج">ج</option><option value="د">د</option>
+                    <option value="هـ">هـ</option><option value="و">و</option>
                 </select>
             </div>
             <div id="displayArea" style="margin-top: 15px; width: 100%;"></div>
@@ -120,7 +122,7 @@
                 return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim() || "أ", sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
             });
             updateUI();
-        } catch(e) { console.error("Load error"); }
+        } catch(e) { console.error("Data fetch error"); }
     }
 
     function handleLogin() {
@@ -129,7 +131,7 @@
         if(pass === "1") role = 'طالب';
         else if(pass === "1111") role = 'معلم';
         else if(pass === "1234") role = 'إشراف';
-        else { alert("الرمز خطأ"); return; }
+        else { alert("الرمز غير صحيح"); return; }
         
         sessionStorage.setItem('isLoggedIn', 'true');
         sessionStorage.setItem('userRole', role);
@@ -142,6 +144,7 @@
         const role = sessionStorage.getItem('userRole');
         document.getElementById('userBadge').innerText = role;
         document.getElementById('userBadge').style.display = 'inline-block';
+        document.getElementById('portalTitle').innerText = 'بوابة ' + role;
         
         const ds = document.getElementById('daySelect');
         ds.innerHTML = '';
@@ -157,13 +160,14 @@
         const section = document.getElementById('sectionSelect').value;
         
         let filtered = rawData.filter(i => i.day === day && (grade === "" || i.grade === grade) && (section === "" || i.section === section));
-        area.innerHTML = filtered.length === 0 ? "لا يوجد حصص" : "";
+
+        area.innerHTML = filtered.length === 0 ? "<div style='color:var(--gray); padding:20px;'>لا توجد حصص مجدولة</div>" : "";
         filtered.forEach(l => {
             area.innerHTML += `
                 <div class="display-card">
-                    <b>${l.sub}</b><br>
+                    <b style="color:var(--primary);">${l.sub}</b><br>
                     <small>${l.teacher} | ${l.s} - ${l.e}</small><br>
-                    <button class="btn btn-primary" style="margin-top:10px; padding:8px; font-size:0.9rem;" onclick="window.open('${l.link}')">دخول</button>
+                    <button class="btn btn-primary" style="margin-top:10px; padding:10px; font-size:0.9rem;" onclick="window.open('${l.link}')">دخول الحصة</button>
                 </div>`;
         });
     }
@@ -173,14 +177,13 @@
         document.getElementById('themeIcon').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun theme-toggle' : 'fas fa-moon theme-toggle';
     }
 
-    // تعديل دالة الخروج لضمان إعادة تنشيط الشاشة الأصلية
     function handleLogout() {
         sessionStorage.clear();
-        window.location.reload(); // إعادة تحميل الصفحة تضمن ظهور شاشة الدخول بأزرارها كاملة
+        window.location.reload();
     }
 
     function hardExit() {
-        if(confirm("هل تريد الخروج تماماً من المنصة؟")) {
+        if(confirm("هل تريد الخروج تماماً؟")) {
             window.location.href = "https://www.google.com";
         }
     }
