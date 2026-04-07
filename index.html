@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v1.6</title>
+    <title>منصة العنقود الرقمية v1.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -13,49 +13,63 @@
             --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #94a3b8; --border: #e2e8f0;
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; }
-        
-        /* Top Bar */
-        .top-bar { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
 
-        /* Professional Select Styling */
+        /* Navigation & Top Bar */
+        .top-bar { background: var(--card); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: auto; }
+
+        /* Responsive Container */
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+
+        /* Professional Dropdowns */
+        .filter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        @media (min-width: 768px) { .filter-grid { grid-template-columns: repeat(4, 1fr); } }
+
         select {
             width: 100%; padding: 12px 15px; border-radius: 12px; border: 2px solid var(--border);
             background: #fff; font-weight: 600; font-size: 0.9rem; color: var(--text);
-            cursor: pointer; transition: all 0.3s; appearance: none;
+            cursor: pointer; appearance: none; transition: 0.3s;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%232563eb' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: left 15px center;
         }
-        select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(37, 99, 235, 0.1); }
 
-        /* Login Container */
-        .login-container { display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; }
-        .pass-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
-        .toggle-password { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); z-index: 10; }
-
-        /* Header UI & Logout Button */
-        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
-        .logout-btn { background: #fee2e2; color: var(--danger); border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        /* Cards & Buttons */
+        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 10px; border-radius: 30px; box-shadow: 0 15px 35px rgba(30, 64, 175, 0.2); }
+        .auth-card { background: var(--card); padding: 30px 20px; border-radius: 25px; text-align: center; }
+        
+        .logout-btn { background: #fee2e2; color: var(--danger); border: none; padding: 8px 18px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
         .logout-btn:hover { background: var(--danger); color: white; }
 
-        /* Stats & Table */
-        .admin-dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: var(--card); padding: 12px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-val { display: block; font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed; box-shadow: none; }
 
-        .admin-table-container { width: 100%; overflow-x: auto; background: var(--card); border-radius: 20px; border: 1px solid var(--border); }
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 750px; }
-        .admin-table th { background: #f8fafc; padding: 12px; border-bottom: 2px solid var(--border); }
-        .admin-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: center; }
-        
-        /* Layout Frames */
-        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 8px; border-radius: 30px; box-shadow: 0 10px 25px rgba(30, 64, 175, 0.2); }
-        .auth-card { background: var(--card); padding: 25px 20px; border-radius: 25px; text-align: center; }
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:disabled { background: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed; }
+        /* Login Eye */
+        .pass-wrapper { position: relative; width: 100%; max-width: 350px; margin: 0 auto 15px; }
+        .toggle-password { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); font-size: 1.1rem; }
 
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 35px; display: flex; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 2000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: var(--primary); min-width: 50px; }
-        .nav-item span { font-size: 0.6rem; font-weight: bold; margin-top: 2px; }
+        /* Stats Dashboard */
+        .admin-dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        @media (min-width: 768px) { .admin-dashboard { grid-template-columns: repeat(4, 1fr); } }
+        .stat-box { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { font-size: 1.6rem; font-weight: 900; color: var(--primary); display: block; }
+        .stat-label { font-size: 0.75rem; color: var(--gray); font-weight: bold; }
+
+        /* Admin Table Responsive */
+        .admin-table-container { width: 100%; overflow-x: auto; border-radius: 20px; background: white; border: 1px solid var(--border); }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .admin-table th { background: #f8fafc; padding: 15px; text-align: center; border-bottom: 2px solid var(--border); }
+        .admin-table td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+
+        /* Cards Layout */
+        .lesson-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .lesson-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1200px) { .lesson-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); padding: 12px 25px; border-radius: 40px; display: flex; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid rgba(255,255,255,0.3); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: var(--primary); }
+        .nav-item span { font-size: 0.65rem; font-weight: bold; margin-top: 3px; }
+
         #google_translate_element { display: none; }
     </style>
 </head>
@@ -64,52 +78,56 @@
 <div id="google_translate_element"></div>
 
 <div class="top-bar">
-    <div id="dateDisplay" style="font-size: 0.8rem; font-weight: bold; color: var(--primary);"></div>
-    <div id="clockDisplay" style="font-size: 0.8rem; font-weight: bold; color: var(--text);"></div>
+    <div class="nav-header">
+        <div id="dateDisplay" style="font-weight: 800; color: var(--primary); font-size: 0.85rem;"></div>
+        <div id="clockDisplay" style="font-weight: 800; font-size: 0.9rem;"></div>
+    </div>
 </div>
 
-<div id="loginScreen" class="login-container">
-    <div class="welcome-frame" style="max-width: 400px; width: 100%;">
+<div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 85vh; padding: 15px;">
+    <div class="welcome-frame" style="width: 100%; max-width: 450px;">
         <div class="auth-card">
-            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 80px; margin-bottom: 10px;">
-            <h3 style="color: var(--primary); margin: 5px 0;">منصة العنقود الرقمية</h3>
-            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 20px;">تصميم وإشراف: م. سامي غنام</p>
+            <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" style="width: 90px; margin-bottom: 15px;">
+            <h2 style="color: var(--primary); margin: 0 0 5px 0;">منصة العنقود الرقمية</h2>
+            <p style="font-size: 0.8rem; color: var(--gray); margin-bottom: 25px;">تصميم وإشراف: م. سامي غنام</p>
+            
             <div class="pass-wrapper">
-                <input type="password" id="sysPass" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); text-align:center; box-sizing:border-box;" placeholder="رمز الدخول">
+                <input type="password" id="sysPass" style="width:100%; padding:15px; border-radius:15px; border:2px solid var(--border); text-align:center; font-size: 1rem; font-weight: 900;" placeholder="أدخل رمز الدخول">
                 <i class="fas fa-eye toggle-password" id="eyeIcon" onclick="togglePassword()"></i>
             </div>
-            <button class="btn" style="background: var(--primary); color: white;" onclick="handleLogin()">دخول للمنصة</button>
+            
+            <button class="btn" style="background: var(--primary); color: white;" onclick="handleLogin()">دخول المنصة</button>
         </div>
     </div>
 </div>
 
-<div id="mainApp" style="display:none; padding: 15px;">
+<div id="mainApp" style="display:none;" class="container">
     <div id="adminStatsArea"></div>
+    
     <div class="welcome-frame">
         <div class="auth-card">
-            <div class="header-main">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;"></span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span id="userBadge" style="background: var(--primary); color: white; padding: 6px 18px; border-radius: 20px; font-size: 0.8rem; font-weight: 900;"></span>
                 <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> خروج</button>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div class="filter-grid">
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="teacherSelect" onchange="updateUI()" style="display:none; border-color: var(--primary);"></select>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                 <select id="gradeSelect" onchange="updateUI()"><option value="">كل الصفوف</option></select>
                 <select id="sectionSelect" onchange="updateUI()"><option value="">كل الشعب</option><option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option></select>
             </div>
+
             <div id="displayArea"></div>
         </div>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="triggerTranslate()"><i class="fas fa-language"></i><span>الترجمة</span></div>
-    <div class="nav-item" onclick="showAbout()"><i class="fas fa-info-circle"></i><span>عنا</span></div>
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope"></i><span>راسلنا</span></div>
+    <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync-alt fa-lg"></i><span>تحديث</span></div>
+    <div class="nav-item" onclick="triggerTranslate()"><i class="fas fa-language fa-lg"></i><span>الترجمة</span></div>
+    <div class="nav-item" onclick="showAbout()"><i class="fas fa-info-circle fa-lg"></i><span>عنا</span></div>
+    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-envelope fa-lg"></i><span>راسلنا</span></div>
 </div>
 
 <script>
@@ -118,19 +136,10 @@
     const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
     function togglePassword() {
-        const passInput = document.getElementById('sysPass');
-        const eyeIcon = document.getElementById('eyeIcon');
-        if (passInput.type === "password") { passInput.type = "text"; eyeIcon.classList.replace('fa-eye', 'fa-eye-slash'); }
-        else { passInput.type = "password"; eyeIcon.classList.replace('fa-eye-slash', 'fa-eye'); }
-    }
-
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'en,ar'}, 'google_translate_element');
-    }
-
-    function triggerTranslate() {
-        const combo = document.querySelector('.goog-te-combo');
-        if (combo) { combo.value = (combo.value === 'en') ? 'ar' : 'en'; combo.dispatchEvent(new Event('change')); }
+        const pass = document.getElementById('sysPass');
+        const icon = document.getElementById('eyeIcon');
+        if (pass.type === "password") { pass.type = "text"; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
+        else { pass.type = "password"; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
     }
 
     async function loadData() {
@@ -145,8 +154,7 @@
             
             const role = sessionStorage.getItem('userRole');
             if(role === 'إدارة وإشراف') {
-                const ts = document.getElementById('teacherSelect');
-                ts.style.display = 'block';
+                const ts = document.getElementById('teacherSelect'); ts.style.display = 'block';
                 const teachers = [...new Set(rawData.map(i => i.teacher))].filter(x => x).sort();
                 ts.innerHTML = '<option value="">كل المعلمين</option>' + teachers.map(t => `<option value="${t}">${t}</option>`).join('');
             }
@@ -154,7 +162,7 @@
             const grades = [...new Set(rawData.map(i => i.grade))].filter(x => x).sort((a,b) => parseInt(a)-parseInt(b));
             gs.innerHTML = '<option value="">كل الصفوف</option>' + grades.map(g => `<option value="${g}">${g}</option>`).join('');
             updateUI();
-        } catch(e) { console.error("Error loading data"); }
+        } catch(e) { console.error("Error Loading"); }
     }
 
     function handleLogin() {
@@ -178,65 +186,54 @@
         const area = document.getElementById('displayArea');
         const statsArea = document.getElementById('adminStatsArea');
         const role = sessionStorage.getItem('userRole');
-        const filters = {
-            day: document.getElementById('daySelect').value,
-            grade: document.getElementById('gradeSelect').value,
-            sec: document.getElementById('sectionSelect').value,
-            teacher: document.getElementById('teacherSelect')?.value || ""
-        };
+        const f = { d: document.getElementById('daySelect').value, g: document.getElementById('gradeSelect').value, s: document.getElementById('sectionSelect').value, t: document.getElementById('teacherSelect')?.value || "" };
         
         const now = new Date();
-        const currentMins = now.getHours() * 60 + now.getMinutes();
+        const curMins = now.getHours() * 60 + now.getMinutes();
 
-        let filtered = rawData.filter(i => 
-            i.day === filters.day && 
-            (filters.grade === "" || i.grade === filters.grade) && 
-            (filters.sec === "" || i.section === filters.sec) &&
-            (role !== 'إدارة وإشراف' || filters.teacher === "" || i.teacher === filters.teacher)
-        );
-
+        let filtered = rawData.filter(i => i.day === f.d && (f.g === "" || i.grade === f.g) && (f.s === "" || i.section === f.s) && (role !== 'إدارة وإشراف' || f.t === "" || i.teacher === f.t));
         area.innerHTML = ""; statsArea.innerHTML = "";
-        if (filtered.length === 0) { area.innerHTML = "<div style='padding:20px; color:var(--gray);'>لا توجد حصص مجدولة</div>"; return; }
 
         if (role === 'إدارة وإشراف') {
-            let act = 0, done = 0;
+            let act = 0, done = 0, wait = 0;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                if (currentMins >= sm && currentMins <= em) act++; else if (currentMins > em) done++;
+                if (curMins >= sm && curMins <= em) act++; else if (curMins > em) done++; else wait++;
             });
             statsArea.innerHTML = `<div class="admin-dashboard">
                 <div class="stat-box"><span class="stat-val">${act}</span><span class="stat-label">نشطة</span></div>
-                <div class="stat-box"><span class="stat-val">%${Math.round((done/filtered.length)*100) || 0}</span><span class="stat-label">إنجاز</span></div>
+                <div class="stat-box"><span class="stat-val">%${Math.round((done/filtered.length)*100) || 0}</span><span class="stat-label">الإنجاز</span></div>
+                <div class="stat-box"><span class="stat-val">${done}</span><span class="stat-label">منتهية</span></div>
+                <div class="stat-box"><span class="stat-val">${wait}</span><span class="stat-label">قادمة</span></div>
             </div>`;
             
             let table = `<div class="admin-table-container"><table class="admin-table"><thead><tr><th>الصف</th><th>المادة</th><th>المعلم</th><th>الوقت</th><th>الحالة</th><th>رابط</th></tr></thead><tbody>`;
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                let status = (currentMins >= sm && currentMins <= em) ? {t:'نشطة', c:'var(--success)'} : (currentMins > em) ? {t:'منتهية', c:'var(--gray)'} : {t:'انتظار', c:'var(--danger)'};
-                table += `<tr><td>${l.grade}-${l.section}</td><td><b>${l.sub}</b></td><td>${l.teacher}</td><td>${l.s}-${l.e}</td><td><span class="status-badge" style="background:${status.c}; color:white; padding:4px 8px; border-radius:6px;">${status.t}</span></td><td><a href="${l.link}" target="_blank" style="color:var(--primary)"><i class="fas fa-external-link-alt"></i></a></td></tr>`;
+                let s = (curMins >= sm && curMins <= em) ? {t:'نشطة', c:'var(--success)'} : (curMins > em) ? {t:'منتهية', c:'var(--gray)'} : {t:'انتظار', c:'var(--danger)'};
+                table += `<tr><td>${l.grade}-${l.section}</td><td><b>${l.sub}</b></td><td>${l.teacher}</td><td>${l.s}-${l.e}</td><td><span style="background:${s.c}; color:white; padding:4px 10px; border-radius:8px; font-weight:800; font-size:0.7rem;">${s.t}</span></td><td><a href="${l.link}" target="_blank" style="color:var(--primary)"><i class="fas fa-external-link-alt"></i></a></td></tr>`;
             });
             area.innerHTML = table + "</tbody></table></div>";
         } else {
+            area.innerHTML = `<div class="lesson-grid"></div>`;
+            const grid = area.querySelector('.lesson-grid');
             filtered.forEach(l => {
                 const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
                 const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
-                const openTime = sm - 5, closeTime = em + 5;
-                const isOpen = (currentMins >= openTime && currentMins <= closeTime);
-                const isEarly = (currentMins >= openTime && currentMins < sm);
-                const isPast = (currentMins > closeTime);
-                
-                let btnText = isOpen ? (isEarly ? "دخول مبكر" : "دخول الحصة") : isPast ? "انتهى الوقت" : "انتظار الموعد";
-                let btnColor = isOpen ? "var(--success)" : isPast ? "var(--gray)" : "var(--danger)";
+                const op = sm - 5, cl = em + 5;
+                const isOpen = (curMins >= op && curMins <= cl);
+                const isPast = (curMins > cl);
+                let btnT = isOpen ? (curMins < sm ? "دخول مبكر" : "دخول الحصة") : isPast ? "انتهى الوقت" : "انتظار الموعد";
+                let btnC = isOpen ? "var(--success)" : isPast ? "var(--gray)" : "var(--danger)";
 
-                area.innerHTML += `
-                    <div class="card-view" style="background:white; border-radius:15px; margin-bottom:12px; padding:15px; border-right: 6px solid ${btnColor}; text-align:right; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-                        <b style="font-size: 1.1rem; color: var(--primary);">${l.sub}</b><br>
-                        <span style="font-size: 0.9rem;">${l.teacher} | ${l.grade}-${l.section}</span><br>
-                        <small style="color: var(--gray);"><i class="far fa-clock"></i> ${l.s} - ${l.e}</small>
-                        <button class="btn" style="background:${btnColor}; color:white; margin-top:12px;" ${isOpen ? '' : 'disabled'} onclick="window.open('${l.link}')">${btnText}</button>
-                    </div>`;
+                grid.innerHTML += `<div class="auth-card" style="border-right: 6px solid ${btnC}; text-align:right; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <b style="font-size: 1.2rem; color: var(--primary);">${l.sub}</b><br>
+                    <span>${l.teacher} | ${l.grade}-${l.section}</span><br>
+                    <small style="color:var(--gray)"><i class="far fa-clock"></i> ${l.s} - ${l.e}</small>
+                    <button class="btn" style="background:${btnC}; color:white; margin-top:15px;" ${isOpen ? '' : 'disabled'} onclick="window.open('${l.link}')">${btnT}</button>
+                </div>`;
             });
         }
     }
@@ -244,11 +241,17 @@
     function updateClock() {
         const now = new Date();
         document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
-        document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long', year:'numeric'});
+        document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'long'});
         if (now.getSeconds() === 0) updateUI();
     }
     function handleLogout() { sessionStorage.clear(); window.location.reload(); }
-    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود الرقمية v1.6\nواجهة احترافية مطورة 2026', 'info'); }
+    function triggerTranslate() { 
+        const combo = document.querySelector('.goog-te-combo');
+        if (combo) { combo.value = (combo.value === 'en') ? 'ar' : 'en'; combo.dispatchEvent(new Event('change')); }
+    }
+    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود الرقمية v1.7\nتجربة مستخدم احترافية 2026', 'info'); }
+    function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'ar', includedLanguages: 'en,ar'}, 'google_translate_element'); }
+
     setInterval(updateClock, 1000);
     window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
 </script>
