@@ -105,18 +105,19 @@
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
     const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    // دالة تحويل الوقت من نص (08:30) إلى دقائق لسهولة المقارنة
+    // تحويل الوقت لنظام الدقائق لسهولة المقارنة البرمجية
     function timeToMinutes(tStr) {
         if (!tStr) return 0;
-        const [h, m] = tStr.split(':').map(Number);
-        return h * 60 + m;
+        let parts = tStr.split(':').map(Number);
+        return parts[0] * 60 + parts[1];
     }
 
     function updateClock() {
         const now = new Date();
-        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('ar-EG');
+        // عرض الساعة بنظام 24 ساعة (مثلاً 14:30 بدلاً من 02:30 م)
+        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-GB', {hour12: false});
         document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long'});
-        // تحديث الألوان تلقائياً كل دقيقة لضمان دقة الحالة الزمنية
+        
         if (now.getSeconds() === 0) updateUI();
     }
     setInterval(updateClock, 1000);
@@ -164,6 +165,7 @@
         const section = document.getElementById('sectionSelect').value;
         
         const now = new Date();
+        // الحصول على الدقيقة الحالية بنظام 24 ساعة
         const currentMins = now.getHours() * 60 + now.getMinutes();
 
         let filtered = rawData.filter(i => i.day === day && (grade === "" || i.grade === grade) && (section === "" || i.section === section));
@@ -173,29 +175,29 @@
             const startMins = timeToMinutes(l.s);
             const endMins = timeToMinutes(l.e);
             
-            let statusColor, statusText;
-            let btnDisabled = "";
+            let statusColor, statusText, btnDisabled = "";
 
+            // المقارنة الزمنية المباشرة (نظام 24 ساعة)
             if (currentMins >= startMins && currentMins <= endMins) {
-                statusColor = "var(--success)"; // أخضر: الحصة قائمة الآن
+                statusColor = "var(--success)"; // أخضر: الحصة جارية
                 statusText = "جارية الآن";
             } else if (currentMins > endMins) {
                 statusColor = "var(--danger)"; // أحمر: الحصة انتهت
-                statusText = "انتهت الحصة";
+                statusText = "منتهية";
                 btnDisabled = "disabled style='opacity:0.4; cursor:not-allowed;'";
             } else {
-                statusColor = "var(--gray)"; // رمادي: لم تبدأ بعد
-                statusText = "لم تبدأ بعد";
+                statusColor = "var(--gray)"; // رمادي: قادمة
+                statusText = "قادمة";
                 btnDisabled = "disabled style='opacity:0.6; cursor:not-allowed;'";
             }
 
             area.innerHTML += `
                 <div class="display-card" style="border-right-color: ${statusColor}">
-                    <div style="display:flex; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <b style="color:${statusColor};">${l.sub}</b>
-                        <span style="font-size:0.7rem; color:${statusColor}; font-weight:bold;">${statusText}</span>
+                        <span style="font-size:0.7rem; color:${statusColor}; font-weight:bold; background:${statusColor}22; padding:2px 8px; border-radius:10px;">${statusText}</span>
                     </div>
-                    <small>${l.teacher} | ${l.s} - ${l.e}</small><br>
+                    <small style="color:var(--gray);">${l.teacher} | ${l.s} - ${l.e}</small><br>
                     <button class="btn btn-primary" ${btnDisabled} style="margin-top:10px; padding:10px; font-size:0.9rem; background: ${statusColor}; box-shadow: 0 4px 0 ${statusColor}99; border:none;" onclick="window.open('${l.link}')">
                         <i class="fas fa-video"></i> دخول الحصة
                     </button>
