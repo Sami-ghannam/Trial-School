@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v2.8.1</title>
+    <title>منصة العنقود الرقمية v2.9 - التقارير الذكية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
@@ -51,6 +52,10 @@
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.5s; }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         .admin-table th, .admin-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
+
+        /* أزرار الإجراءات */
+        .report-btn { background: var(--purple); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
+        .report-btn:hover { background: #7c3aed; }
 
         /* الشريط السفلي */
         .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--nav-bg); backdrop-filter: blur(12px); padding: 10px; border-radius: 40px; display: flex; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; border: 1px solid var(--border); width: 90%; max-width: 500px; justify-content: space-around; }
@@ -100,6 +105,7 @@
             <div class="stat-card"><span class="stat-num" id="percentDone">0%</span><span>إنجاز</span></div>
         </div>
         <div class="progress-container"><div id="progBar" class="progress-bar"></div></div>
+        <button class="report-btn" onclick="generateDailyReport()"><i class="fas fa-file-excel"></i> استخراج تقرير اليوم</button>
     </div>
 
     <div class="welcome-frame">
@@ -145,7 +151,7 @@
                 return { 
                     day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim(), 
                     sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), 
-                    e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() // جلب رقم الهاتف من العمود I (رقم 9)
+                    e: c[6]?.trim(), link: c[7]?.trim(), phone: c[8]?.trim() 
                 };
             });
             setupFilters(); updateUI();
@@ -225,6 +231,53 @@
         }
     }
 
+    // دالة استخراج التقرير الذكي
+    function generateDailyReport() {
+        const day = document.getElementById('daySelect').value;
+        const now = new Date();
+        const curMins = now.getHours() * 60 + now.getMinutes();
+        
+        // تجهيز البيانات للتقرير
+        let reportData = rawData.filter(i => i.day === day).map(l => {
+            const sm = (l.s.split(':')[0]*60) + Number(l.s.split(':')[1]);
+            const em = (l.e.split(':')[0]*60) + Number(l.e.split(':')[1]);
+            let status = (curMins >= sm && curMins <= em) ? 'نشطة حالياً' : (curMins > em) ? 'مكتملة' : 'في قائمة الانتظار';
+            
+            return {
+                'اليوم': l.day,
+                'الصف': l.grade,
+                'الشعبة': l.section,
+                'المعلم': l.teacher,
+                'المادة': l.sub,
+                'وقت البدء': l.s,
+                'وقت الانتهاء': l.e,
+                'حالة الحصة': status
+            };
+        });
+
+        if(reportData.length === 0) { Swal.fire('تنبيه', 'لا توجد بيانات لهذا اليوم لتصديرها', 'warning'); return; }
+
+        // حساب الإحصائيات
+        const total = reportData.length;
+        const doneCount = reportData.filter(r => r['حالة الحصة'] !== 'في قائمة الانتظار').length;
+        const percent = Math.round((doneCount / total) * 100);
+
+        // إضافة ملخص في نهاية الملف
+        reportData.push({}); // سطر فارغ
+        reportData.push({ 'اليوم': 'ملخص الإنجاز:', 'الصف': `نسبة الحصص المنفذة/النشطة: ${percent}%` });
+
+        // إنشاء ملف الإكسيل
+        const ws = XLSX.utils.json_to_sheet(reportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "تقرير العنقود");
+        
+        // تنزيل الملف
+        const fileName = `تقرير_العنقود_${day}_${now.toLocaleDateString('ar-EG')}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+        
+        Swal.fire('تم بنجاح', 'تم استخراج تقرير اليوم بصيغة Excel بنجاح', 'success');
+    }
+
     function toggleLanguage() {
         const combo = document.querySelector('.goog-te-combo');
         if (!combo) return;
@@ -254,7 +307,7 @@
         if(dateEl) dateEl.innerText = now.toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'long'});
         if(now.getSeconds() === 0 && sessionStorage.getItem('isLoggedIn')) updateUI();
     }
-    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.8.1\nالتنبيه والربط بالعمود I', 'info'); }
+    function showAbout() { Swal.fire('م. سامي غنام', 'منصة العنقود v2.9\nنظام التقارير الذكية (Excel)', 'info'); }
 
     setInterval(updateClock, 1000);
     window.onload = () => { 
