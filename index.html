@@ -3,94 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة العنقود الرقمية v3.5</title>
+    <title>منصة العنقود الرقمية Gold Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2563eb; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
-            --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --gray: #64748b; --border: #e2e8f0;
-            --nav-bg: rgba(255, 255, 255, 0.9);
+            --primary: #2563eb; --accent: #3b82f6; --success: #10b981; --danger: #ef4444;
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gray: #64748b; --border: #e2e8f0;
+            --gold: #f59e0b;
         }
 
         body.dark-mode { 
-            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --gray: #94a3b8; --border: #334155; 
-            --nav-bg: rgba(30, 41, 59, 0.9);
+            --bg: #020617; --card: #0f172a; --text: #f1f5f9; --gray: #94a3b8; --border: #1e293b; 
         }
         
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; transition: 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
 
-        /* الشريط العلوي */
-        .top-bar { background: var(--card); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
-        .live-date, .live-clock { font-weight: bold; color: var(--primary); font-size: 0.85rem; }
-        #userBadge { background: var(--primary); color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.7rem; margin-left: 8px; display: none; }
-        .theme-toggle { cursor: pointer; font-size: 1.2rem; color: var(--gray); transition: 0.3s; }
+        /* شريط علوي فخم */
+        .top-bar { background: var(--card); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .live-clock { font-weight: 800; color: var(--primary); letter-spacing: 1px; font-size: 1rem; }
 
-        /* شاشة الدخول */
-        .welcome-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; }
-        .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 10px; border-radius: 40px; width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-        .auth-card { background: var(--card); padding: 30px 20px; border-radius: 32px; text-align: center; }
-        .main-logo { width: 80px; height: auto; margin-bottom: 15px; }
+        /* شاشة الترحيب الاحترافية */
+        .welcome-page { display: flex; align-items: center; justify-content: center; min-height: 90vh; padding: 20px; animation: fadeIn 0.8s ease; }
+        .welcome-frame { background: linear-gradient(145deg, #1e40af, #3b82f6); padding: 3px; border-radius: 50px; width: 100%; max-width: 420px; box-shadow: 0 30px 60px rgba(37, 99, 235, 0.2); }
+        .auth-card { background: var(--card); padding: 40px 30px; border-radius: 47px; text-align: center; }
+        .main-logo { width: 100px; height: auto; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); margin-bottom: 20px; }
 
-        input[type="text"], select { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--border); margin-bottom: 12px; outline: none; text-align: center; font-size: 1rem; background: var(--card); color: var(--text); box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-        .btn-exit { background: transparent; color: var(--danger); border: 2px solid var(--danger); margin-top: 10px; }
-        .btn:active { transform: scale(0.98); }
+        /* أزرار فخمة ومميزة */
+        input[type="text"] { width: 100%; padding: 15px; border-radius: 20px; border: 2px solid var(--border); margin-bottom: 20px; outline: none; text-align: center; font-size: 1.1rem; background: var(--bg); color: var(--text); transition: 0.3s; }
+        input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
-        #mainApp { display: none; padding: 20px; padding-bottom: 120px; }
-        .display-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 20px; margin-bottom: 12px; text-align: right; }
+        .btn-main { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 1.1rem; transition: 0.4s; position: relative; overflow: hidden; }
+        
+        .btn-enter { background: linear-gradient(90deg, #2563eb, #3b82f6); color: white; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); margin-bottom: 15px; }
+        .btn-enter:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4); }
+        
+        .btn-exit-auth { background: transparent; color: var(--danger); border: 2px solid var(--danger); }
+        .btn-exit-auth:hover { background: var(--danger); color: white; transform: translateY(-2px); }
 
-        /* --- شريط التنقل السفلي الاحترافي --- */
-        .bottom-nav { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px;
-            background: var(--nav-bg); 
-            backdrop-filter: blur(10px);
-            padding: 10px 5px; 
-            display: flex; justify-content: space-around; align-items: center; 
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            border: 1px solid var(--border);
-            z-index: 2000;
-        }
+        /* نظام التنبيهات (Modal) الاحترافي */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; align-items:center; justify-content:center; z-index:9999; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 30px; width: 90%; max-width: 350px; text-align: center; transform: scale(0.7); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); }
+        .modal-overlay.active { display: flex; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-icon { font-size: 3rem; margin-bottom: 15px; }
 
-        .nav-item { 
-            text-align: center; color: var(--gray); cursor: pointer; 
-            flex: 1; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; padding: 5px 0;
-        }
+        /* شريط سفلي عائم */
+        .bottom-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 450px; background: var(--card); padding: 12px; display: flex; justify-content: space-around; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid var(--border); z-index: 2000; }
+        .nav-item { text-align: center; color: var(--gray); cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 5px; transition: 0.3s; }
+        .nav-item:hover i { color: var(--primary); transform: scale(1.2); }
 
-        .nav-item i { 
-            font-size: 1.3rem; display: block; margin-bottom: 4px; 
-            color: var(--gray); transition: 0.3s;
-        }
-
-        .nav-item span { font-size: 0.65rem; font-weight: 600; display: block; }
-
-        /* تأثير عند الضغط/التنشيط */
-        .nav-item:active i { transform: scale(0.8); color: var(--primary); }
-        .nav-item:hover i { color: var(--primary); transform: translateY(-3px); }
-        .nav-item:hover span { color: var(--text); }
-
-        /* أيقونة تحديث مميزة */
-        .nav-refresh i { color: var(--success); }
-        .nav-contact i { color: #25d366; } /* لون واتساب */
-        .nav-info i { color: var(--warning); }
-        .nav-help i { color: var(--primary); }
-
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .spinning { animation: rotate 0.8s linear; }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
+<div class="modal-overlay" id="customModal">
+    <div class="modal-content">
+        <div class="modal-icon" id="modalIcon"></div>
+        <h3 id="modalTitle" style="margin:0 0 10px 0;"></h3>
+        <p id="modalMsg" style="color:var(--gray); margin-bottom:25px;"></p>
+        <button class="btn-main btn-enter" style="padding:12px;" onclick="closeModal()">حسناً</button>
+    </div>
+</div>
+
 <div class="top-bar">
-    <div class="live-date" id="dateDisplay">--/--/----</div>
+    <div class="live-clock" id="clockDisplay">00:00:00</div>
     <div style="display: flex; align-items: center;">
+        <span id="userBadge" style="background:var(--primary); color:white; padding:4px 15px; border-radius:20px; font-size:0.75rem; margin-left:10px; display:none; font-weight:bold;"></span>
         <i class="fas fa-moon theme-toggle" onclick="toggleTheme()" id="themeIcon"></i>
-        <span id="userBadge"></span>
-        <div class="live-clock" id="clockDisplay">00:00:00</div>
     </div>
 </div>
 
@@ -98,75 +79,106 @@
     <div class="welcome-frame">
         <div class="auth-card">
             <img src="https://github.com/Sami-ghannam/Beit-Alroosh-AlTehta-School/blob/main/logo.png?raw=true" alt="Logo" class="main-logo">
-            <h3 style="margin:0 0 20px 0; color:var(--primary);">منصة العنقود الرقمية</h3>
-            <input type="text" id="sysPass" placeholder="رمز الدخول">
-            <button class="btn btn-primary" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> دخول</button>
-            <button class="btn btn-exit" onclick="hardExit()"><i class="fas fa-power-off"></i> خروج</button>
+            <h2 style="margin:0 0 10px 0; color:var(--primary); font-weight:900;">مرحباً بك</h2>
+            <p style="color:var(--gray); margin-bottom:30px; font-size:0.9rem;">بوابة م. سامي غنام التعليمية</p>
+            
+            <input type="text" id="sysPass" placeholder="رمز الدخول السري">
+            
+            <button class="btn-main btn-enter" onclick="handleLogin()">
+                <i class="fas fa-fingerprint"></i> دخول آمن
+            </button>
+            <button class="btn-main btn-exit-auth" onclick="showPrompt('exit')">
+                <i class="fas fa-power-off"></i> إغلاق المنصة
+            </button>
         </div>
     </div>
 </div>
 
-<div id="mainApp">
-    <div class="welcome-frame">
-        <div class="auth-card" style="padding: 15px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h4 id="portalTitle" style="margin:0; color:var(--primary);">البوابة</h4>
-                <button onclick="handleLogout()" style="border:none; background:var(--bg); color:var(--danger); font-weight:bold; cursor:pointer; padding:8px 12px; border-radius:10px;">خروج</button>
+<div id="mainApp" style="display:none; padding:20px; padding-bottom:120px; animation: fadeIn 0.5s ease;">
+    <div class="welcome-frame" style="max-width: 600px; margin: auto;">
+        <div class="auth-card" style="padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <span style="color:var(--primary); font-weight:bold;"><i class="fas fa-graduation-cap"></i> جدول الحصص</span>
+                <button onclick="handleLogout()" style="background:var(--danger); color:white; border:none; padding:8px 15px; border-radius:12px; cursor:pointer; font-weight:bold; font-size:0.8rem;">تسجيل خروج</button>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:20px;">
                 <select id="daySelect" onchange="updateUI()"></select>
                 <select id="gradeSelect" onchange="updateUI()">
                     <option value="">الصف</option>
                     <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">${i}</option>`);</script>
                 </select>
                 <select id="sectionSelect" onchange="updateUI()">
-                    <option value="أ">أ</option><option value="ب">ب</option>
-                    <option value="ج">ج</option><option value="د">د</option>
-                    <option value="هـ">هـ</option><option value="و">و</option>
+                    <option value="أ">أ</option><option value="ب">ب</option><option value="ج">ج</option><option value="د">د</option>
                 </select>
             </div>
-            <div id="displayArea" style="margin-top: 15px;"></div>
+            <div id="displayArea"></div>
         </div>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item nav-refresh" onclick="refreshData(this)">
-        <i class="fas fa-rotate"></i>
-        <span>تحديث</span>
+    <div class="nav-item" onclick="loadData()">
+        <i class="fas fa-sync-alt" style="color:var(--success);"></i>
+        <span style="font-size:0.6rem;">تحديث</span>
     </div>
-    <div class="nav-item nav-contact" onclick="window.open('https://wa.me/970599000000')">
-        <i class="fab fa-whatsapp"></i>
-        <span>راسلنا</span>
+    <div class="nav-item" onclick="window.open('https://wa.me/970599000000')">
+        <i class="fab fa-whatsapp" style="color:#25d366;"></i>
+        <span style="font-size:0.6rem;">الدعم</span>
     </div>
-    <div class="nav-item nav-help" onclick="showHelp()">
-        <i class="fas fa-circle-question"></i>
-        <span>تعليمات</span>
+    <div class="nav-item" onclick="showModal('info', 'عن المنصة', 'تم تطوير هذا النظام بواسطة م. سامي غنام لتسهيل الوصول للحصص الافتراضية.')">
+        <i class="fas fa-shield-halved" style="color:var(--gold);"></i>
+        <span style="font-size:0.6rem;">الخصوصية</span>
     </div>
-    <div class="nav-item nav-info" onclick="showAbout()">
-        <i class="fas fa-address-card"></i>
-        <span>عن المنصة</span>
+    <div class="nav-item" onclick="showModal('help', 'تعليمات', 'اختر صفك وشعبتك، وستظهر حصصك الحالية. اضغط دخول الحصة للانتقال للبث المباشر.')">
+        <i class="fas fa-lightbulb" style="color:var(--primary);"></i>
+        <span style="font-size:0.6rem;">مساعدة</span>
     </div>
 </div>
 
 <script>
     let rawData = [];
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
-    const weekDaysArr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
 
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('ar-EG');
-        document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', {day:'numeric', month:'long'});
+    // دالة التنبيهات الاحترافية
+    function showModal(type, title, msg) {
+        const overlay = document.getElementById('customModal');
+        const iconDiv = document.getElementById('modalIcon');
+        iconDiv.innerHTML = type === 'success' ? '<i class="fas fa-check-circle" style="color:var(--success)"></i>' : 
+                          type === 'error' ? '<i class="fas fa-times-circle" style="color:var(--danger)"></i>' : 
+                          type === 'info' ? '<i class="fas fa-info-circle" style="color:var(--primary)"></i>' : 
+                          '<i class="fas fa-lightbulb" style="color:var(--gold)"></i>';
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalMsg').innerText = msg;
+        overlay.classList.add('active');
     }
-    setInterval(updateClock, 1000);
 
-    function refreshData(el) {
-        const icon = el.querySelector('i');
-        icon.classList.add('spinning');
-        loadData().then(() => {
-            setTimeout(() => icon.classList.remove('spinning'), 800);
-        });
+    function closeModal() { document.getElementById('customModal').classList.remove('active'); }
+
+    function handleLogin() {
+        const pass = document.getElementById('sysPass').value.trim();
+        if(pass === "1" || pass === "1111" || pass === "1234") {
+            const role = pass === "1" ? "طالب" : pass === "1111" ? "معلم" : "إشراف";
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('userRole', role);
+            showApp();
+        } else {
+            showModal('error', 'خطأ في الدخول', 'رمز الدخول الذي أدخلته غير صحيح، يرجى المحاولة مرة أخرى.');
+        }
+    }
+
+    function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        const role = sessionStorage.getItem('userRole');
+        document.getElementById('userBadge').innerText = role;
+        document.getElementById('userBadge').style.display = 'inline-block';
+        
+        const ds = document.getElementById('daySelect');
+        ds.innerHTML = '';
+        ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"].forEach(d => ds.innerHTML += `<option value="${d}">${d}</option>`);
+        ds.value = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"][new Date().getDay()] || "الأحد";
+        loadData();
     }
 
     async function loadData() {
@@ -179,30 +191,7 @@
                 return { day: c[0]?.trim(), grade: c[1]?.trim(), section: c[2]?.trim() || "أ", sub: c[3]?.trim(), teacher: c[4]?.trim(), s: c[5]?.trim(), e: c[6]?.trim(), link: c[7]?.trim() };
             });
             updateUI();
-        } catch(e) { console.error("Error"); }
-    }
-
-    function handleLogin() {
-        let pass = document.getElementById('sysPass').value.trim();
-        let role = (pass === "1") ? 'طالب' : (pass === "1111") ? 'معلم' : (pass === "1234") ? 'إشراف' : '';
-        if(!role) { alert("الرمز غير صحيح"); return; }
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('userRole', role);
-        showApp();
-    }
-
-    function showApp() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        const role = sessionStorage.getItem('userRole');
-        document.getElementById('userBadge').innerText = role;
-        document.getElementById('userBadge').style.display = 'inline-block';
-        document.getElementById('portalTitle').innerText = 'بوابة ' + role;
-        const ds = document.getElementById('daySelect');
-        ds.innerHTML = '';
-        weekDaysArr.forEach(d => ds.innerHTML += `<option value="${d}">${d}</option>`);
-        ds.value = weekDaysArr[new Date().getDay()] || "الأحد";
-        loadData();
+        } catch(e) { showModal('error', 'فشل التحديث', 'لم نتمكن من جلب البيانات، تأكد من اتصال الإنترنت.'); }
     }
 
     function updateUI() {
@@ -211,9 +200,14 @@
         const grade = document.getElementById('gradeSelect').value;
         const section = document.getElementById('sectionSelect').value;
         let filtered = rawData.filter(i => i.day === day && (grade === "" || i.grade === grade) && (section === "" || i.section === section));
-        area.innerHTML = filtered.length === 0 ? "<div style='color:var(--gray); text-align:center; padding:20px;'>لا توجد حصص</div>" : "";
+        area.innerHTML = filtered.length === 0 ? "<div style='color:var(--gray); padding:30px;'>لا توجد حصص مجدولة</div>" : "";
         filtered.forEach(l => {
-            area.innerHTML += `<div class="display-card"><b>${l.sub}</b><br><small>${l.teacher} | ${l.s} - ${l.e}</small><br><button class="btn btn-primary" style="margin-top:10px; padding:8px; font-size:0.85rem;" onclick="window.open('${l.link}')">دخول الحصة</button></div>`;
+            area.innerHTML += `
+                <div style="background:var(--bg); padding:15px; border-radius:20px; margin-bottom:15px; text-align:right; border:1px solid var(--border);">
+                    <b style="color:var(--primary); font-size:1.1rem;">${l.sub}</b><br>
+                    <small style="color:var(--gray);">${l.teacher} | ${l.s} - ${l.e}</small><br>
+                    <button class="btn-main btn-enter" style="margin-top:10px; padding:10px; font-size:0.9rem; width:auto;" onclick="window.open('${l.link}')">دخول الحصة</button>
+                </div>`;
         });
     }
 
@@ -222,12 +216,19 @@
         document.getElementById('themeIcon').className = document.body.classList.contains('dark-mode') ? 'fas fa-sun theme-toggle' : 'fas fa-moon theme-toggle';
     }
 
-    function showAbout() { alert("منصة العنقود الرقمية v3.5\nنظام إدارة الحصص المدرسية\nتصميم وإشراف: م. سامي غنام\n2026"); }
-    function showHelp() { alert("تعليمات:\n1. اختر اليوم والصف والشعبة.\n2. اضغط 'دخول الحصة' للانضمام.\n3. استخدم زر التحديث لمزامنة الجدول."); }
     function handleLogout() { sessionStorage.clear(); window.location.reload(); }
-    function hardExit() { if(confirm("خروج نهائي؟")) window.location.href = "https://www.google.com"; }
+    
+    function showPrompt(action) {
+        if(action === 'exit') {
+            if(confirm("هل أنت متأكد من رغبتك في إغلاق المنصة؟")) window.location.href = "https://www.google.com";
+        }
+    }
 
-    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); else updateClock(); };
+    setInterval(() => {
+        document.getElementById('clockDisplay').innerText = new Date().toLocaleTimeString('ar-EG');
+    }, 1000);
+
+    window.onload = () => { if(sessionStorage.getItem('isLoggedIn')) showApp(); };
 </script>
 </body>
 </html>
