@@ -39,7 +39,6 @@
         .welcome-frame { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 10px; border-radius: 30px; box-shadow: 0 15px 35px rgba(30, 64, 175, 0.2); margin-top: 10px; }
         .auth-card { background: var(--card); padding: 25px; border-radius: 25px; text-align: center; }
         
-        /* تنسيق حقل كلمة المرور الجديد مع العين */
         .pass-wrapper { position: relative; width: 90%; margin: 0 auto 15px auto; }
         .pass-wrapper input { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); text-align: center; font-weight: 900; background: var(--bg); color: var(--text); font-size: 1rem; box-sizing: border-box; }
         .pass-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); z-index: 10; transition: 0.2s; }
@@ -110,56 +109,3 @@
 
 <div id="mainApp" style="display:none;" class="container">
     <div id="adminDashboard" style="display:none; margin-bottom: 20px;">
-        <div class="admin-stats-grid">
-            <div class="stat-card"><span class="stat-num" id="countActive">0</span><span>نشطة</span></div>
-            <div class="stat-card"><span class="stat-num" id="countWait">0</span><span>انتظار</span></div>
-            <div class="stat-card"><span class="stat-num" id="countDone">0</span><span>مكتملة</span></div>
-            <div class="stat-card"><span class="stat-num" id="percentDone">0%</span><span>إنجاز</span></div>
-        </div>
-        <div class="progress-container"><div id="progBar" class="progress-bar"></div></div>
-        <button class="report-btn" onclick="generateDailyReport()"><i class="fas fa-file-export"></i> استخراج تقرير الحضور (Excel)</button>
-    </div>
-
-    <div class="welcome-frame">
-        <div class="auth-card" style="padding: 15px;">
-            <div id="teacherGamification" style="display:none;" class="teacher-achievements">
-                <div class="badge-mini"><i class="fas fa-stopwatch" style="color:var(--primary)"></i> حصص دقيقة: <span id="onTimeCount">0</span></div>
-                <div id="fullCommitment" class="badge-mini" style="display:none; border-color: var(--gold); color: #856404; background: #fffdf0;"><i class="fas fa-crown" style="color:var(--gold)"></i> وسام الالتزام</div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <span id="userBadge" style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;"></span>
-                <button style="color: var(--danger); border: none; background: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;" onclick="handleLogout()">خروج</button>
-            </div>
-            
-            <div class="filter-grid-expanded">
-                <select id="daySelect" onchange="updateUI()"></select>
-                <select id="teacherSelect" onchange="updateUI()" style="display:none;"></select>
-                <select id="gradeSelect" onchange="updateUI()"><option value="">الصف</option></select>
-                <select id="sectionSelect" onchange="updateUI()"><option value="">الشعبة</option><option value="أ">أ</option><option value="ب">ب</option></select>
-            </div>
-            <div id="displayArea">جاري المزامنة...</div>
-        </div>
-    </div>
-</div>
-
-<div id="bottomNav" class="bottom-nav">
-    <div class="nav-item" onclick="location.reload()"><i class="fas fa-redo-alt" style="color:var(--success)"></i><span>تحديث</span></div>
-    <div class="nav-item" onclick="toggleLanguage()"><i class="fas fa-language" style="color:var(--purple)"></i><span id="langText">English</span></div>
-    <div class="nav-item" onclick="showAbout()"><i class="fas fa-code" style="color:var(--info)"></i><span>v2.9.6</span></div>
-    <div class="nav-item" onclick="window.location.href='mailto:sami.ghannam@shebron.edu.ps'"><i class="fas fa-headset" style="color:#f59e0b"></i><span>الدعم</span></div>
-</div>
-
-<script>
-    let rawData = [];
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRa-upd7Oa8Ma0r3PaX0XoZdvLhz9kkCXayodb3FDbbYT-W0k6SHC3GKN1-sXz75O7BIbE2FE5lBO-k/pub?gid=0&single=true&output=csv';
-    const weekDays = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-    let currentLang = 'ar';
-
-    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
-
-    // تحويل الأرقام العربية إلى إنجليزية تلقائياً
-    function normalizeInput(el) {
-        const map = { '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9' };
-        el.value = el.value.replace(/[٠-٩]/g, function(d) { return map[d]; });
-    }
